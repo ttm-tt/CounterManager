@@ -1,0 +1,212 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+/* 
+    Document   : ticker
+    Created on : 23.06.2013, 19:53:03
+    Author     : chtheis
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+
+/* Layout */
+root { 
+    display: block;
+}
+
+.caption {
+    display: block;
+}
+
+.caption > div {
+    display: inline-block;
+}
+
+.team {
+    display: block;
+    overflow: auto;
+}
+
+.team .names {
+    display: inline-block;
+    float: left;
+}
+
+.team .result {
+    display: inline-block;
+    float: right;
+}
+
+.detail {
+    display: block;
+}
+
+.detail .match {
+    display: table;
+    border-collapse: collapse;
+}
+
+.match .left {
+    display: table-row;
+}
+
+.match .left > div {
+    display: table-cell;
+}
+
+.match .right {
+    border-top: 1px solid black;
+    display: table-row;
+}
+
+.match .right > div {
+    display: table-cell;
+}
+
+.game {
+    display: inline;
+}
+
+.team .result {
+    _width: 5%;
+}
+
+.detail .match {
+    width: 100%;
+}
+
+.match .player {
+    width: 60%;
+}
+
+.match .points {
+    width: 35%;
+}
+
+.match .result {
+    _width: 5%;
+}
+
+/* Metrics */
+body {
+
+}
+
+.time {
+    width: 5ex;
+}
+
+.table {
+    margin-left: 1ex;
+    width: 5ex;
+}
+
+.event {
+    margin-left: 1ex;
+    width: 7ex;
+}
+
+.group {
+    margin-left: 1ex;
+    width: auto;
+}
+
+.round {
+    margin-left: 2ex;
+    width: 8ex;
+}
+
+.caption {
+    line-height: 1.2em;
+    padding-left: 1ex;
+    padding-right: 1ex;
+}
+
+.team {
+    line-height: 1.2em;
+    padding-left: 1ex;
+    padding-right: 1ex;
+}
+
+.team .result {
+    text-align: right;
+}
+
+.detail {
+    padding-left: 1ex;
+    padding-right: 1ex;  
+    line-height: 1.2em;
+}
+
+.match .player {
+    padding-right: 1ex;
+}
+
+.match .game {
+    padding-left: 0.2ex;
+    padding-right: 0.2ex;        
+}
+
+.match .game {
+    text-align: right;
+    vertical-align: middle;
+}
+
+.match .result {
+    text-align: right;
+    vertical-align: middle;
+}
+
+/* Fonts and Colors */
+.caption {
+    background: lightgray;
+    font-size: 80%;
+}
+
+.team {
+    background: lightblue;
+    font-size: 90%;
+    font-weight: bold;
+}
+
+.detail {
+    background: lightblue;
+    font-size: 100%;
+}
+
+.match .result {
+    font-weight: bold;
+}
+
+
+
+/* Screen resolution specific metrics */
+@media only screen and (max-device-width: 800px) { 
+    html {
+        width: 100%;
+    }
+    
+    #ticker {
+        width: 100%;
+    }
+    
+    #ticker td {
+        padding-bottom: 10px;
+    }
+    
+    .caption {
+
+    }
+
+    .team {
+
+    }
+
+    .detail {
+
+    }
+
+}
+
+
+

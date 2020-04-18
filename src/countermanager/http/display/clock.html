@@ -1,0 +1,27 @@
+<html>
+
+    <head>
+        <title>Bahnhofsuhr</title>
+        <script type="text/javascript" src="../scripts/jquery.js"></script>
+        <script type="text/javascript" src="../scripts/common.js"></script>
+        <script type="text/javascript" src="../scripts/station-clock.js"></script>
+        <script type="text/javascript" src="clock.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="clock.css">        
+
+        <!-- Load specific css file -->
+        <script type="text/javascript">
+            document.write('<link rel="stylesheet" type="text/css" href="themes/' + getParameterByName("theme", "default") + '.css">');
+            document.write('<link rel="stylesheet" type="text/css" href="themes/' + getParameterByName("config", "default") + '.css">');
+        </script>
+        
+    </head>
+
+    <body id="stationclock">
+        <div id="container">
+            <canvas id="clock">
+            </canvas>
+        </div>
+    </body>
+
+</html>

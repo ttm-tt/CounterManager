@@ -1,0 +1,1185 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+/* 
+    Document   : monitor
+    Created on : 11.08.2012, 18:33:15
+    Author     : chtheis
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+* {
+    cursor: none;
+}
+
+root { 
+    display: block;
+}
+
+body {
+    font-family: "Arial Narrow", "Liberation Sans Narrow", "Arial", "sans-serif";
+}
+
+/* Colors */
+body {
+    background-color: black;
+    color: white;
+}
+
+#content {
+    border: 1px solid gray;
+}
+
+.invert {
+}
+
+
+/* Styles */
+.left {
+    text-align: left;
+}
+
+.center {
+    text-align: center;
+}
+
+.right {
+    text-align: right;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.hidden {
+    display:none;
+}
+
+
+.middle {
+    display: table;
+}
+
+.middle span {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.crop {
+    /* white-space: nowrap; */
+    overflow: hidden;
+}
+
+.timeouts {
+    background-color: black;
+    color: white; 
+}
+
+.timeouts.running {
+    background-color: white;
+    color: black;
+}
+
+.cards {
+    background-color: yellow;
+    color: red;
+}
+
+
+#caption {
+    color: yellow;
+}
+
+.flag img {
+    border: 1px solid lightgray; 
+}
+
+.invert .flag img {
+    border: 1px solid lightgray;    
+}
+
+ #names {
+    color: yellow;    
+}
+
+#result .games {
+    color: orange;
+}
+
+#result .points{
+    color: red;
+}
+
+.nation {
+    font-weight: bold;
+}
+
+.teamresult {
+    font-weight: bold;
+}
+
+#names {
+    font-weight: bold;    
+}
+
+.name span {
+    overflow-x: hidden;    
+}
+
+.name span.service {
+    text-decoration: underline;
+}
+
+#result .games {
+    font-weight: bold;
+}
+
+#result .timeouts {
+    font-weight: bold;
+}
+
+#result .cards {
+    font-weight: bold;
+}
+
+#result .points{
+    font-weight: bold;
+}
+
+#result #gamesleft {
+    text-align: center;
+}
+
+#result #gamesright {
+    text-align: center;
+}
+
+#result #timeoutleft {
+    text-align: center;
+}
+
+#result #cardleft {
+    text-align: center;
+}
+
+#result #pointsleft {
+    text-align: center;
+}
+
+#result #pointsright {
+    text-align: center;
+}
+
+#result #timeoutright {
+    text-align: center;
+}
+
+#result #cardright {
+    text-align: center;
+}
+
+div#match .game {
+    text-align: center;
+}
+
+div#schedule {
+    visibility: visible;
+}
+
+/* Texts */
+#schedule:before {
+    content: "Start at ";
+}
+
+#schedule:lang(de):before {
+    content: "Start um ";
+}
+
+
+/* Positions and Sizes */
+/* 1920 x 1080 */
+@media only screen and (min-width: 1911px) { 
+    body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+    }
+
+    #content {
+        width: 1920px;
+        height: 1080px;
+    }
+
+    #caption {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 1920px;
+        height: 150px;
+        font-size: 110px;
+    }
+
+    .flag {
+        width: 300px;
+        height: inherit;
+        position: absolute;
+    }
+
+    .flag img {
+        max-width: 135px;
+        max-height: 90px;
+    }
+
+    .nation {
+        width: 590px;
+        height: inherit;
+        position: absolute;
+    }
+
+    #flagleft {
+        left: 0px;
+    }
+
+    #flagb {
+        left: 0px;
+    }
+
+    #flaga {
+        left: 150px;
+    }
+
+    #nationleft {
+        left: 300px;
+        padding-right: 10px;
+    }
+
+    #teamresult {
+        width: 120px;    
+        height: 150px;
+        position: absolute;
+        left: 850px;
+    }
+
+    #flagright {
+        right: 0px;
+    }
+
+    #flagx {
+        right: 150px;
+    }
+
+    #flagy {
+        right: 0px;    
+    }
+
+    #nationright {
+        right: 300px;
+        padding-left: 10px;
+    }
+
+    #names {
+        position: absolute;
+        top: 150px;
+        left: 0px;
+        width: 1920px;
+        height: 350px;
+        font-size: 140px;
+        display: visible;
+    }
+    
+    .name {
+        width: 900px;
+        position: absolute;
+        height: inherit;
+    }
+
+    #nameleft {
+        left: 0px;
+        padding-right: 10px;
+    }
+
+    #namecenter {
+        left: 900px;
+        width: 120px;
+    }
+
+    #nameright {
+        right: 0px;
+        padding-left: 10px;
+    }
+
+    #result {
+        position: absolute;
+        top: 500px;
+        left: 0px;
+        width: 1920px;
+        height: 430px;
+    }
+
+    #result .games {
+        width: 150px;
+        height: 270px;
+        top: -40px;
+        position: absolute;
+        font-size: 340px;
+        line-height: 0.9;
+    }
+
+    #result .timeouts {
+        width: 120px;
+        height: 160px;
+        position: absolute;
+        top: 250px;
+        font-size: 160px;
+        line-height: 160px;
+    }
+    
+    #result .cards {
+        width: 120px;
+        height: 160px;
+        position: absolute;
+        top: 250px;
+        font-size: 160px;
+        line-height: 160px;
+    }
+
+    #result .points{
+        width: 600px;
+        height: 500px;
+        position: absolute;
+        top: -60px;
+        font-size: 500px;
+        line-height: 500px;
+    }
+
+    #result #gamesleft {
+        left: 150px;
+    }
+
+    #result #gamesright {
+        right: 150px;
+    }
+
+    #result #timeoutleft {
+        left: 160px;
+    }
+    
+    #result #cardleft {
+        left: 0px;
+    }
+
+    #result #pointsleft {
+        left: 300px;
+        text-align: right;
+    }
+
+    #result #pointscenter {
+        width: 120px;
+        left: 880px;  /* Should be 900px like #namescenter, but the text appears to far right */
+    }
+
+    #result #pointsright {
+        right: 300px;
+        text-align: left;
+    }
+
+    #result #timeoutright {
+        right: 160px;
+    }
+    
+    #result #cardright {
+        right: 0px;
+    }
+
+    #timeresult {
+        position: absolute;
+        top: 930px;
+        left: 0px;
+        width: 1920px;
+        height: 150px;
+        font-size: 200px;
+        line-height: 150px;
+        display: visible;
+    }
+
+    div#schedule {
+        position: absolute;
+        bottom: 0px;
+        width: 100%;
+    }
+
+    div#match .game {
+        position: absolute;
+        bottom: 0px;
+        width: 270px;
+    }
+
+    #match #game1 {
+        left: 0px;
+    }
+
+    #match #game2 {
+        left: 270px;
+    }
+
+    #match #game3 {
+        left: 540px;    
+    }
+
+    #match #game4 {
+        left: 810px;
+    }
+
+    #match #game5 {
+        left: 1080px;
+    }
+
+    #match #game6 {
+        left: 1350px;
+    }
+
+    #match #game7 {
+        left: 1620px;
+    }
+}
+
+
+/* 1440 x 900 */
+@media only screen and (min-width: 1431px) and (max-width: 1910px) {
+    body {
+        margin: 0;
+        width: 1440px;
+        height: 900px;
+    }
+
+    #content {
+        width: 1440px;
+        height: 900px;
+    }
+
+    #caption {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 1440px;
+        height: 150px;
+        font-size: 110px;
+    }
+
+    .flag {
+        width: 225px;
+        height: inherit;
+        position: absolute;
+    }
+
+    .flag img {
+        max-width: 100px;
+        max-height: 90px;
+    }
+
+    .nation {
+        width: 440px;
+        height: inherit;
+        position: absolute;
+    }
+
+    #flagleft {
+        left: 0px;
+    }
+
+    #flagb {
+        left: 0px;
+    }
+
+    #flaga {
+        left: 110px;
+    }
+
+    #nationleft {
+        left: 225px;
+        padding-right: 10px;
+    }
+
+    #teamresult {
+        width: 90px;    
+        height: 150px;
+        position: absolute;
+        left: 675px;
+    }
+
+    #flagright {
+        right: 0px;
+    }
+
+    #flagx {
+        right: 110px;
+    }
+
+    #flagy {
+        right: 0px;    
+    }
+
+    #nationright {
+        right: 225px;
+        padding-left: 10px;
+    }
+
+    #names {
+        position: absolute;
+        top: 150px;
+        left: 0px;
+        width: 1440px;
+        height: 350px;
+        font-size: 140px;
+        display: none;
+    }
+
+    .name {
+        width: 675px;
+        position: absolute;
+        height: inherit;
+    }
+
+    #nameleft {
+        left: 0px;
+        padding-right: 10px;
+    }
+
+    #namecenter {
+        left: 675px;
+        width: 90px;
+    }
+
+    #nameright {
+        right: 0px;
+        padding-left: 10px;
+    }
+
+    #result {
+        position: absolute;
+        top: 150px;
+        left: 0px;
+        width: 1440px;
+        height: 750px;
+    }
+
+    #result .games {
+        width: 110px;
+        height: 180px;
+        top: -30px;
+        position: absolute;
+        font-size: 250px;
+        line-height: 0.9;
+    }
+
+    #result .timeouts {
+        position: absolute;
+        width: 110px;
+        height: 120px;
+        top: 630px;
+        font-size: 140px;
+        line-height: 120px;
+    }
+    
+    #result .cards {
+        width: 110px;
+        height: 120px;
+        position: absolute;
+        top: 630px;
+        font-size: 140px;
+        line-height: 120px;
+    }
+
+    #result .points{
+        width: 550px;
+        height: 500px;
+        position: absolute;
+        top: 150px;
+        font-size: 600px;
+        line-height: 500px;;
+    }
+
+    #result #gamesleft {
+        left: 10px;
+    }
+
+    #result #gamesright {
+        right: 10px;
+    }
+
+    #result #timeoutleft {
+        left: 10px;
+    }
+    
+    #result #cardleft {
+        left: 150px;
+    }
+
+    #result #pointsleft {
+        left: 50px;  /* Should be 125px */
+        text-align: right;
+    }
+
+    #result #pointscenter {
+        width: 240px;
+        left: 600px; 
+        line-height: 0.65;
+    }
+
+    #result #pointsright {
+        right: 10px;
+        text-align: left;
+    }
+
+    #result #timeoutright {
+        right: 10px;
+    }
+    
+    #result #cardright {
+        right: 150px;
+    }
+
+    #timeresult {
+        position: absolute;
+        top: 850px;
+        left: 0px;
+        width: 1440px;
+        height: 50px;
+        font-size: 50px;
+        display: none;
+    }
+
+    div#schedule {
+        position: absolute;
+        bottom: 0px;
+        width: 100%;
+    }
+
+    div#match .game {
+        position: absolute;
+        bottom: 0px;
+        width: 205px;
+    }
+
+    #match #game1 {
+        left: 0px;
+    }
+
+    #match #game2 {
+        left: 205px;
+    }
+
+    #match #game3 {
+        left: 410px;    
+    }
+
+    #match #game4 {
+        left: 615px;
+    }
+
+    #match #game5 {
+        left: 820px;
+    }
+
+    #match #game6 {
+        left: 1025px;
+    }
+
+    #match #game7 {
+        left: 1230px;
+    }
+}
+
+/* 1280 x 1024 */
+@media only screen and (min-width: 1271px) and (max-width: 1430px) {
+    body {
+        margin: 0px;
+        width: 1280px;
+        height: 1024px;
+    }
+
+    #content {
+        width: 1280px;
+        height: 1024px;
+    }
+
+    #caption {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 1280px;
+        height: 80px;
+        font-size: 60px;
+    }
+
+    .flag {
+        width: 200px;
+        height: inherit;
+        position: absolute;
+    }
+
+    .flag img {
+        max-width: 96px;
+        max-height: 60px;
+    }
+
+    .nation {
+        width: 310px;
+        height: inherit;
+        position: absolute;
+    }
+
+    #flagleft {
+        left: 0px;
+    }
+
+    #flagb {
+        left: 0px;
+    }
+
+    #flaga {
+        left: 100px;
+    }
+
+    #nationleft {
+        left: 200px;
+        padding-right: 5px;
+    }
+
+    #teamresult {
+        position: absolute;
+        left: 580px;
+        width: 120px;    
+        height: 80px;
+    }
+
+    #flagright {
+        right: 0px;
+    }
+
+    #flagx {
+        right: 100px;
+    }
+
+    #flagy {
+        right: 0px;    
+    }
+
+    #nationright {
+        right: 200px;
+        padding-left: 5px;
+    }
+
+    #names {
+        position: absolute;
+        top: 80px;
+        left: 0px;
+        width: 1280px;
+        height: 250px;
+        font-size: 100px;
+        display: block;
+    }
+
+    .name {
+        width: 480px;
+        position: absolute;
+        height: inherit;
+    }
+
+    #nameleft {
+        left: 0px;
+        padding-right: 5px;
+    }
+
+    #namecenter {
+        left: 580px;
+        width: 60px;
+    }
+
+    #nameright {
+        right: 0px;
+        padding-left: 5px;
+    }
+
+    #result {
+        position: absolute;
+        top: 400px;
+        left: 0px;
+        width: 1280px;
+        height: 450px;
+    }
+
+    #result .games {
+        width: 80px;
+        height: 190px;
+        top: -40px;
+        position: absolute;
+        font-size: 210px;
+        line-height: 1.0;
+    }
+
+    #result .timeouts {
+        width: 100px;
+        height: 160px;
+        position: absolute;
+        top: 200px;
+        font-size: 130px;
+        line-height: 110px;
+    }
+    
+    #result .cards {
+        width: 60px;
+        height: 110px;
+        position: absolute;
+        top: 200px;
+        font-size: 110px;
+        line-height: 110px;
+    }
+
+    #result .points{
+        width: 400px;
+	height: 350px;
+        position: absolute;
+        top: -40px;
+        font-size: 400px;
+        line-height: 400px;
+    }
+
+    #result #gamesleft {
+        left: 40px;
+    }
+
+    #result #gamesright {
+        right: 40px;
+    }
+
+    #result #timeoutleft {
+        left: 60px;
+    }
+    
+    #result #cardleft {
+        left: 0px;
+    }
+
+    #result #pointsleft {
+        left: 160px;
+        text-align: right;
+    }
+
+    #result #pointscenter {
+        width: 60px;
+        left: 610px;  /* Should be 900px like #namescenter, but the text appears to far right */
+        line-height: 0.85;
+    }
+
+    #result #pointsright {
+        right: 160px;
+        text-align: left;
+    }
+
+    #result #timeoutright {
+        right: 60px;
+    }
+    
+    #result #cardright {
+        right: 0px;
+    }
+
+    #timeresult {
+        position: absolute;
+        top: 924px;
+        left: 0px;
+        width: 1280px;
+        height: 100px;
+        font-size: 120px;
+        line-height: 100px;
+        display: block;
+    }
+
+    div#schedule {
+        position: absolute;
+        bottom: 0px;
+        width: 100%;
+    }
+
+    div#match .game {
+        position: absolute;
+        bottom: 0px;
+        width: 140px;
+    }
+
+    #match #game1 {
+        left: 0px;
+    }
+
+    #match #game2 {
+        left: 180px;
+    }
+
+    #match #game3 {
+        left: 360px;    
+    }
+
+    #match #game4 {
+        left: 540px;
+    }
+
+    #match #game5 {
+        left: 720px;
+    }
+
+    #match #game6 {
+        left: 900px;
+    }
+
+    #match #game7 {
+        left: 1080px;
+    }
+}
+
+/* 1024 x 768 */
+@media only screen and (max-width: 1270px) {
+    body {
+        margin: 0px;
+        width: 1024px;
+        height: 768px;
+    }
+
+    #content {
+        width: 1024px;
+        height: 768px;
+    }
+
+    #caption {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 1024px;
+        height: 80px;
+        font-size: 60px;
+    }
+
+    .flag {
+        width: 200px;
+        height: inherit;
+        position: absolute;
+    }
+
+    .flag img {
+        max-width: 96px;
+        max-height: 60px;
+    }
+
+    .nation {
+        width: 310px;
+        height: inherit;
+        position: absolute;
+    }
+
+    #flagleft {
+        left: 0px;
+    }
+
+    #flagb {
+        left: 0px;
+    }
+
+    #flaga {
+        left: 100px;
+    }
+
+    #nationleft {
+        left: 200px;
+        padding-right: 5px;
+    }
+
+    #teamresult {
+        width: 120px;    
+        height: 80px;
+        position: absolute;
+        left: 460px;
+    }
+
+    #flagright {
+        right: 0px;
+    }
+
+    #flagx {
+        right: 100px;
+    }
+
+    #flagy {
+        right: 0px;    
+    }
+
+    #nationright {
+        right: 200px;
+        padding-left: 5px;
+    }
+
+    #names {
+        position: absolute;
+        top: 80px;
+        left: 0px;
+        width: 1024px;
+        height: 250px;
+        font-size: 100px;
+        display: block;
+    }
+
+    .name {
+        width: 480px;
+        position: absolute;
+        height: inherit;
+    }
+
+    #nameleft {
+        left: 0px;
+        padding-right: 5px;
+    }
+
+    #namecenter {
+        left: 435px;
+        width: 60px;
+    }
+
+    #nameright {
+        right: 0px;
+        padding-left: 5px;
+    }
+
+    #result {
+        position: absolute;
+        top: 355px;
+        left: 0px;
+        width: 1024px;
+        height: 450px;
+    }
+
+    #result .games {
+        width: 80px;
+        height: 190px;
+        top: -40px;
+        position: absolute;
+        font-size: 210px;
+        line-height: 1.0;
+    }
+
+    #result .timeouts {
+        width: 100px;
+        height: 160px;
+        position: absolute;
+        top: 170px;
+        font-size: 130px;
+        line-height: 110px;
+    }
+    
+    #result .cards {
+        width: 60px;
+        height: 110px;
+        position: absolute;
+        top: 170px;
+        font-size: 110px;
+        line-height: 110px;
+    }
+
+    #result .points{
+        width: 320px;
+	height: 300px;
+        position: absolute;
+        top: -40px;
+        font-size: 360px;
+        line-height: 360px;
+    }
+
+    #result #gamesleft {
+        left: 40px;
+    }
+
+    #result #gamesright {
+        right: 40px;
+    }
+
+    #result #timeoutleft {
+        left: 60px;
+    }
+    
+    #result #cardleft {
+        left: 0px;
+    }
+
+    #result #pointsleft {
+        left: 160px;
+        text-align: right;
+    }
+
+    #result #pointscenter {
+        width: 60px;
+        left: 470px;  /* Should be 900px like #namescenter, but the text appears to far right */
+        line-height: 0.85;
+    }
+
+    #result #pointsright {
+        right: 160px;
+        text-align: left;
+    }
+
+    #result #timeoutright {
+        right: 60px;
+    }
+    
+    #result #cardright {
+        right: 0px;
+    }
+
+    #timeresult {
+        position: absolute;
+        top: 668px;
+        left: 0px;
+        width: 1024px;
+        height: 100px;
+        font-size: 120px;
+        line-height: 100px;
+        display: block;
+    }
+
+    div#schedule {
+        position: absolute;
+        bottom: 0px;
+        width: 100%;
+    }
+
+    div#match .game {
+        position: absolute;
+        bottom: 0px;
+        width: 140px;
+    }
+
+    #match #game1 {
+        left: 0px;
+    }
+
+    #match #game2 {
+        left: 145px;
+    }
+
+    #match #game3 {
+        left: 290px;    
+    }
+
+    #match #game4 {
+        left: 435px;
+    }
+
+    #match #game5 {
+        left: 580px;
+    }
+
+    #match #game6 {
+        left: 725px;
+    }
+
+    #match #game7 {
+        left: 830px;
+    }
+}

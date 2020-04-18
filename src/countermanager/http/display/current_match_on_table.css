@@ -1,0 +1,108 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+root { 
+    display: block;
+}
+
+body#currrent_match_on_table {
+
+}
+
+#content table {
+    width: 100%;
+}
+
+#content table td {
+    vertical-align: middle;
+}
+
+#content table tr.caption td {
+    vertical-align: top;
+}
+
+#content table tr.what td {
+    vertical-align: bottom;
+}
+
+tr.caption {
+    width: 100%;
+    height: 3em;
+    font-size: 80%;
+    margin-bottom: 1em;
+}
+
+tr.what {
+    width: 100%;
+    height: 3em;
+    font-size: 80%;
+    margin-top: 1em;
+}
+
+/* 
+ * Row with names shall be the same height for singles and doubles 
+ * But we cannot do that for #top td, because we may have a different 
+ * font in games and points
+ */
+#top td.names {
+    height: 2.5em;
+}
+
+#bottom td.names {
+  height: 2.5em;
+}
+
+#line td {
+    /* height: 1.8em; */
+}
+
+.assoc {
+    width: 4em;
+}
+
+.assoc img {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    border: 1px solid lightgray; 
+    height: 1.0em;
+}
+
+.names {
+    width: 80%;
+    padding-left: 1em;
+}
+
+.points {
+    padding-right: 1em;
+}
+
+.games {
+}
+
+.matches {
+    padding-left: 1em;
+}
+
+#line td div {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    border: 1px solid yellow;
+    background-color: yellow;
+}
+
+#history td.history {
+    /* display: none; */
+    width: 100%;
+}
+
+#history td.history span.game {
+    width: 14%;
+    padding: 1ex;
+}
+
+#footer {
+    width: 100%;
+    height: 1em;
+    font-size: 80%;
+    margin-top: 1em;
+}
+

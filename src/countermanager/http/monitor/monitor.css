@@ -1,0 +1,124 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+/* 
+    Document   : monitor
+    Created on : 11.08.2012, 18:33:15
+    Author     : chtheis
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+* {
+    cursor: none;
+}
+
+root { 
+    display: block;
+}
+
+body {
+    font-family: "Arial Narrow", "Liberation Sans Narrow", "Arial", "sans-serif";
+    overflow: hidden;
+}
+
+#header {
+    display: none;
+}
+
+
+#footer {
+    display: none;
+}
+
+
+/* Styles */
+.left {
+    text-align: left;
+}
+
+.center {
+    text-align: center;
+}
+
+.right {
+    text-align: right;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.hidden {
+    display:none;
+}
+
+
+.middle {
+    display: table;
+}
+
+.middle span {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.crop {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.name span {
+    overflow-x: hidden;
+}
+
+#result #gamesleft {
+    text-align: center;
+}
+
+#result #gamesright {
+    text-align: center;
+}
+
+#result #timeoutleft {
+    text-align: center;
+}
+
+#result #cardleft {
+    text-align: center;
+}
+
+#result #pointsleft {
+    text-align: center;
+}
+
+#result #pointsright {
+    text-align: center;
+}
+
+#result #timeoutright {
+    text-align: center;
+}
+
+#result #cardright {
+    text-align: center;
+}
+
+div#match .game {
+    text-align: center;
+}
+
+div#schedule {
+    
+}
+
+/* Show / hide logo when there is no match scheduled immediately */
+#content.showlogo {
+    background-image: url('blank.gif');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+#content.showlogo > div {
+    visibility: hidden;
+}

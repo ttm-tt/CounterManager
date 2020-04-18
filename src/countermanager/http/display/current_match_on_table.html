@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Current Match</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="Cache-Control" content="no-cache">
+
+        <script type="text/javascript" src="../scripts/common.js"></script>
+        <script type="text/javascript" src="../scripts/jquery.js"></script>
+        <script type="text/javascript" src="../scripts/xmlrpcclient.js"></script>
+        <script type="text/javascript" src="current_match_on_table.js"></script>
+
+        <!-- Common CSS settings -->
+        <link rel="stylesheet" type="text/css" href="current_match_on_table.css">
+        <link rel="stylesheet" type="text/css" href="themes/common.css">
+        
+        <!-- IE 7 and below don't know about JSON, so do it in JS code -->
+        <!--[if lt IE 8]>
+            <script type="text/javascript" src="../scripts/json2.js"></script>
+        <![endif]-->
+        
+        <!-- Load specific css file -->
+        <script type="text/javascript">
+            document.write('<link rel="stylesheet" type="text/css" href="themes/' + getParameterByName("theme", "default") + '.css">');
+            document.write('<link rel="stylesheet" type="text/css" href="themes/' + getParameterByName("config", "default") + '.css">');
+        </script>
+        
+    </head>
+    <body id="current_match_on_table">
+        <div id="content">
+            <table>
+                <tr id="caption" class="caption">
+                    <td class="text" colspan="2"></td>
+                    <td class="points">Pts</td>
+                    <td class="games">Gms</td>
+                    <td class="matches">Mts</td>                        
+                </tr>
+                <tr id="top">
+                    <td class="assoc"></td>
+                    <td class="names"></td>
+                    <td class="points"></td>
+                    <td class="games"></td>
+                    <td class="matches"></td>
+                </tr>
+                <tr id="line">
+                    <td colspan="5">
+                        <div class="line"></div>
+                    </td>
+                </tr>
+                <tr id="bottom">
+                    <td class="assoc"></td>
+                    <td class="names"></td>
+                    <td class="points"></td>
+                    <td class="games"></td>
+                    <td class="matches"></td>
+                </tr>
+                <tr id="history" class="history">
+                    <td class="history" colspan="4"></td>
+                </tr>
+                <tr id="what" class="what">
+                    <td colspan="4" class="what"></td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>

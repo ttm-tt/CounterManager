@@ -1,0 +1,22 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {   
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+
+#page {
+    width: 100%;
+    height: 100%;
+}
+
+#content {
+    width: 100%;
+    height: 100%;
+}

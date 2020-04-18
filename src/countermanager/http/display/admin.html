@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Display Administration</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        
+        <link rel="stylesheet" type="text/css" href="/scripts/jquery-editable-select.css">
+        <link rel="stylesheet" type="text/css" href="admin.css">
+        
+        <script type="text/javascript" src="../scripts/jquery.js"></script>
+        <script type="text/javascript" src="../scripts/jquery-editable-select.js"></script>
+        <script type="text/javascript" src="../scripts/xmlrpcclient.js"></script>
+        <script type="text/javascript" src="admin.js"></script>
+    </head>
+    <body>
+        <div>
+            <table id="scene">
+                <thead>
+                <th class="url">URL</th><th class="type">Type</th><th class="value">Value</th><th class="actions" colspan="2">Add/Del</th>
+                </thead>
+                <tbody>
+                </tbody>            
+            </table>
+            <p></p>
+            <select id="scenes" class="editable-select"></select>
+            <button type="button" class="load" onclick="load();">Load</button>
+            <button type="button" class="save" onclick="save();">Save</button>
+            <button type="button" class="remove" onclick="remove();">Delete</button>
+        </div>
+    </body>
+</html>

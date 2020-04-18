@@ -1,0 +1,289 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+root {  
+    display: block;
+    overflow: hidden;
+}
+
+/* Tabular layout */
+.grid {  
+    display: table;
+    table-layout: fixed;
+}
+
+.grid .row {  
+    display: table-row;
+}
+
+.grid .row .cell {  
+    display: table-cell;
+}
+
+/* Layout */
+.left {  
+    width: 25%;  
+    height: 100%;
+}
+
+.center {  
+    width: 50%;  
+    height: 100%;
+}
+
+.right {  
+    width: 25%;  
+    height: 100%;
+}
+
+#content {  
+    width: 100%;  
+    height: 100%;
+}
+
+.grid {  
+    width: 100%;
+}
+
+.row {  
+    width: 100%;
+}
+
+.teams {  
+    height: 25%;
+}
+
+.players {  
+    height: 50%;
+}
+
+.results {  
+    height: 25%;
+}
+
+.caption {
+    display: table;
+    margin: 0 auto;
+}
+
+.caption span {
+    padding-left: 20px;
+    padding-right: 20px;
+    text-align: center;
+}
+
+#teamleft {
+    text-align: center;
+    vertical-align: middle;
+}
+
+#teamcenter {  
+    text-align: center;
+    vertical-align: middle;
+}
+
+#teamright {  
+    text-align: center;
+    vertical-align: middle;
+}
+
+#playerleft {  
+    text-align: center;  
+    vertical-align: bottom;
+}
+
+#playerleft img {
+    max-width: 30%;
+    border: 1px solid lightgray;
+}
+
+#playerright {  
+    text-align: center;  
+    vertical-align: bottom;
+}
+
+#playerright img {
+    max-width: 30%;
+    border: 1px solid lightgray;
+}
+
+#gamescardleft {  
+    width: 20%;  
+    text-align: center;
+}
+
+#gamesleft {
+    width: 100%;
+}
+
+#gamesspacecenter {  
+    width: 60%;
+/*    
+    background-image: url("header.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+*/
+}
+
+#gamescardright {  
+    width: 20%;  
+    text-align: center;
+}
+
+
+#gamescard {
+    width: 100%;
+}
+
+#pointsspaceleft {  
+    width: 20%;
+}
+
+#pointscenter {  
+    width: 60%;
+}
+
+#pointscardleft {  
+    width: 50%;  
+    float: left;
+}
+
+#pointsleft {
+    width: 100%;
+    text-align: center;
+}
+
+#pointscadright {  
+    width: 50%;  
+    float: right;
+}
+
+#pointsright {
+    width: 100%;
+    text-align: center;
+}
+
+#pointsspaceright {
+    width: 20%;
+}
+
+#gamehistory {
+    width: 100%;
+}
+
+#gamehistory div {
+    width: 14%;
+    font-size: 20px;
+    text-align: center;
+}
+
+
+/* Borders */
+.grid {
+    border-collapse: collapse;    
+}
+
+.row {
+    border-collapse: collapse;
+}
+
+.cell {
+    border-collapse: collapse;
+}
+
+#content > .row > .cell {
+    border: 1px solid lightblue;
+    border-collapse: collapse;
+}
+
+.card {
+    border: 1px solid lightblue;
+    border-collapse: collapse;
+}
+
+
+#matchresult {
+    margin: -1px 1px -1px -1px;
+    border: 1px solid lightblue;
+    border-right: 0px;
+    border-collapse: collapse;        
+}
+
+#games {
+    border: 1px solid lightblue;
+    border-collapse: collapse;        
+}
+
+#points {
+    border: 1px solid lightblue;
+    border-right: 0px;
+    border-collapse: collapse;        
+}
+
+#gamehistory .game {
+    border: 1px solid lightblue;
+    border-bottom: 0px;
+    border-collapse: collapse;    
+}
+
+#gamehistory #game1.game {
+    border-left: 0px;
+}
+
+/* Fonts */
+body {  
+    font-family: "Arial Narrow", "Liberation Sans Narrow", "Arial", "sans-serif";
+}
+
+.caption {
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.teams {  
+    font-size: 50px;  
+    font-weight: bold;
+}
+
+.players {  
+    font-size: 30px;  
+    font-weight: bold;
+}
+
+
+.games {  
+    font-size: 120px;
+}
+
+.points {  
+    font-size: 150px;
+}
+
+/* Colors */
+body {  
+    background-color: #2f99fc;  
+}
+
+a {
+    color: white;
+}
+
+/* But not the link to the team result */
+#teamcenter a {
+    color: black;
+}
+
+#gamescardleft {  
+    background-color: white;  
+}
+
+#gamescardright {  
+    background-color: white;  
+}
+
+#pointscardleft {  
+    background-color: white;  
+}
+
+#pointscardright {  
+    background-color: white;  
+}

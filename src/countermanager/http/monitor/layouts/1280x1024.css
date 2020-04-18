@@ -1,0 +1,271 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+/* 1280 x 1024 */
+body {
+    margin: 0px;
+    width: 1280px;
+    height: 1024px;
+}
+
+#content {
+    width: 1280px;
+    height: 1024px;
+}
+
+#caption {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 1280px;
+    height: 80px;
+    font-size: 60px;
+}
+
+.flag {
+    width: 200px;
+    height: inherit;
+    position: absolute;
+}
+
+.flag img {
+    max-width: 96px;
+    max-height: 60px;
+}
+
+.nation {
+    width: 310px;
+    height: inherit;
+    position: absolute;
+}
+
+#flagleft {
+    left: 0px;
+}
+
+#flagb {
+    left: 0px;
+}
+
+#flaga {
+    left: 100px;
+}
+
+#nationleft {
+    left: 200px;
+    padding-right: 5px;
+}
+
+.service {
+    position: absolute;
+    top: 15px;                             /* half height */
+}
+
+#serviceleft {
+    left: 520px;                           /* 1em left of team result */
+    border-top-width: 30px;                /* half if flag img height */
+    border-bottom-width: 30px;
+    border-right-width: 30px;
+}
+
+#serviceright {
+    right: 520px;                          /* 1 em right of team result */
+    border-top-width: 30px;                /* half of flag img height */
+    border-bottom-width: 30px;
+    border-left-width: 30px;
+}
+
+#teamresult {
+    position: absolute;
+    left: 580px;
+    width: 120px;    
+    height: 80px;
+}
+
+#flagright {
+    right: 0px;
+}
+
+#flagx {
+    right: 100px;
+}
+
+#flagy {
+    right: 0px;    
+}
+
+#nationright {
+    right: 200px;
+    padding-left: 5px;
+}
+
+#names {
+    position: absolute;
+    top: 80px;
+    left: 0px;
+    width: 1280px;
+    height: 250px;
+    font-size: 100px;
+    display: block;
+}
+
+.name {
+    width: 480px;
+    position: absolute;
+    height: inherit;
+}
+
+.name span {
+    max-width: 480px;  /* Same as .name */
+}
+
+#nameleft {
+    left: 0px;
+    padding-right: 5px;
+}
+
+#namecenter {
+    left: 610px;
+    width: 60px;
+}
+
+#nameright {
+    right: 0px;
+    padding-left: 5px;
+}
+
+#result {
+    position: absolute;
+    top: 400px;
+    left: 0px;
+    width: 1280px;
+    height: 450px;
+}
+
+#result .games {
+    width: 80px;
+    height: 190px;
+    top: -40px;
+    position: absolute;
+    font-size: 210px;
+    line-height: 1.0;
+}
+
+#result .timeouts {
+    width: 65px;
+    height: 110px;
+    position: absolute;
+    top: 200px;
+    font-size: 100px;
+    line-height: 110px;
+}
+
+#result .cards {
+    width: 65px;
+    height: 110px;
+    position: absolute;
+    top: 200px;
+    font-size: 100px;
+    line-height: 110px;
+}
+
+#result .points{
+    width: 400px;
+    height: 350px;
+    position: absolute;
+    top: -40px;
+    font-size: 400px;
+    line-height: 400px;
+}
+
+#result #gamesleft {
+    left: 40px;
+}
+
+#result #gamesright {
+    right: 40px;
+}
+
+#result #timeoutleft {
+    left: 65px;
+}
+
+#result #cardleft {
+    left: 0px;
+}
+
+#result #pointsleft {
+    left: 160px;
+    text-align: right;
+}
+
+#result #pointscenter {
+    width: 60px;
+    left: 585px;  /* Should be 900px like #namescenter, but the text appears to far right */
+    line-height: 0.85;
+}
+
+#result #pointsright {
+    right: 160px;
+    text-align: left;
+}
+
+#result #timeoutright {
+    right: 65px;
+}
+
+#result #cardright {
+    right: 0px;
+}
+
+#timeresult {
+    position: absolute;
+    top: 924px;
+    left: 0px;
+    width: 1280px;
+    height: 100px;
+    font-size: 120px;
+    line-height: 100px;
+    display: block;
+}
+
+div#schedule {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+}
+
+div#match .game {
+    position: absolute;
+    bottom: 0px;
+    width: 140px;
+}
+
+#match #game1 {
+    left: 0px;
+}
+
+#match #game2 {
+    left: 180px;
+}
+
+#match #game3 {
+    left: 360px;    
+}
+
+#match #game4 {
+    left: 540px;
+}
+
+#match #game5 {
+    left: 720px;
+}
+
+#match #game6 {
+    left: 900px;
+}
+
+#match #game7 {
+    left: 1080px;
+}
+
+

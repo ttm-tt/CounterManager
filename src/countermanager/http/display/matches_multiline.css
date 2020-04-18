@@ -1,0 +1,74 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+root { 
+    display: block;
+}
+
+body#current_matches_multiline {
+
+}
+
+#page {
+    width: 100%;
+    height: 100%;
+}
+
+#table{
+    border-collapse: collapse;
+    width: 100%;
+    height: 100%;
+}
+
+#pages {
+    overflow: auto;
+}
+
+
+/* Layout */
+
+.table {
+    padding-left: 10px;
+    width: 7ex;
+}
+
+.assoc {
+    padding-left: 10px;
+}
+
+.caption .event {
+    text-align: center;
+}
+
+.games {
+    padding-left: 10px;
+    width: 4ex;    
+    text-align: right;
+}
+
+.matches {
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 4ex;
+    text-align: right;
+}
+
+
+/* Fonts */
+.caption td {
+    font-size: 80%;
+}
+
+tr.double .assoc {
+    font-size: 80%;
+}
+
+tr.double .names {
+    font-size: 80%;
+}
+
+/* Colors */
+
+#table {
+
+}
+

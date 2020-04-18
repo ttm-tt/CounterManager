@@ -1,0 +1,114 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+* {
+    font-family: sans-serif,Arial;
+    cursor: none;
+}
+
+body {
+    background-color: black;
+    color: white;
+    font-size: 50px;
+    font-weight: bold;
+}
+
+.assoc {
+    color: darkorange;
+}
+
+.names {
+    color: darkorange;
+}
+
+.points {
+    color: #0bf80b;
+}
+
+.games {
+    color: yellow;  /* lighter green */
+}
+
+.matches {
+    color: red;
+}
+
+.table {
+    color: white;
+}
+
+.event {
+    color: white;
+}
+
+.pos {
+    color: green;
+}
+
+.matchpoints {
+    color: yellow;
+}
+
+/* A caption row */
+tr.caption {    
+    color: white;
+}
+
+/* Any table row not the caption */
+tr:not(.caption) {
+    background-color: #666666;        
+}
+
+/* If striped make table rows lighter and darker than default */
+tr.odd {    
+    background-color: #555555;
+}
+
+tr.even {
+    background-color: #777777;
+}
+
+/* Specific settings */
+
+/* current_matches_multiline */
+#current_matches_multiline {
+    
+}
+
+#current_matches_multiline {
+
+}
+
+
+/* current_matches */
+#current_matches {
+    
+}
+
+/* stripe rows */
+/*
+#current_matches tr.odd {
+    background-color: red;
+}
+
+#current_matches tr.odd td {
+    color: white;
+}
+
+#current_matches tr.even {
+    background-color: black;
+}
+
+#current_matches tr.even td {
+    color: yellow; 
+}
+*/
+
+/* current_match_on_table */
+#current_match_on_table {
+    font-size: 90px;
+}
+
+/* Default for table rows would be #666666, but we want it black */
+#current_match_on_table tr {
+    background-color: black;
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Liveticker</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">  
+        
+        <link rel="stylesheet" type="text/css" href="ticker.css">
+        
+        <!-- IE 7 and below don't know about JSON, so do it in JS code -->
+        <!--[if lt IE 8]>
+            <script type="text/javascript" src="/scripts/json2.js"></script>
+        <![endif]-->
+        <script type="text/javascript" src="/scripts/jquery.js"></script>
+        <script type="text/javascript" src="/scripts/common.js"></script>
+        <script type="text/javascript" src="ticker.js"></script>
+    </head>
+    <body>
+        <a href="mobile/ticker.html">Mobile version</a><br>
+        <table id="ticker">
+            <thead>
+                <tr>
+                    <th class="time">Time</th>
+                    <th class="table">Table</th>
+                    <th class="event">Event</th>
+                    <th class="group">Group</th>
+                    <th class="round">Round</th>
+                    <th class="players" colspan="7">Players</th>
+                    <th class="games" colspan="7">Games</th>
+                    <th class="result">Result</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>                
+        </table>
+        <br>
+        <iframe id="oneMatch" name="oneMatch" height="0" frameborder="0" scrolling="no"></iframe>
+        <iframe id="teamMatches" name="teamMatches" height="0" frameborder="0" scrolling="no"></iframe>
+    </body>
+</html>

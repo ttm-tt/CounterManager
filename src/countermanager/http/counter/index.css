@@ -1,0 +1,36 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+body {
+    background-color: #F0F0F0;
+}
+
+#page {
+    background-color: #FFFFFF;
+    width: 768px;                
+    border: 1px;
+    border-color: #000000;
+    border-style: solid;
+    border-collapse: collapse;
+}
+
+#header {
+    width: 100%;
+}
+
+#matches {
+    width: 100%;
+    font-size: 20pt;
+    border-collapse: collapse;
+}
+
+#matches tr:nth-child(even) {
+    background-color: lightgray;
+}
+
+#matches td {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    padding-left: 0.5ex;
+    padding-right: 0.5ex;
+}
+

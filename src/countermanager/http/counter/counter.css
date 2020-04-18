@@ -1,0 +1,485 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+/* Debug settings */
+#debug {
+    display: none;
+}
+
+/* Position header */
+#header {
+    position: relative;
+}
+
+#header #schedule {
+    width: 85%;
+    position: absolute;
+    left: 1em;
+}
+
+#header #timer {
+    width: 15%;
+    position: absolute;
+    right: 1em;
+    text-align: right;
+}
+
+/* Position commands */
+#commands {
+    position: relative;
+    height: 40pt;
+}
+
+
+#commands #left {
+    position: absolute;
+    left: 1em;
+}
+
+#commands #right {
+    position: absolute;
+    right: 1em;
+}
+
+/* General settings */
+
+.disabled {
+    /* invisible buttons, but they should use up space */
+    visibility: hidden;
+}
+
+.hidden {
+    /* Hidden fields, e.g. not used games, which should not use up space */
+    display: none;
+}
+
+button {
+    font-size : 16pt;
+    height: 40pt;
+}
+
+
+/* Layout of a counter row                               */
+/* | .name              | .center | .name             |  */
+/* | Left Player        |   <->   |      Right Player |  */
+/* ----------------------------------------------------  */
+/* | .action  | .points | .center | .points | .action |  */
+/* |       +/-|       99|    -    |99       |+/-      |  */
+
+/* Page width */
+#page {
+    /* max-width: 768px; */
+    max-width: 1280px;
+}
+
+/* Table width */
+#counter table {
+    width: 100%;
+}
+
+/* Column widths */
+#counter .names .name.left #counter .names .name.right { 
+    /* One player name, left or right */
+    width: 43%;
+}
+
+#counter .center {
+    /* The button between the player names or the dash between the points */
+    width: 14%;
+}
+
+#counter #cards {
+    /* display: none; */
+}
+
+#counter .action {
+    /* The +/- buttons column */
+    width: 35%;
+}
+
+#counter .game .points {
+    /* The points of a game, left or right */
+    width: 9%;
+}
+
+#counter .game .points.center {
+    /* The dash between the points */
+    width: 4%;
+}
+
+#counter .names, #counter .teams {
+    /* Players names at the top */
+    text-align: center;
+    font-size: 20pt;
+    font-weight: bold;
+}
+
+#counter .names #games {
+    font-size: 25pt;
+}
+
+#counter .center {
+    /* The button between the player names or the dash between the points */
+    text-align: center;
+    padding: 0;
+}
+
+#counter .flags .center button {    
+    /* The button between the names */
+    /* height of the buttons is 40pt, we stretch over 2 rows */
+    width: 60pt;
+    height: 60pt;
+    vertical-align: middle;
+}
+
+#counter .names .name.left, #counter .teams .team.left {
+    /* left players name */
+    text-align: left;
+    padding-right: 0;
+}
+
+#counter .names .name.right, #counter .teams .team.right {
+    /* right playes name */
+    text-align: right;
+    padding-left: 0;
+}
+
+#counter #spacer.teams td {
+    /* Line at the bottom of the teams*/
+    border-top: 1px solid black;
+}
+
+#counter .game .points {
+    /* The points of a game */
+    font-size: 20pt;
+    font-weight: bold;
+}
+
+#counter .game .left {
+    /* left points / action */
+    text-align: right;
+}
+
+
+#counter .game .right {
+    /* right points / action */
+    text-align: left;
+}
+
+#counter .game .action {
+    /* The "+" and "-" buttons */
+}
+
+#counter .action button {
+    /* The actual button */
+    font-family: "Courier New", "Liberation Mono", monospace;
+    font-size: 30pt;
+    font-weight: bold;
+    margin-left : 10pt;
+    margin-right: 10pt;
+}
+
+#counter .action button.plus {
+    width: 40pt;
+    height: 40pt;    
+    
+    color: darkgreen;
+}
+
+#counter .action button.minus {
+    width: 40pt;
+    height: 40pt;    
+    
+    color: red;
+}
+
+#counter .game td {
+    /* Spacing in the rows of the games */
+    padding: 3px;
+}
+
+#counter .flags .left, #counter .flags .right {
+    /* Service, Timeout, Injured buttons */
+    width: 32%;    
+    padding: 2px;
+    text-align: center;
+    height: 40pt;
+}
+
+#counter .cards .left, #counter .cards .right {
+    /* Yellow, YR 1P, YR 2P buttons */
+    width: 32%;    
+    padding: 2px;
+    text-align: center;
+    height: 40pt;
+}
+
+#results {
+    width: 100%;
+    overflow: auto;
+}
+
+#results .result {
+    font-size: 20pt;
+    text-align: center;
+    width: 14%;
+    float: left;
+}
+
+
+/* Colors and Fonts */
+body {
+    background-color: lightblue;
+}
+
+#page {
+    background-color: inherit;
+    border: 1px solid black;
+    font-family: "Arial", "Liberation Sans", sans-serif;
+}
+
+#header {
+    /* Start, Table, Number and Time of the match */
+    font-weight: bold;
+    background-color: inherit;
+    padding: 10px;
+}
+
+#counter {
+    background-color: inherit;
+    border-bottom: 1px solid black;
+    padding: 10px;
+}
+
+#commands {
+    background-color: inherit;
+    border-bottom: 1px solid black;
+    padding: 10px;
+}
+
+#results {
+    background-color: inherit;
+    border-bottom: 1px solid black;
+    padding: 0px; 
+}
+
+#status {
+    background-color: inherit;
+    padding: 10px;    
+}
+
+#status .alert {
+    color: red;
+}
+
+#timer .warning {
+    background-color: yellow;
+}
+
+#timer .alert {
+    background-color: red;
+}
+
+#setAlert.alertpending {
+    /* Alert button with pending alrt */
+    background-color: red;
+}
+
+
+/* Emulate toggle button */
+button.toggle:not([checked="checked"]) {
+    background-color: buttonface;
+    color: buttontext;
+}
+
+button.toggle[checked="checked"] {
+    background-color: buttontext;
+    color: buttonface;
+}
+
+
+/* Games which cannot be counted are inactive. I.e. don't show the +/- buttons */
+tr.game.inactive td.action{
+    visibility: hidden;        
+}
+
+/* Unused classes in HTML file */
+.page {
+    
+}
+
+.header {
+    
+}
+
+.schedule {
+    
+}
+
+.table {
+    
+}
+
+.start {
+    
+}
+
+.event {
+    
+}
+
+.nr {
+    
+}
+
+.timer {
+    
+}
+
+.counter {
+    
+}
+
+.result {
+    
+}
+
+.spacer {
+    
+}
+
+.service {
+    
+}
+
+.timeout {
+    
+}
+
+.wo {
+    
+}
+
+.plus {
+    
+}
+
+.minus {
+    
+}
+
+.commands {
+    
+}
+
+.expedite {
+    
+}
+
+.swapPlayers {
+    
+}
+
+.endMatch {
+    
+}
+
+.status {
+    
+}
+
+.results {
+    
+}
+
+
+#results {
+    display: none;
+}
+
+
+/* Lockscreen */
+div#lock {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+}
+
+body.locked {
+    filter: blur(3px);
+}
+
+body:not(.locked) div#lock {
+    display: none;
+}
+
+body.locked div#lock{
+    display: block;
+}
+
+@media only screen and (max-height: 760px), only screen and (orientation: landscape) { 
+    #page {
+        width: 100%;
+        height: 100%;
+    }
+    
+    #counter .flags .center button {    
+        /* The button between the names */
+        /* We set to same size as the plus-button */
+        width: 70pt;
+        height: 70pt;
+    }
+
+    /* Games which cannot be counted are inactive. I.e. don't show the +/- buttons */
+    tr.game.inactive {
+        display: none;        
+    }
+        
+    #counter .names #games {
+        font-size: 35pt;
+    }
+
+    #counter .game .points {
+        /* The points of a game */
+        font-size: 30pt;
+    }
+    
+    #counter #cards {
+        /* display: block; */
+    }
+    
+    #counter .action button {
+        font-size: 40pt;
+    }
+    
+    /* In landscape mode make plus larger */
+    #counter .action button.plus {
+        width: 70pt;
+        height: 70pt;    
+    }
+
+    #counter .action button.minus {
+        width: 50pt;
+        height: 50pt;    
+    }
+
+    #results {
+        display: block;
+        min-height: 24pt;
+    }
+
+    #results .result {
+        font-size: 22pt;
+        font-weight: bold;
+    }
+}
+
+
+@media only screen and (max-height: 560px) { 
+    /* Never show the teams */
+    .teams {
+        display: none;
+    }    
+}

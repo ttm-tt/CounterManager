@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+        <title>Award Ceremony</title>
+
+        <meta name="description" content="A web app for simulating a waving flag." />
+        <meta name="keywords" content="FlagWaver, Flag, Waving, Vexillology, THREE.js, WebGL, 3D, JavaScript" />
+
+        <!-- BEGIN CSS -->
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" />
+        <link rel="stylesheet" type="text/css" href="./css/main.css" />
+        <!-- END CSS -->
+
+        <!-- BEGIN JS -->
+        <script type="text/javascript" src="../scripts/jquery.js"></script>
+        <script type="text/javascript" src="./js/three.min.js"></script>
+        <script type="text/javascript" src="../scripts/common.js"></script>
+        <script type="text/javascript" src="./js/app.js"></script>
+        <!-- END JS -->
+        
+        <!-- Load specific css file -->
+        <script type="text/javascript">
+            document.write('<link rel="stylesheet" type="text/css" href="themes/' + getParameterByName("config", "default") + '.css">');
+        </script>
+        
+        <!-- Initialize search path for flags -->
+        <script type="text/javascript">
+            var imageLocation = "../flags";
+        </script>        
+    </head>
+    <body>
+        <div class="wrapper-page bg-sky" style="visibility: hidden">
+            <main class="page-main">
+                <div class="js-flag-canvas"></div>
+            </main>
+        </div>
+    </body>
+</html>

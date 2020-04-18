@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Liveticker Input</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">  
+        <meta name="viewport" content="width=device-width, initial-scale=1"> 
+        
+        <link rel="stylesheet" type="text/css" href="counter.css">
+        
+        <!-- IE 7 and below don't know about JSON, so do it in JS code -->
+        <!--[if lt IE 8]>
+            <script type="text/javascript" src="../scripts/json2.js"></script>
+        <![endif]-->
+        <script type="text/javascript" src="../scripts/jquery.js"></script>
+        <script type="text/javascript" src="../scripts/common.js"></script>
+        <script type="text/javascript" src="counter.js"></script>
+        
+    </head>
+    <body>
+        <div id="debug">
+            <h1>
+                <span id="firstService"></span>
+                &nbsp;
+                <span id="firstServiceDouble"></span>
+                &nbsp;
+                <span id="serviceDouble"></span>
+            </h1>
+        </div>
+        <div id="page" class="page">
+            <div id="header" class="header">
+                <div id="schedule" class="schedule">
+                    <label class="table"></label>
+                    <label class="start"></label>
+                    <label class="event"></label>
+                    <label class="nr"></label>
+                </div>
+                <div id="timer" class="timer">
+                    <label class="timer"></label>                    
+                </div>
+            </div>
+            <p>
+            <div id="counter" class="counter">
+                <table>
+                    <tr class="teams hidden" id="teams">
+                        <td class="team left" id="teamleft" colspan="2"></td>
+                        <td class="team result center" id="teamresult"></td>
+                        <td class="team right" id="teamright" colspan="2"></td>
+                    </tr>
+                    
+                    <tr class="teams hidden spacer" id="spacer">
+                        <td class="team" colspan="5"><br></td>
+                    </tr>
+                    
+                    <tr class="names" id="names">
+                        <td class="name left" colspan="2">Player Left</td>
+                        <td class="name center" id="games">0&nbsp;-&nbsp;0</td>
+                        <td class="name right" colspan="2">Player Right</td>
+                    </tr>
+
+                    <tr class="spacer"><td colspan="5"><br></td></tr>
+                    
+                    <tr class="flags" id="flags">
+                        <td class="flags left" colspan="2">
+                            <button type="button" class="toggle service left" id="serviceleft" onclick="setService($(this));">Service</button>
+                            <button type="button" class="toggle timeout left" id="timeoutleft" onclick="timeout($(this));">Timeout</button>
+                            <button type="button" class="toggle wo left" id="woleft" onclick="wo($(this));">Lost w/o</button>
+                            <!-- <button type="button" class="toggle injured left" id="injuredleft" onclick="injured($(this))">Injured</button> -->
+                        </td>
+                        <td rowspan="2" class="center">&nbsp;<button type="button" id="swap" onclick="swapSides();">&lt;-&gt;</button>&nbsp;</td>
+                        <td class="flags right" colspan="2">
+                            <!-- <button type="button" class="toggle injured right" id="injuredright" onclick="injured($(this))">Injured</button> -->
+                            <button type="button" class="toggle wo right" id="woright" onclick="wo($(this));">Lost w/o</button>
+                            <button type="button" class="toggle timeout right" id="timeoutright" onclick="timeout($(this));">Timeout</button>
+                            <button type="button" class="toggle service right" id="serviceright" onclick="setService($(this));">Service</button>
+                        </td>
+                    </tr>
+                    
+<!-- TODO: Yellow / Red cards. 
+Problem: 
+- How to give points to the opponent at 9:10? 
+- How to distuingish between the 2 players in a double?
+-->
+                    <tr class="cards" id="cards">
+                        <td class="cards left" colspan="2">
+                            <button type="button" class="toggle yellow left" id="yellowleft" onclick="setCard($(this));">Yellow</button>
+                            <button type="button" class="toggle yr1p left" id="yr1pleft" onclick="setCard($(this));">YR 1P</button>
+                            <button type="button" class="toggle yr2p left" id="yr2pleft" onclick="setCard($(this));">YR 2P</button>
+                        </td>
+                        <!-- <td class="cards center"> </td> -->
+                            
+                        <td class="cards right" colspan="2">
+                            <button type="button" class="toggle yellow right" id="yellowright" onclick="setCard($(this));">Yellow</button>
+                            <button type="button" class="toggle yr1p right" id="yr1pright" onclick="setCard($(this));">YR 1P</button>
+                            <button type="button" class="toggle yr2p right" id="yr2pright" onclick="setCard($(this));">YR 2P</button>
+                    </tr>
+                    <tr class="spacer"><td colspan="5"><br></td></tr>
+                    <tr class="game" id="game1">
+                        <td class="action left">
+                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                        </td>
+                        <td class="points left">0</td>
+                        <td class="points center">&nbsp;-&nbsp;</td>
+                        <td class="points right">0</td>
+                        <td class="action right">
+                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                        </td>
+                    </tr>
+                    <tr class="game" id="game2">
+                        <td class="action left">
+                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                        </td>
+                        <td class="points left">0</td>
+                        <td class="points center">&nbsp;-&nbsp;</td>
+                        <td class="points right">0</td>
+                        <td class="action right">
+                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                        </td>
+                    </tr>
+                    <tr class="game" id="game3">
+                        <td class="action left">
+                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                        </td>
+                        <td class="points left">0</td>
+                        <td class="points center">&nbsp;-&nbsp;</td>
+                        <td class="points right">0</td>
+                        <td class="action right">
+                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                        </td>
+                    </tr>
+                    <tr class="game" id="game4">
+                        <td class="action left">
+                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                        </td>
+                        <td class="points left">0</td>
+                        <td class="points center">&nbsp;-&nbsp;</td>
+                        <td class="points right">0</td>
+                        <td class="action right">
+                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                        </td>
+                    </tr>
+                    <tr class="game" id="game5">
+                        <td class="action left">
+                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                        </td>
+                        <td class="points left">0</td>
+                        <td class="points center">&nbsp;-&nbsp;</td>
+                        <td class="points right">0</td>
+                        <td class="action right">
+                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                        </td>
+                    </tr>
+                    <tr class="game" id="game6">
+                        <td class="action left">
+                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                        </td>
+                        <td class="points left">0</td>
+                        <td class="points center">&nbsp;-&nbsp;</td>
+                        <td class="points right">0</td>
+                        <td class="action right">
+                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                        </td>
+                    </tr>
+                    <tr class="game" id="game7">
+                        <td class="action left">
+                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                        </td>
+                        <td class="points left">0</td>
+                        <td class="points center">&nbsp;-&nbsp;</td>
+                        <td class="points right">0</td>
+                        <td class="action right">
+                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="results" class="results">
+                <div id="result1" class="result"></div>
+                <div id="result2" class="result"></div>
+                <div id="result3" class="result"></div>
+                <div id="result4" class="result"></div>
+                <div id="result5" class="result"></div>
+                <div id="result6" class="result"></div>
+                <div id="result7" class="result"></div>
+            </div>
+            <div id="commands" class="commands">
+                <div id="left">
+                    <button type="button" class="toggle start" id="startGame" onclick="startGame($(this));">Start Game</button>
+                    <button type="button" class="toggle expedite" id="setExpedite" onclick="setExpedite($(this));">Expedite</button>
+                    <button type="button" class="swapPlayers" id="swapPlayers" onclick="swapPlayers();">Swap Names</button>
+                    <button type="button" class="toggle endMatch" id="endMatch" onclick="endMatch();">End Match</button>
+                </div>
+                <div id="right">
+                    <button id="setAlert" onclick="setAlert();">Help</button>
+                    <button id="reload" onclick="window.location.reload();">&nbsp;&#8635;&nbsp;</button>
+                </div>
+            </div>
+            <div id="status" class="status">
+
+            </div>
+        </div>
+        
+        <!-- The lock screen. Tap or click 5 times to force unlock -->
+        <div id="lock" onclick="unlockAction();">
+            
+        </div>
+    </body>
+</html>

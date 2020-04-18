@@ -1,0 +1,243 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+root {  
+    display: block;
+    overflow: hidden;
+}
+
+/* iframe with individual team matches */
+#teamMatches {
+   width: 100%;
+   border: 0;
+}
+
+/* iframe with one matches */
+#oneMatch {
+   width: 100%;
+   border: 0;
+}
+
+/* Change cursor of table row */
+table#ticker tr td[onclick] {
+    cursor: pointer;
+}
+
+/* Width of fields */
+table#ticker {
+   /* Whole table */
+   width: 100%;
+}
+
+.time {
+   /* Time of the match */
+   width: 4%;
+}
+
+.table {
+   /* Table of the match */
+   width: 4%;
+}
+
+td.table {
+   text-align: right;
+}
+
+.event {
+   /* Name of the event */
+   width: 4%;
+   padding-left: 0.5em;
+}
+
+.group {
+   /* Name of the group */
+   width: 15%;
+   padding-left: 0.5em;
+}
+
+.round {
+   /* Round */
+   width: 5%;
+   padding-left: 0.5em;
+}
+
+.players {
+    /* 7 columns with player, timeout, service left, center, player, ... right */
+}
+
+.player {
+    /* Player columns */
+}
+
+.player.left, .player.right {
+   /* Player(s) left and right */
+   width: 20%;
+   padding-left: 8px;
+   padding-right: 8px;
+}
+
+
+.service {
+   width: 10px;
+   min-width: 10px;
+   max-width: 10px;
+}
+
+.timeout {
+   /* Timeout field left / right */
+   width: 2%;
+}
+
+.player.center {
+   /* The "-" between the players */
+   width: 1%;
+   padding-left: 0.5em;
+   padding-right: 0.5em;
+}
+
+.games {
+   /* The 7 games */
+   width: 28%;
+}
+
+.game {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.game:not(.empty) {
+   /* One game, not empty */
+   width: 4%; /* 1  1/7 of .games */
+}
+
+.result {
+   /* The result of the match */
+   width: 5%;
+   padding-left: 2px;
+}
+
+table#ticker {
+   /* Settings of the HTML table */
+   border-width: 1px;
+   border-style: outset;               
+   border-collapse: collapse;
+   padding: 5px;    
+   empty-cells: show;               
+}
+
+th {
+   /* The header row */
+   font-weight: bold;
+}
+
+th.players, th.games {
+   /* Caption of "Players" and "Games" are centered */
+   text-align: center;
+}
+
+.time {
+   /* Time (value and caption) is left aligned */
+   text-align: left;
+}
+
+.table {
+   /* Table (value and caption) is left aligned */
+   text-align: left;
+}
+
+.event {
+   /* Event (value and caption) is left aligned */
+   text-align: left;               
+}
+
+.group {
+   /* Group (value and caption) is left aligned */
+   text-align: left;
+}
+
+.round {
+   /* Round (value and caption) is left aligned */
+   text-align: left;
+}
+
+.player.left {
+   /* Left player is right aligned */
+   text-align: right;
+}
+
+.player.right {     
+   /* Right player is left aligned */
+   text-align: left;
+}
+
+.timeout {
+   /* Timeout is centered */
+   text-align: center;
+}
+
+.player.center {
+   /* "-" between players is centered */
+   text-align: center;
+}
+
+.result {
+   /* Match result is left aligned */
+   text-align: left;
+}
+
+.game {
+   /* Result of a game is centered */
+   text-align: center;
+}
+
+tbody .result {
+   /* The match result (value) is bold */
+   font-weight: bold;
+}
+
+
+tbody tr.even {
+   /* Alternating rows: Even rows light blue */
+   background-color: #2f99fc;
+   color: white;
+} 
+
+tbody tr.odd {
+   /* Alternate rows: Odd rows dark blue */
+   background-color: #365efc;
+   color: white;
+}
+
+tbody a {
+    color: white;
+}
+
+
+div.teamname {
+   /* Names of the teams in team matches: larger and bold */
+   font-size: 105%;
+   font-weight: bold;  
+}
+
+div.teamresult {
+   /* Result of a team match: same size as team name */
+   font-size: 105%;
+}
+
+.div.playerresult {
+   /* Result of an individual match */
+}
+
+div.playerservice.service {
+   /* The service column */  
+   /* Draw a small yellow circle which resembles sometimes a table tennis ball ;) */
+   display: block;
+   height: 10px;
+   width: 10px;
+   border-radius: 5px;
+   background-color: yellow;
+}
+
+div.playertimeout.timeoutrunning {
+    text-decoration: blink;
+}
+

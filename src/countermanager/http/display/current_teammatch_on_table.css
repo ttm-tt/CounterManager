@@ -1,0 +1,69 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+root { 
+    display: block;
+}
+
+#current_teammatch_on_table #page {
+    width: 100%;
+    height: 100%;
+}
+
+#current_teammatch_on_table #table{
+    border-collapse: collapse;
+    width: 100%;
+    height: 100%;
+}
+
+#current_teammatch_on_table #table td {
+    border: 1px solid black;
+}
+
+#current_teammatch_on_table #table tr td > span {
+    display: block;
+}
+
+#current_teammatch_on_table td.team {
+    width: 70%
+}
+
+#current_teammatch_on_table td.names {
+    width: 70%
+}
+
+#current_teammatch_on_table td.points {
+    width: 5%;
+    text-align: center;
+}
+
+#current_teammatch_on_table td.points[colspan="5"] {
+    width: 25%
+}
+
+#current_teammatch_on_table td.matches {
+    width: 5%;
+    text-align: center;
+}
+
+#current_teammatch_on_table td.games {
+    width: 5%;
+    text-align: center;
+}
+
+/* Special fonts colors */
+#current_teammatch_on_table #table tr.caption {
+    font-size: 175%;
+}
+
+#current_teammatch_on_table #table tr.double {
+    font-size: 80%;
+}
+
+#current_teammatch_on_table #table tr.started.single {
+    font-size: 200%;
+}
+
+#current_teammatch_on_table #table tr.started.double {
+    font-size: 150%;
+}
+

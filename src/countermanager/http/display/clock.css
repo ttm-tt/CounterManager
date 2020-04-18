@@ -1,0 +1,18 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+* {
+    cursor: none;
+}
+
+
+body#stationclock div#container {
+    background: gray;
+    height: 100%;
+    width: 100%;
+}
+
+body#stationclock canvas#clock {
+    margin-left: auto;
+    margin-right: auto;
+    height: 100%;
+}

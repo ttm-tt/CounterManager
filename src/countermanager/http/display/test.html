@@ -1,0 +1,64 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <script type="text/javascript" src="/scripts/jquery.js"></script>
+        <script type="text/javascript" src="/scripts/xmlrpcclient.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                update();
+            });
+
+            function update() {
+                xmlrpc(
+                    "/RPC2", 
+                    "ttm.listPlayers", 
+                    [], 
+                    function success(data) {
+                        // Show data, start with offset 0
+                        show(data, 0);
+                    }                     
+/*                    
+                    , function error(e) {
+                        alert(e);
+                    }
+                    , function final() {
+                        
+                    }
+*/                    
+                )
+            }
+            
+
+            function show(data, start) {
+                $('#matches tbody').empty();
+
+                for (var i = 0; i < 10 && i + start < data.length; i++) {
+                    var pl = data[start + i];
+                    var tr = "<tr><td>" + pl.psFirst + "</td><td>" + pl.psLast + "</td><td>" + pl.naName + "</td></tr>";
+                    $('#matches tbody').append(tr);
+                }
+                
+                // Show next data (if there is any), starting with offset + 10
+                if ( start + 10 < data.length)
+                    setTimeout(function() {show(data, start + 10);}, 2000);
+            }
+            
+
+        </script>
+    </head>
+    <body>
+        <div>
+            <table id="matches">
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

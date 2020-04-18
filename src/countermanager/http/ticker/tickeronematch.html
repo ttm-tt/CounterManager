@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta content="text/html; charset=utf-8" http-equiv="content-type">
+        <title>Liveticker</title>
+        <link rel="stylesheet" type="text/css" href="tickeronematch.css">
+        <!-- IE 7 and below don't know about JSON, so do it in JS code -->
+        <!--[if lt IE 8]>
+                <script type="text/javascript" src="/scripts/json2.js"></script>        <![endif]-->
+        <script type="text/javascript" src="/scripts/jquery.js"></script>
+        <script type="text/javascript" src="/scripts/common.js"></script>
+        <script type="text/javascript" src="tickeronematch.js"></script>
+        
+    </head>
+    <body onLoad = "load();">
+        <!-- <a href="javascript:close()">Close</a><br> -->
+        <div id="caption" class="caption">
+            <span id="table"></span>
+            <span id="event"></span>
+            <span id="group"></span>
+            <span id="round"></span>
+        </div>
+        <div id="content" class="content grid">
+            <div id="teams" class="teams row">
+                <div id="teamleft" class="teamleft left cell">&nbsp;</div>
+                <div id="teamcenter" class="teamcenter center cell">&nbsp;</div>
+                <div id="teamright" class="teamright right cell">&nbsp;</div>
+            </div>
+            <div id="players" class="players row">
+                <div id="playerleft" class="playerleft left cell">&nbsp;</div>
+                <div id="playercenter" class="playercenter center cell">
+                    <div id="matchresult" class="matchresult grid">
+                        <div id="games" class="games row">
+                            <div id="gamescardleft" class="gamesleft card cell">
+                                <div id="gamesleft" class="gamesleft">&nbsp;</div>
+                            </div>
+                            <div id="gamesspacecenter" class="gamesspace cell"></div>
+                            <div id="gamescardright" class="gamesright card cell">
+                                <div id="gamesright" class="gamesright">&nbsp;</div>
+                            </div>
+                        </div>
+                        <div id="points" class="points row">
+                            <div id="pointsspaceleft" class="pointsspace cell"> </div>
+                            <div id="pointscenter" class="pointscenter center cell">
+                                <div id="pointscardleft" class="pointsleft card">
+                                    <div id="pointsleft" class="pointsleft">&nbsp;</div>
+                                </div>
+                                <div id="pointscardright" class="pointsright card">
+                                    <div id="pointsright" class="pointsright">&nbsp;</div>
+                                </div>
+                            </div>
+                            <div id="pointsspaceright" class="pointsspace cell"></div>
+                        </div>
+                    </div>
+                    <div id="gamehistory" class="gamehistory grid">
+                        <div id="game1" class="game cell">&nbsp;</div>
+                        <div id="game2" class="game cell">&nbsp;</div>
+                        <div id="game3" class="game cell">&nbsp;</div>
+                        <div id="game4" class="game cell">&nbsp;</div>
+                        <div id="game5" class="game cell">&nbsp;</div>
+                        <div id="game6" class="game cell">&nbsp;</div>
+                        <div id="game7" class="game cell">&nbsp;</div>
+                    </div>
+                </div>
+                <div id="playerright" class="playerright right cell">&nbsp;</div>
+            </div>
+        </div>
+        <br>
+        <!-- <a href="javascript:close()">Close</a><br> -->
+    </body>
+</html>

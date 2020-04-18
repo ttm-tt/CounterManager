@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=1028, initial-scale=1.0">
+        <style>
+            html, body {
+                margin: 0px;
+                width: 1028px;
+                height: 512px;
+                overflow: hidden;
+            }
+            
+            iframe {
+                display: inline;
+                width: 512px;
+                height: 512px;
+                border-width: 0px;
+                transform: scale(0.25);
+                -webkit-transform: scale(0.25);
+                border: 0;
+                frameborder: 0;
+                padding: 0;  
+                background-color: transparent;
+            }
+            
+            #if1 {
+                transform-origin: 0 0;
+                -webkit-transform-origin: 0 0;
+            }
+            
+            #if2 {
+                transform-origin: -512px 0;
+                -webkit-transform-origin: -512px 0;
+            }
+        </style>
+        <script type="text/javascript" src="/scripts/common.js"></script>
+        <script type="text/javascript" src="/scripts/jquery.js"></script>        
+        <script type="text/javascript">
+            document.write('<link rel="stylesheet" type="text/css" href="' + getParameterByName("config", "default") + '.css">');
+            $(document).ready(function() {
+                $('#if1').attr('src', '/display/display.html?config=' + getParameterByName("config", "default") + "-left");
+                $('#if2').attr('src', '/display/display.html?config=' + getParameterByName("config", "default") + "-right");
+            });
+        </script>
+            
+    </head>
+    <body>
+        <iframe id="if1"></iframe>
+        <iframe id="if2"></iframe>
+    </body>
+</html>

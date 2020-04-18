@@ -1,0 +1,109 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+/* Fonts */
+.nation {
+    font-weight: bold;
+}
+
+.teamresult {
+    font-weight: bold;
+}
+
+#names {
+    font-weight: bold;    
+}
+
+#result .games {
+    font-weight: bold;
+}
+
+#result .timeouts {
+    font-weight: bold;
+}
+
+#result .cards {
+    font-weight: bold;
+}
+
+#result .points{
+    font-weight: bold;
+}
+
+
+/* Colors */
+body {
+    background-color: black;
+    color: white;
+    border: 1px solid transparent;
+}
+
+#content {
+}
+
+.invert {
+}
+
+.service {
+    /* Actual color for left / right is defined below */
+    border-color: transparent;
+    border-style: solid;
+}
+
+#serviceleft {
+    border-right-color: #ffe36a;
+}
+
+
+#serviceright {
+    border-left-color: #ffe36a;
+}
+
+
+.timeouts {
+    background-color: black;
+    color: white; 
+}
+
+.timeouts.running {
+    background-color: white;
+    color: black;
+}
+
+.cards {
+    background-color: yellow;
+    color: red;
+}
+
+
+#caption {
+    color: #ffe36a; /* kind of yellow */
+}
+
+.flag img {
+    border: 1px solid lightgray; 
+}
+
+.invert .flag img {
+    border: 1px solid lightgray;    
+}
+
+ #names {
+     color: #ffe36a; /* kind of yellow */   
+}
+
+#result .games {
+    color: yellow;
+}
+
+#result .points{
+    color: #0bf80b;
+}
+
+/* Texts */
+#schedule:before {
+    content: "Start at ";
+}
+
+#schedule:lang(de):before {
+    content: "Start um ";
+}
