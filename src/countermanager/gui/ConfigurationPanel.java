@@ -880,7 +880,7 @@ public class ConfigurationPanel extends javax.swing.JPanel {
 
     private void addLivetickerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addLivetickerButtonActionPerformed
         Object ret = javax.swing.JOptionPane.showInputDialog(
-                this, null, null, JOptionPane.PLAIN_MESSAGE, null, new String[] {"TTM"}, "TTM"
+                this, null, null, JOptionPane.PLAIN_MESSAGE, null, new String[] {"TTM", "Unas"}, "TTM"
         );
         
         if (ret == null)
@@ -889,6 +889,10 @@ public class ConfigurationPanel extends javax.swing.JPanel {
         switch (ret.toString()) {
             case "TTM" :
                 LivetickerAdmininstration.addLiveticker(new countermanager.liveticker.ttm.TTM());
+                break;
+                
+            case "Unas" :
+                LivetickerAdmininstration.addLiveticker(new countermanager.liveticker.unas.Unas());
                 break;
                 
             default :

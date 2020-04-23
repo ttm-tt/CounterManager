@@ -10,6 +10,7 @@ package countermanager.model.database.simulation;
 import countermanager.model.CounterModelMatch;
 import countermanager.model.database.IDatabase;
 import countermanager.model.database.IDatabaseSettings;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -55,7 +56,7 @@ public final class Simulation implements IDatabase {
     }
 
     @Override
-    public List<CounterModelMatch> update(int fromTable, int toTable) {
+    public List<CounterModelMatch> update(int fromTable, int toTable, java.time.LocalDate when, boolean all) {
         List<CounterModelMatch> list = new java.util.ArrayList<>();
         for (int table = fromTable; table <= toTable; table++) {
             CounterModelMatch match = new CounterModelMatch();
@@ -171,5 +172,15 @@ public final class Simulation implements IDatabase {
     private int doublesEach = 0;
     private int teamsEach = 0;
     private boolean connected = false;
+
+    @Override
+    public List<LocalDate> getChangedDates(long timestamp) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public long getMaxMtTimestamp() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

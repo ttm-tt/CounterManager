@@ -142,4 +142,42 @@ public class Properties extends java.util.Properties {
     public void putBoolean(String key, boolean val) {
         setProperty(key, Boolean.toString(val));
     }
+    
+    
+    // Read specific value form ini file
+    public static long getLong(String section, String key, long defaultValue) {
+        org.ini4j.Ini ini = new org.ini4j.Ini();
+        ini.setFile(getIniFile());
+        
+        try {
+            ini.load();
+        } catch (Exception ex) {
+            
+        }
+        
+        String val = ini.get(section, key);
+
+        if (val == null || val.isEmpty())
+            return defaultValue;
+        
+        try {
+            return Long.parseLong(val);
+        } catch (NumberFormatException ex) {
+            return defaultValue;
+        }
+    }
+        
+    // Write specific value to ini file
+    public static void putLong(String section, String key, long val) {
+        org.ini4j.Ini ini = new org.ini4j.Ini();
+        ini.setFile(getIniFile());
+        
+        try {
+            ini.load();
+        } catch (Exception ex) {
+            
+        }
+     
+        ini.add(section, key, val);
+    }
 }

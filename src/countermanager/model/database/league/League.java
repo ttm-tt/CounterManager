@@ -7,6 +7,7 @@ import countermanager.model.database.IDatabase;
 import countermanager.model.database.IDatabaseSettings;
 import countermanager.model.database.league.MatchDetails.MatchType;
 import java.io.FileNotFoundException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -23,6 +24,16 @@ public class League implements IDatabase {
     private final static String dbFileName = "league.xml";
     
     JAXBContext context;
+
+    @Override
+    public List<LocalDate> getChangedDates(long timestamp) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public long getMaxMtTimestamp() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     @XmlRootElement
     private static class Database {
@@ -68,7 +79,7 @@ public class League implements IDatabase {
     }
 
     @Override
-    public List<CounterModelMatch> update(int fromTable, int toTable) {
+    public List<CounterModelMatch> update(int fromTable, int toTable, java.time.LocalDate when, boolean all) {
         Map<Integer, CounterModelMatch> map = new java.util.HashMap<>();
 
         for (CounterModelMatch match : database.list) {

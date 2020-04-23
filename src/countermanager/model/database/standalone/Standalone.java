@@ -8,6 +8,7 @@ import countermanager.model.database.IDatabase;
 import countermanager.model.database.IDatabaseSettings;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -105,7 +106,7 @@ public class Standalone implements IDatabase {
     }
 
     @Override
-    public List<CounterModelMatch> update(int fromTable, int toTable) {
+    public List<CounterModelMatch> update(int fromTable, int toTable, java.time.LocalDate when, boolean all) {
         List<CounterModelMatch> list = new java.util.ArrayList<>();
         
         java.util.Collections.sort(database.matches, new java.util.Comparator<Match>() {
@@ -212,5 +213,15 @@ public class Standalone implements IDatabase {
         }
         
         return false;
+    }
+
+    @Override
+    public List<LocalDate> getChangedDates(long timestamp) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public long getMaxMtTimestamp() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

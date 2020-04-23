@@ -6,16 +6,16 @@
  */
 package countermanager.model.database.ttm;
 
-import com.enterprisedt.util.debug.Level;
 import countermanager.model.CounterModelMatch;
 import countermanager.model.database.IDatabase;
 import countermanager.model.database.IDatabaseSettings;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Map;
 
 /**
  *
@@ -35,7 +35,7 @@ public final class TTM implements IDatabase {
     private Connection updateMatchConnection = null;
     private Connection updateResultConnection = null;
     
-    private PreparedStatement updateMatchStmt = null;
+    private Map<String, PreparedStatement> stmtMap = new java.util.HashMap<>();
     
     
     public TTM() {
@@ -151,175 +151,271 @@ public final class TTM implements IDatabase {
         return false;
     }
 
-    Object syncUpdateMatch = new Object();
+    private final Object syncUpdateMatch = new Object();
     
     @Override
-    public List<CounterModelMatch> update(int fromTable, int toTable) {
-            final String sql =             
-                // Singles
-                "SELECT cpType, cpName, cpDesc, grName, grDesc, grStage, grModus, grSize, " +
-                "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
-                "       mtTimeStamp, mtNr, 0 AS mtMS, mtRound, mtMatch, " +
-                "       mtTable, mtDateTime, mtBestOf, mtMatches, 0 AS mtReverse, " +
-                "       mt.mtResA, mt.mtResX, " +
-                "       plAplNr, plAplExtId, plApsLast, plApsFirst, plAnaName, plAnaRegion " +
-                "       NULL AS plBplNr, NULL AS plBplExtId, NULL AS plBpsLast, NULL AS plBpsFirst, NULL AS plBnaName, NULL AS plBnaRegion, " +
-                "       plXplNr, plXplExtId, plXpsLast, plXpsFirst, plXnaName, plXnaRegion " +
-                "       NULL AS plYplNr, NULL AS plYplExtId, NULL AS plYpsLast, NULL AS plYpsFirst, NULL AS plYnaName, NULL AS plYnaRegion " +
-                "       NULL AS tmAtmName, NULL AS tmAtmDesc, NULL AS tmAnaName, NULL AS tmAnaRegion " +
-                "       NULL AS tmXtmName, NULL AS tmXtmDesc, NULL AS tmXnaName, NULL As tmXnaRegion " +
-                "       NULL AS mttmResA, NULL AS mttmResX, " +
-                "       mtSet1.mtResA, mtSet1.mtResX, " +
-                "       mtSet2.mtResA, mtSet2.mtResX, " +
-                "       mtSet3.mtResA, mtSet3.mtResX, " +
-                "       mtSet4.mtResA, mtSet4.mtResX, " +
-                "       mtSet5.mtResA, mtSet5.mtResX, " +
-                "       mtSet6.mtResA, mtSet6.mtResX, " +
-                "       mtSet7.mtResA, mtSet7.mtResX, " +
-                "       mtSet8.mtResA, mtSet8.mtResX, " +
-                "       mtSet9.mtResA, mtSet9.mtResX  " +
-                "  FROM MtSingleList mt " +
-                "       INNER JOIN GrList gr ON mt.grID = gr.grID " +
-                "       INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
-                "       LEFT OUTER JOIN MtSet mtSet1 ON mt.mtID = mtSet1.mtID AND mtSet1.mtSet = 1 " +
-                "       LEFT OUTER JOIN MtSet mtSet2 ON mt.mtID = mtSet2.mtID AND mtSet2.mtSet = 2 " +
-                "       LEFT OUTER JOIN MtSet mtSet3 ON mt.mtID = mtSet3.mtID AND mtSet3.mtSet = 3 " +
-                "       LEFT OUTER JOIN MtSet mtSet4 ON mt.mtID = mtSet4.mtID AND mtSet4.mtSet = 4 " +
-                "       LEFT OUTER JOIN MtSet mtSet5 ON mt.mtID = mtSet5.mtID AND mtSet5.mtSet = 5 " +
-                "       LEFT OUTER JOIN MtSet mtSet6 ON mt.mtID = mtSet6.mtID AND mtSet6.mtSet = 6 " +
-                "       LEFT OUTER JOIN MtSet mtSet7 ON mt.mtID = mtSet7.mtID AND mtSet7.mtSet = 7 " +
-                "       LEFT OUTER JOIN MtSet mtSet8 ON mt.mtID = mtSet8.mtID AND mtSet8.mtSet = 8 " +
-                "       LEFT OUTER JOIN MtSet mtSet9 ON mt.mtID = mtSet9.mtID AND mtSet9.mtSet = 9 " +
-                " WHERE CAST(mtDateTime AS DATE) = CAST(CURRENT_TIMESTAMP AS DATE) AND " +
-                "       (mt.stA IS NULL OR mt.tmAtmID IS NOT NULL) AND " +
-                "       (mt.stX IS NULL OR mt.tmXtmID IS NOT NULL) AND " +
-                // "       plAplNr IS NOT NULL AND plXplNr IS NOT NULL AND " +
-                "       2 * mt.mtResA < mtBestOf AND 2 * mt.mtResX < mtBestOf AND " +
-                // "       mtResA = 0 AND mtResX = 0 AND " +
-                "       mt.mtWalkOverA = 0 AND mt.mtWalkOverX = 0 AND " +
-                "       cpType = 1 AND mtTable >= ? AND mtTable <= ? " +
+    public long getMaxMtTimestamp() {
+        long ret = 0;
+        
+        final String sql = 
+                "SELECT MAX(mtTimeStamp) FROM MtList"
+        ;
+        
+        synchronized (syncUpdateMatch) {
+            if (!testConnection(updateMatchConnection)) {
+                updateMatchConnection = getConnection(connectionString, true);
+            }
+                
+            try (java.sql.Statement stmt = updateMatchConnection.createStatement();
+                 java.sql.ResultSet rs = stmt.executeQuery(sql)) {
 
-                // Doubles and Mixed
-                "UNION " +                        
-                "SELECT cpType, cpName, cpDesc, grName, grDesc, grStage, grModus, grSize, " +
-                "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
-                "       mtTimeStamp, mtNr, 0 AS mtMS, mtRound, mtMatch, " +
-                "       mtTable, mtDateTime, mtBestOf, mtMatches, 0 AS mtReverse, " +
-                "       mt.mtResA, mt.mtResX, " +
-                "       plAplNr, plAplExtId, plApsLast, plApsFirst, plAnaName,plAnaRegion,  " +
-                "       plBplNr, plBplExtId, plBpsLast, plBpsFirst, plBnaName, plBnaRegion, " +
-                "       plXplNr, plXplExtId, plXpsLast, plXpsFirst, plXnaName, plXnaRegion, " +
-                "       plYplNr, plYplExtId, plYpsLast, plYpsFirst, plYnaName, plAnaRegion, " +
-                "       NULL AS tmAtmName, NULL AS tmAtmDesc, NULL AS tmAnaName, NULL AS tmAnaRegion, " +
-                "       NULL AS tmXtmName, NULL AS tmXtmDesc, NULL AS tmXnaName, NULL AS tmXnaRegion, " +
-                "       NULL AS mttmResA, NULL AS mttmResX, " +
-                "       mtSet1.mtResA, mtSet1.mtResX, " +
-                "       mtSet2.mtResA, mtSet2.mtResX, " +
-                "       mtSet3.mtResA, mtSet3.mtResX, " +
-                "       mtSet4.mtResA, mtSet4.mtResX, " +
-                "       mtSet5.mtResA, mtSet5.mtResX, " +
-                "       mtSet6.mtResA, mtSet6.mtResX, " +
-                "       mtSet7.mtResA, mtSet7.mtResX, " +
-                "       mtSet8.mtResA, mtSet8.mtResX, " +
-                "       mtSet9.mtResA, mtSet9.mtResX  " +
-                "  FROM MtDoubleList mt " +
-                "       INNER JOIN GrList gr ON mt.grID = gr.grID " +
-                "       INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
-                "       LEFT OUTER JOIN MtSet mtSet1 ON mt.mtID = mtSet1.mtID AND mtSet1.mtSet = 1 " +
-                "       LEFT OUTER JOIN MtSet mtSet2 ON mt.mtID = mtSet2.mtID AND mtSet2.mtSet = 2 " +
-                "       LEFT OUTER JOIN MtSet mtSet3 ON mt.mtID = mtSet3.mtID AND mtSet3.mtSet = 3 " +
-                "       LEFT OUTER JOIN MtSet mtSet4 ON mt.mtID = mtSet4.mtID AND mtSet4.mtSet = 4 " +
-                "       LEFT OUTER JOIN MtSet mtSet5 ON mt.mtID = mtSet5.mtID AND mtSet5.mtSet = 5 " +
-                "       LEFT OUTER JOIN MtSet mtSet6 ON mt.mtID = mtSet6.mtID AND mtSet6.mtSet = 6 " +
-                "       LEFT OUTER JOIN MtSet mtSet7 ON mt.mtID = mtSet7.mtID AND mtSet7.mtSet = 7 " +
-                "       LEFT OUTER JOIN MtSet mtSet8 ON mt.mtID = mtSet8.mtID AND mtSet8.mtSet = 8 " +
-                "       LEFT OUTER JOIN MtSet mtSet9 ON mt.mtID = mtSet9.mtID AND mtSet9.mtSet = 9 " +
-                " WHERE CAST(mtDateTime AS DATE) = CAST(CURRENT_TIMESTAMP AS DATE) AND " +
-                "       (mt.stA IS NULL OR mt.tmAtmID IS NOT NULL) AND " +
-                "       (mt.stX IS NULL OR mt.tmXtmID IS NOT NULL) AND " +
-                // "       plAplNr IS NOT NULL AND plXplNr IS NOT NULL AND " +
-                "       2 * mt.mtResA < mtBestOf AND 2 * mt.mtResX < mtBestOf AND " +
-                // "       mtResA = 0 AND mtResX = 0 AND " +
-                "       mt.mtWalkOverA = 0 AND mt.mtWalkOverX = 0 AND " +
-                "       (cpType = 2 OR cpType = 3) AND mtTable >= ? AND mtTable <= ? " +
+                if (rs.next()) {
+                    java.sql.Timestamp ts = rs.getTimestamp(1);
+                    ret = ts.getTime();
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();                
+                try {
+                    updateMatchConnection.close();
+                } catch (java.sql.SQLException ex) {
 
-                // Team (Individual)
-                "UNION " +                        
-                "SELECT cp.cpType, cp.cpName, cp.cpDesc, gr.grName, gr.grDesc, gr.grStage, gr.grModus, gr.grSize, " +
-                "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
-                "       mt.mtTimeStamp, mt.mtNr, mt.mtMS AS mtMS, mt.mtRound, mt.mtMatch, " +
-                "       mt.mtTable, mt.mtDateTime, mt.mtBestOf, mt.mtMatches, MtList.mtReverse, " +
-                "       mt.mtResA, mt.mtResX, " +
-                "       plAplNr, plAplExtId, plApsLast, plApsFirst, plAnaName, plAnaRegion, " +
-                "       plBplNr, plBplExtId, plBpsLast, plBpsFirst, plBnaName, plBnaRegion, " +
-                "       plXplNr, plXplExtId, plXpsLast, plXpsFirst, plXnaName, plXnaRegion, " +
-                "       plYplNr, plYplExtId, plYpsLast, plYpsFirst, plYnaName, plYnaRegion, " +
-                "       stA.tmName \"tmAtmName\", stA.tmDesc \"tmAtmDesc\", stA.naName \"tmAnaName\", stA.naRegion \"tmAnaRegion\", " +
-                "       stX.tmName \"tmXtmName\", stX.tmDesc \"tmXtmDesc\", stX.naName \"tmXnaName\", stX.naRegion \"tmXnaRegion\", " +
-                "       MtList.mtResA \"mttmResA\", MtList.mtResX \"mttmResX\", " +
-                "       mtSet1.mtResA, mtSet1.mtResX, " +
-                "       mtSet2.mtResA, mtSet2.mtResX, " +
-                "       mtSet3.mtResA, mtSet3.mtResX, " +
-                "       mtSet4.mtResA, mtSet4.mtResX, " +
-                "       mtSet5.mtResA, mtSet5.mtResX, " +
-                "       mtSet6.mtResA, mtSet6.mtResX, " +
-                "       mtSet7.mtResA, mtSet7.mtResX, " +
-                "       mtSet8.mtResA, mtSet8.mtResX, " +
-                "       mtSet9.mtResA, mtSet9.mtResX  " +
-                "  FROM MtIndividualList mt " +
-                "       INNER JOIN MtList ON mt.mtID = MtList.mtID " +
-                "       INNER JOIN GrList gr ON mt.grID = gr.grID " +
-                "       INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
-                "       INNER JOIN StTeamList stA ON MtList.stA = stA.stID " +
-                "       INNER JOIN StTeamList stX ON MtList.stX = stX.stID " +
-                "       LEFT OUTER JOIN MtSet mtSet1 ON mt.mtID = mtSet1.mtID AND mtSet1.mtSet = 1 AND mtSet1.mtMS = mt.mtMS " +
-                "       LEFT OUTER JOIN MtSet mtSet2 ON mt.mtID = mtSet2.mtID AND mtSet2.mtSet = 2 AND mtSet2.mtMS = mt.mtMS " +
-                "       LEFT OUTER JOIN MtSet mtSet3 ON mt.mtID = mtSet3.mtID AND mtSet3.mtSet = 3 AND mtSet3.mtMS = mt.mtMS " +
-                "       LEFT OUTER JOIN MtSet mtSet4 ON mt.mtID = mtSet4.mtID AND mtSet4.mtSet = 4 AND mtSet4.mtMS = mt.mtMS " +
-                "       LEFT OUTER JOIN MtSet mtSet5 ON mt.mtID = mtSet5.mtID AND mtSet5.mtSet = 5 AND mtSet5.mtMS = mt.mtMS " +
-                "       LEFT OUTER JOIN MtSet mtSet6 ON mt.mtID = mtSet6.mtID AND mtSet6.mtSet = 6 AND mtSet6.mtMS = mt.mtMS " +
-                "       LEFT OUTER JOIN MtSet mtSet7 ON mt.mtID = mtSet7.mtID AND mtSet7.mtSet = 7 AND mtSet7.mtMS = mt.mtMS " +
-                "       LEFT OUTER JOIN MtSet mtSet8 ON mt.mtID = mtSet8.mtID AND mtSet8.mtSet = 8 AND mtSet8.mtMS = mt.mtMS " +
-                "       LEFT OUTER JOIN MtSet mtSet9 ON mt.mtID = mtSet9.mtID AND mtSet9.mtSet = 9 AND mtSet9.mtMS = mt.mtMS " +
-                " WHERE CAST(mt.mtDateTime AS DATE) = CAST(CURRENT_TIMESTAMP AS DATE) AND " +
-                "       (mt.stA IS NULL OR mt.tmAtmID IS NOT NULL) AND " +
-                "       (mt.stX IS NULL OR mt.tmXtmID IS NOT NULL) AND " +
-                // "       plAplNr IS NOT NULL AND plXplNr IS NOT NULL AND " +
-                // "       MtList.stA IS NOT NULL AND MtList.stX IS NOT NULL AND " +
-                "       (mt.mtResA IS NULL OR 2 * mt.mtResA < mt.mtBestOf) AND " + 
-                "       (mt.mtResX IS NULL OR 2 * mt.mtResX < mt.mtBestOf) AND " +
-                "       (mt.mtWalkOverA IS NULL OR mt.mtWalkOverA = 0) AND " +
-                "       (mt.mtWalkOverX IS NULL OR mt.mtWalkOverX = 0) AND " +
-                // "       mt.mtResA = 0 AND mt.mtResX = 0 AND " +
-                "       2 * MtList.mtResA < MtList.mtMatches AND 2 * MtList.mtResX < MtList.mtMatches AND " +
-                "       cp.cpType = 4 AND mt.mtTable >= ? AND mt.mtTable <= ? " +
+                }
 
-                // Order: By Table, Time, Individual.
-                // Also for Round and Match-in-Round for RR-groups with all matches 
-                // at the same time and table.
-                " ORDER BY mtTable, mtDateTime, mtMS, mtRound, mtMatch";
+                updateMatchConnection = null;
 
+                ret = 0;
+            }
+        }
+     
+        return ret;
+    }
+    
+    @Override
+    public List<LocalDate> getChangedDates(long timestamp) {
+        List<LocalDate> list = new java.util.ArrayList<>();
+        
+        final String sql = 
+                "SELECT DISTINCT CAST(mtDateTime AS DATE) AS date " + 
+                "  FROM mtList mt INNER JOIN GrList gr ON mt.grID = gr.grID " +
+                " WHERE gr.grPublished = 1 AND mtDateTime IS NOT NULL AND mtTimestamp > ? " +
+                " ORDER BY date ASC "
+        ;
+        
+        synchronized (syncUpdateMatch) {
+            if (!testConnection(updateMatchConnection)) {
+                updateMatchConnection = getConnection(connectionString, true);
+            }
+                
+            try (java.sql.PreparedStatement stmt = updateMatchConnection.prepareStatement(sql)) {
+
+                stmt.setDate(1, new java.sql.Date(timestamp));
+                try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        list.add(rs.getDate(1).toLocalDate());   
+                    }
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();                
+                try {
+                    updateMatchConnection.close();
+                } catch (java.sql.SQLException ex) {
+
+                }
+
+                updateMatchConnection = null;
+
+                list.clear();
+            }
+        }
+                
+        return list;
+    }
+    
+    
+    @Override
+    public List<CounterModelMatch> update(int fromTable, int toTable, java.time.LocalDate date, boolean all) {
+        String sql =             
+            // Singles
+            "SELECT cpType, cpName, cpDesc, grName, grDesc, grStage, grModus, grSize, " +
+            "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
+            "       mtTimeStamp, mtNr, 0 AS mtMS, mtRound, mtMatch, " +
+            "       mtTable, mtDateTime, mtBestOf, mtMatches, 0 AS mtReverse, " +
+            "       mt.mtResA, mt.mtResX, " +
+            "       plAplNr, plAplExtId, plApsLast, plApsFirst, plAnaName, plAnaRegion, " +
+            "       NULL AS plBplNr, NULL AS plBplExtId, NULL AS plBpsLast, NULL AS plBpsFirst, NULL AS plBnaName, NULL AS plBnaRegion, " +
+            "       plXplNr, plXplExtId, plXpsLast, plXpsFirst, plXnaName, plXnaRegion, " +
+            "       NULL AS plYplNr, NULL AS plYplExtId, NULL AS plYpsLast, NULL AS plYpsFirst, NULL AS plYnaName, NULL AS plYnaRegion, " +
+            "       NULL AS tmAtmName, NULL AS tmAtmDesc, NULL AS tmAnaName, NULL AS tmAnaRegion, " +
+            "       NULL AS tmXtmName, NULL AS tmXtmDesc, NULL AS tmXnaName, NULL As tmXnaRegion, " +
+            "       NULL AS mttmResA, NULL AS mttmResX, " +
+            "       mtSet1.mtResA, mtSet1.mtResX, " +
+            "       mtSet2.mtResA, mtSet2.mtResX, " +
+            "       mtSet3.mtResA, mtSet3.mtResX, " +
+            "       mtSet4.mtResA, mtSet4.mtResX, " +
+            "       mtSet5.mtResA, mtSet5.mtResX, " +
+            "       mtSet6.mtResA, mtSet6.mtResX, " +
+            "       mtSet7.mtResA, mtSet7.mtResX, " +
+            "       mtSet8.mtResA, mtSet8.mtResX, " +
+            "       mtSet9.mtResA, mtSet9.mtResX  " +
+            "  FROM MtSingleList mt " +
+            "       INNER JOIN GrList gr ON mt.grID = gr.grID " +
+            "       INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
+            "       LEFT OUTER JOIN MtSet mtSet1 ON mt.mtID = mtSet1.mtID AND mtSet1.mtSet = 1 " +
+            "       LEFT OUTER JOIN MtSet mtSet2 ON mt.mtID = mtSet2.mtID AND mtSet2.mtSet = 2 " +
+            "       LEFT OUTER JOIN MtSet mtSet3 ON mt.mtID = mtSet3.mtID AND mtSet3.mtSet = 3 " +
+            "       LEFT OUTER JOIN MtSet mtSet4 ON mt.mtID = mtSet4.mtID AND mtSet4.mtSet = 4 " +
+            "       LEFT OUTER JOIN MtSet mtSet5 ON mt.mtID = mtSet5.mtID AND mtSet5.mtSet = 5 " +
+            "       LEFT OUTER JOIN MtSet mtSet6 ON mt.mtID = mtSet6.mtID AND mtSet6.mtSet = 6 " +
+            "       LEFT OUTER JOIN MtSet mtSet7 ON mt.mtID = mtSet7.mtID AND mtSet7.mtSet = 7 " +
+            "       LEFT OUTER JOIN MtSet mtSet8 ON mt.mtID = mtSet8.mtID AND mtSet8.mtSet = 8 " +
+            "       LEFT OUTER JOIN MtSet mtSet9 ON mt.mtID = mtSet9.mtID AND mtSet9.mtSet = 9 " +
+            " WHERE gr.grPublished = 1 AND " +
+            "       CAST(mtDateTime AS DATE) = ? AND " +
+            "       (mt.stA IS NULL OR mt.tmAtmID IS NOT NULL) AND " +
+            "       (mt.stX IS NULL OR mt.tmXtmID IS NOT NULL) AND " +
+            // "       plAplNr IS NOT NULL AND plXplNr IS NOT NULL AND " +
+            // If all == false then exclude finished matches
+            (all ? "" : (
+            "       2 * mt.mtResA < mtBestOf AND 2 * mt.mtResX < mtBestOf AND " +
+            "       mt.mtWalkOverA = 0 AND mt.mtWalkOverX = 0 AND "
+            )) +
+            "       cpType = 1 AND mtTable >= ? AND mtTable <= ? " +
+
+            // Doubles and Mixed
+            "UNION " +                        
+            "SELECT cpType, cpName, cpDesc, grName, grDesc, grStage, grModus, grSize, " +
+            "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
+            "       mtTimeStamp, mtNr, 0 AS mtMS, mtRound, mtMatch, " +
+            "       mtTable, mtDateTime, mtBestOf, mtMatches, 0 AS mtReverse, " +
+            "       mt.mtResA, mt.mtResX, " +
+            "       plAplNr, plAplExtId, plApsLast, plApsFirst, plAnaName,plAnaRegion,  " +
+            "       plBplNr, plBplExtId, plBpsLast, plBpsFirst, plBnaName, plBnaRegion, " +
+            "       plXplNr, plXplExtId, plXpsLast, plXpsFirst, plXnaName, plXnaRegion, " +
+            "       plYplNr, plYplExtId, plYpsLast, plYpsFirst, plYnaName, plAnaRegion, " +
+            "       NULL AS tmAtmName, NULL AS tmAtmDesc, NULL AS tmAnaName, NULL AS tmAnaRegion, " +
+            "       NULL AS tmXtmName, NULL AS tmXtmDesc, NULL AS tmXnaName, NULL AS tmXnaRegion, " +
+            "       NULL AS mttmResA, NULL AS mttmResX, " +
+            "       mtSet1.mtResA, mtSet1.mtResX, " +
+            "       mtSet2.mtResA, mtSet2.mtResX, " +
+            "       mtSet3.mtResA, mtSet3.mtResX, " +
+            "       mtSet4.mtResA, mtSet4.mtResX, " +
+            "       mtSet5.mtResA, mtSet5.mtResX, " +
+            "       mtSet6.mtResA, mtSet6.mtResX, " +
+            "       mtSet7.mtResA, mtSet7.mtResX, " +
+            "       mtSet8.mtResA, mtSet8.mtResX, " +
+            "       mtSet9.mtResA, mtSet9.mtResX  " +
+            "  FROM MtDoubleList mt " +
+            "       INNER JOIN GrList gr ON mt.grID = gr.grID " +
+            "       INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
+            "       LEFT OUTER JOIN MtSet mtSet1 ON mt.mtID = mtSet1.mtID AND mtSet1.mtSet = 1 " +
+            "       LEFT OUTER JOIN MtSet mtSet2 ON mt.mtID = mtSet2.mtID AND mtSet2.mtSet = 2 " +
+            "       LEFT OUTER JOIN MtSet mtSet3 ON mt.mtID = mtSet3.mtID AND mtSet3.mtSet = 3 " +
+            "       LEFT OUTER JOIN MtSet mtSet4 ON mt.mtID = mtSet4.mtID AND mtSet4.mtSet = 4 " +
+            "       LEFT OUTER JOIN MtSet mtSet5 ON mt.mtID = mtSet5.mtID AND mtSet5.mtSet = 5 " +
+            "       LEFT OUTER JOIN MtSet mtSet6 ON mt.mtID = mtSet6.mtID AND mtSet6.mtSet = 6 " +
+            "       LEFT OUTER JOIN MtSet mtSet7 ON mt.mtID = mtSet7.mtID AND mtSet7.mtSet = 7 " +
+            "       LEFT OUTER JOIN MtSet mtSet8 ON mt.mtID = mtSet8.mtID AND mtSet8.mtSet = 8 " +
+            "       LEFT OUTER JOIN MtSet mtSet9 ON mt.mtID = mtSet9.mtID AND mtSet9.mtSet = 9 " +
+            " WHERE gr.grPublished = 1 AND " +
+            "       CAST(mtDateTime AS DATE) = ? AND " +
+            "       (mt.stA IS NULL OR mt.tmAtmID IS NOT NULL) AND " +
+            "       (mt.stX IS NULL OR mt.tmXtmID IS NOT NULL) AND " +
+            // "       plAplNr IS NOT NULL AND plXplNr IS NOT NULL AND " +
+            // If all == false then exclude finished matches
+            (all ? "" : (
+            "       2 * mt.mtResA < mtBestOf AND 2 * mt.mtResX < mtBestOf AND " +
+            "       mt.mtWalkOverA = 0 AND mt.mtWalkOverX = 0 AND "
+            )) +
+            "       (cpType = 2 OR cpType = 3) AND mtTable >= ? AND mtTable <= ? " +
+
+            // Team (Individual)
+            "UNION " + 
+            "SELECT cp.cpType, cp.cpName, cp.cpDesc, gr.grName, gr.grDesc, gr.grStage, gr.grModus, gr.grSize, " +
+            "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
+            "       mt.mtTimeStamp, mt.mtNr, mt.mtMS AS mtMS, mt.mtRound, mt.mtMatch, " +
+            "       mt.mtTable, mt.mtDateTime, mt.mtBestOf, mt.mtMatches, mt.mtReverse, " +
+            "       mt.mtResA, mt.mtResX, " +
+            "       plAplNr, plAplExtId, plApsLast, plApsFirst, plAnaName, plAnaRegion, " +
+            "       plBplNr, plBplExtId, plBpsLast, plBpsFirst, plBnaName, plBnaRegion, " +
+            "       plXplNr, plXplExtId, plXpsLast, plXpsFirst, plXnaName, plXnaRegion, " +
+            "       plYplNr, plYplExtId, plYpsLast, plYpsFirst, plYnaName, plYnaRegion, " +
+            "       stA.tmName \"tmAtmName\", stA.tmDesc \"tmAtmDesc\", stA.naName \"tmAnaName\", stA.naRegion \"tmAnaRegion\", " +
+            "       stX.tmName \"tmXtmName\", stX.tmDesc \"tmXtmDesc\", stX.naName \"tmXnaName\", stX.naRegion \"tmXnaRegion\", " +
+            "       mt.mtResA \"mttmResA\", mt.mtResX \"mttmResX\", " +
+            "       mtSet1.mtResA, mtSet1.mtResX, " +
+            "       mtSet2.mtResA, mtSet2.mtResX, " +
+            "       mtSet3.mtResA, mtSet3.mtResX, " +
+            "       mtSet4.mtResA, mtSet4.mtResX, " +
+            "       mtSet5.mtResA, mtSet5.mtResX, " +
+            "       mtSet6.mtResA, mtSet6.mtResX, " +
+            "       mtSet7.mtResA, mtSet7.mtResX, " +
+            "       mtSet8.mtResA, mtSet8.mtResX, " +
+            "       mtSet9.mtResA, mtSet9.mtResX  " +
+            "  FROM MtIndividualList mt " +
+            "       INNER JOIN GrList gr ON mt.grID = gr.grID " +
+            "       INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
+            "       INNER JOIN StTeamList stA ON mt.stA = stA.stID " +
+            "       INNER JOIN StTeamList stX ON mt.stX = stX.stID " +
+            "       LEFT OUTER JOIN MtSet mtSet1 ON mt.mtID = mtSet1.mtID AND mtSet1.mtSet = 1 AND mtSet1.mtMS = mt.mtMS " +
+            "       LEFT OUTER JOIN MtSet mtSet2 ON mt.mtID = mtSet2.mtID AND mtSet2.mtSet = 2 AND mtSet2.mtMS = mt.mtMS " +
+            "       LEFT OUTER JOIN MtSet mtSet3 ON mt.mtID = mtSet3.mtID AND mtSet3.mtSet = 3 AND mtSet3.mtMS = mt.mtMS " +
+            "       LEFT OUTER JOIN MtSet mtSet4 ON mt.mtID = mtSet4.mtID AND mtSet4.mtSet = 4 AND mtSet4.mtMS = mt.mtMS " +
+            "       LEFT OUTER JOIN MtSet mtSet5 ON mt.mtID = mtSet5.mtID AND mtSet5.mtSet = 5 AND mtSet5.mtMS = mt.mtMS " +
+            "       LEFT OUTER JOIN MtSet mtSet6 ON mt.mtID = mtSet6.mtID AND mtSet6.mtSet = 6 AND mtSet6.mtMS = mt.mtMS " +
+            "       LEFT OUTER JOIN MtSet mtSet7 ON mt.mtID = mtSet7.mtID AND mtSet7.mtSet = 7 AND mtSet7.mtMS = mt.mtMS " +
+            "       LEFT OUTER JOIN MtSet mtSet8 ON mt.mtID = mtSet8.mtID AND mtSet8.mtSet = 8 AND mtSet8.mtMS = mt.mtMS " +
+            "       LEFT OUTER JOIN MtSet mtSet9 ON mt.mtID = mtSet9.mtID AND mtSet9.mtSet = 9 AND mtSet9.mtMS = mt.mtMS " +
+            " WHERE gr.grPublished = 1 AND " +
+            "       CAST(mt.mtDateTime AS DATE) = ? AND " +
+            "       (mt.stA IS NULL OR mt.tmAtmID IS NOT NULL) AND " +
+            "       (mt.stX IS NULL OR mt.tmXtmID IS NOT NULL) AND " +
+            "       plAplNr IS NOT NULL AND plXplNr IS NOT NULL AND " +
+            "       mt.stA IS NOT NULL AND mt.stX IS NOT NULL AND " +
+            // If all == false then exclude finished matches
+            (all ? "" : (
+            "       (mt.mtResA IS NULL OR 2 * mt.mtResA < mt.mtBestOf) AND " + 
+            "       (mt.mtResX IS NULL OR 2 * mt.mtResX < mt.mtBestOf) AND " +
+            "       (mt.mtWalkOverA IS NULL OR mt.mtWalkOverA = 0) AND " +
+            "       (mt.mtWalkOverX IS NULL OR mt.mtWalkOverX = 0) AND " 
+            // "       2 * mttmResA < mt.mtMatches AND 2 * mttmResX < mt.mtMatches AND "
+            )) +
+            "       cp.cpType = 4 AND mt.mtTable >= ? AND mt.mtTable <= ? " +
+
+            // Order: By Table, Time, Individual.
+            // Also for Round and Match-in-Round for RR-groups with all matches 
+            // at the same time and table.
+            " ORDER BY mtTable, mtDateTime, mtMS, mtRound, mtMatch";
+        
         List<CounterModelMatch> list = new java.util.ArrayList<>();
         
         try {
             synchronized(syncUpdateMatch) {
                 if (!testConnection(updateMatchConnection)) {
+                    stmtMap.clear();                    
                     updateMatchConnection = getConnection(connectionString, true);
-                    updateMatchStmt = updateMatchConnection.prepareStatement(sql);
                 }
+                
+                if (!stmtMap.containsKey(sql))
+                    stmtMap.put(sql, updateMatchConnection.prepareStatement(sql));
+                
+                PreparedStatement updateMatchStmt = stmtMap.get(sql);
         
-                updateMatchStmt.setInt(1, fromTable);
-                updateMatchStmt.setInt(2, toTable);
-                updateMatchStmt.setInt(3, fromTable);
-                updateMatchStmt.setInt(4, toTable);
-                updateMatchStmt.setInt(5, fromTable);
-                updateMatchStmt.setInt(6, toTable);
+                int par = 0;
+                
+                updateMatchStmt.setObject(++par, date);
+                updateMatchStmt.setInt(++par, fromTable);
+                updateMatchStmt.setInt(++par, toTable);
+                updateMatchStmt.setObject(++par, date);
+                updateMatchStmt.setInt(++par, fromTable);
+                updateMatchStmt.setInt(++par, toTable);
+                updateMatchStmt.setObject(++par, date);
+                updateMatchStmt.setInt(++par, fromTable);
+                updateMatchStmt.setInt(++par, toTable);
 
-                try (java.sql.ResultSet result = updateMatchStmt.executeQuery()) {
-                    
+                try (java.sql.ResultSet result = updateMatchStmt.executeQuery()) {                    
                     while (result.next()) {
                         int idx = 1;
-
+                        
                         int     cpType      = result.getInt(idx++);
                         String  cpName      = getString(result, idx++);
                         String  cpDesc      = getString(result, idx++);
@@ -584,24 +680,8 @@ public final class TTM implements IDatabase {
         return null;
     }
 
-    final private static java.nio.charset.Charset charsetUTF = java.nio.charset.Charset.forName("UTF-16LE");
-    final private static java.nio.charset.Charset charsetISO = java.nio.charset.Charset.forName("ISO-8859-1");
-
     private static String getString(java.sql.ResultSet rs, int idx)  throws SQLException {
         return rs.getString(idx);
-        
-/*        
-        // Unter jTDS kann man nicht mehr zwischen varchar und nvarchar unterscheiden
-        byte[] bytes = rs.getBytes(idx);
-        if (bytes == null)
-            return null;
-        else if (bytes.length == 0)
-            return "";
-        else if (rs.getMetaData().getColumnType(idx) == java.sql.Types.NVARCHAR)
-            return new String(bytes, charsetUTF);
-        else
-            return new String(bytes, charsetISO);
-*/
     }
     
     

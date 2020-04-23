@@ -38,7 +38,8 @@ public class LivetickerAdmininstration {
     @XmlRootElement
     private static class LivetickerList {
         @XmlElements({
-            @XmlElement(name="ttm", type=countermanager.liveticker.ttm.TTM.class)
+            @XmlElement(name="ttm", type=countermanager.liveticker.ttm.TTM.class),
+            @XmlElement(name="unas", type=countermanager.liveticker.unas.Unas.class)
         })
         @XmlElementWrapper(name="livetickers")
         List<countermanager.liveticker.Liveticker> list = new java.util.ArrayList<>();
@@ -153,6 +154,4 @@ public class LivetickerAdmininstration {
         }
         
     }
-    
-    
 }

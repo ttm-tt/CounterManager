@@ -719,7 +719,7 @@ public final class CounterPanelItem extends javax.swing.JPanel {
     private void selectMatchMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectMatchMenuItemActionPerformed
 
         int table = counter + CounterModel.getDefaultInstance().getTableOffset();
-        final List<CounterModelMatch> matches = CounterModel.getDefaultInstance().getDatabase().update(table, table);
+        final List<CounterModelMatch> matches = CounterModel.getDefaultInstance().getDatabase().update(table, table, java.time.LocalDate.now(), false);
         selectMatchTable.setModel(new javax.swing.table.AbstractTableModel() {
             
             private final String[] columnNames =  {

@@ -7,6 +7,8 @@
 package countermanager.model.database;
 
 import countermanager.model.CounterModelMatch;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,7 +21,9 @@ public interface IDatabase {
     public void    disconnect();
     public boolean isConnected();
     public boolean testConnection(String connectString);
-    public List<CounterModelMatch> update(int fromTable, int toTable);
+    public long getMaxMtTimestamp();
+    public List<LocalDate> getChangedDates(long timestamp);
+    public List<CounterModelMatch> update(int fromTable, int toTable, java.time.LocalDate date, boolean all);
     public boolean updateResult(int mtNr, int mtMS, int[][] mtSets, int mtWalkOverA, int mtWalkOverX);
     
     public List<CounterModelMatch> getCurrentTeamMatches(int fromTable, int toTable);

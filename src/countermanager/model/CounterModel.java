@@ -663,7 +663,7 @@ public class CounterModel {
         if (database == null)
             return;
         
-        List<CounterModelMatch> matches = database.update(fromTable, toTable);
+        List<CounterModelMatch> matches = database.update(fromTable, toTable, java.time.LocalDate.now(), false);
         
         int lastTable = -1;
         
