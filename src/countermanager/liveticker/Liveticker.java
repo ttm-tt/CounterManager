@@ -8,15 +8,47 @@
 package countermanager.liveticker;
 
 import countermanager.model.ICounterModelListener;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 
 /**
  *
  * @author Administrator
  */
-@XmlRootElement
 public abstract class  Liveticker implements ICounterModelListener {
+
+    public static String encryptPassword(String pwd) {
+        if (pwd == null)
+            return null;
+        else if (pwd.isEmpty())
+            return "";
+        
+        try {
+            return Class.forName("countermanager.liveticker.ttm.TTMPrivate").getMethod("encryptPassword", String.class).invoke(null, pwd).toString();
+        } catch (Exception ex) {
+            
+        }
+
+        // In case of an error return the password to encrypt itself
+        return pwd;        
+    }
+    
+    public static String decryptPassword(String pwd) {
+        if (pwd == null)
+            return null;
+        else if (pwd.isEmpty())
+            return "";
+
+        try {
+            return Class.forName("countermanager.liveticker.ttm.TTMPrivate").getMethod("decryptPassword", String.class).invoke(null, pwd).toString();
+        } catch (Exception ex) {
+            
+        }
+        
+        // In case of an error return the password to decrypt itself
+        return pwd;        
+    }
+    
     public abstract void setMessage(int counter, String message);
     public abstract String getMessage(int counter);
     protected abstract void loadProperties();

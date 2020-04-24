@@ -1,9 +1,5 @@
 /* Copyright (C) 2020 Christoph Theis */
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package countermanager.liveticker.ttm;
 
 import com.enterprisedt.net.ftp.FTPException;
@@ -21,13 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-/**
- *
- * @author chtheis
- */
-@XmlRootElement
+
 public final class TTM extends Liveticker {
 
     java.util.Timer timer;
@@ -75,6 +67,9 @@ public final class TTM extends Liveticker {
     /**
      * @return the ftpPassword
      */
+    
+    // encrypt password in Xml
+    @XmlJavaTypeAdapter(countermanager.liveticker.XmlPasswordAdapter.class)
     public String getFtpPassword() {
         return ftpPassword;
     }
@@ -574,39 +569,6 @@ public final class TTM extends Liveticker {
             fos.write(bytes);
         }
     }
-
-    private String encryptPassword(String pwd) {
-        if (pwd == null)
-            return null;
-        else if (pwd.isEmpty())
-            return "";
-        
-        try {
-            return Class.forName("countermanager.liveticker.ttm.TTMPrivate").getMethod("encryptPassword", TTM.class, String.class).invoke(null, this, pwd).toString();
-        } catch (Exception ex) {
-            
-        }
-
-        // In case of an error return the password to encrypt itself
-        return pwd;
-    }
-
-    private String decryptPassword(String pwd) {
-        if (pwd == null)
-            return null;
-        else if (pwd.isEmpty())
-            return "";
-
-        try {
-            return Class.forName("countermanager.liveticker.ttm.TTMPrivate").getMethod("decryptPassword", TTM.class, String.class).invoke(null, this, pwd).toString();
-        } catch (Exception ex) {
-            
-        }
-        
-        // In case of an error return the password to decrypt itself
-        return pwd;
-    }
-
 
     @Override
     public String getName() {

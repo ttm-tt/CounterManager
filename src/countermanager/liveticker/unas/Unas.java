@@ -5,7 +5,6 @@ package countermanager.liveticker.unas;
 import com.enterprisedt.net.ftp.FTPException;
 import com.enterprisedt.net.ftp.FileTransferOutputStream;
 import countermanager.liveticker.Liveticker;
-import countermanager.liveticker.ttm.TTM;
 import countermanager.model.CounterModel;
 import countermanager.model.CounterModelMatch;
 import countermanager.model.database.IDatabase;
@@ -21,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.script.Invocable;
 import javax.script.ScriptException;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 public class Unas extends Liveticker {
@@ -168,10 +168,10 @@ public class Unas extends Liveticker {
                     client = (com.enterprisedt.net.ftp.FileTransferClientInterface) Class.forName("at.co.ttm.ftp.FtpClient").getConstructor(Boolean.TYPE).newInstance(ftpSecure);
                 } catch (ClassNotFoundException ex) {
                     // We expect this when we can't use the commercial lib
-                    Logger.getLogger(TTM.class.getName()).log(Level.FINE, null, ex);                
+                    Logger.getLogger(getClass().getName()).log(Level.FINE, null, ex);                
                 } catch (Exception ex) {
                     // Anything unexpected like the Spanish Inquistion
-                    Logger.getLogger(TTM.class.getName()).log(Level.WARNING, null, ex);                
+                    Logger.getLogger(getClass().getName()).log(Level.WARNING, null, ex);                
                 }
 
                 if (client == null) {
@@ -310,6 +310,9 @@ public class Unas extends Liveticker {
     /**
      * @return the ftpPassword
      */
+    
+    // encrypt password in Xml
+    @XmlJavaTypeAdapter(countermanager.liveticker.XmlPasswordAdapter.class)
     public String getFtpPassword() {
         return ftpPassword;
     }
@@ -500,39 +503,6 @@ public class Unas extends Liveticker {
         }
     }
 
-    private String encryptPassword(String pwd) {
-        if (pwd == null)
-            return null;
-        else if (pwd.isEmpty())
-            return "";
-        
-        try {
-            return Class.forName("countermanager.liveticker.ttm.TTMPrivate").getMethod("encryptPassword", TTM.class, String.class).invoke(null, this, pwd).toString();
-        } catch (Exception ex) {
-            
-        }
-
-        // In case of an error return the password to encrypt itself
-        return pwd;
-    }
-
-    private String decryptPassword(String pwd) {
-        if (pwd == null)
-            return null;
-        else if (pwd.isEmpty())
-            return "";
-
-        try {
-            return Class.forName("countermanager.liveticker.ttm.TTMPrivate").getMethod("decryptPassword", TTM.class, String.class).invoke(null, this, pwd).toString();
-        } catch (Exception ex) {
-            
-        }
-        
-        // In case of an error return the password to decrypt itself
-        return pwd;
-    }
-    
-    
     // Read and write lastTimestamp in INI file
     // deliberately named readXxx / writeXxx so they don't appear in the settings
     private long readLastTimestamp() {
@@ -547,7 +517,7 @@ public class Unas extends Liveticker {
 
     private String  ftpHost = "";
     private String  ftpUser = "";
-    private String  ftpPassword = "";
+    private String  ftpPassword = "";    
     private String  ftpDirectory = "";
     private boolean ftpPassiveMode = true;
     private boolean ftpSecure = false;
