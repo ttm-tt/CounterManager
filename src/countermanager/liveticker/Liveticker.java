@@ -8,7 +8,27 @@
 package countermanager.liveticker;
 
 import countermanager.model.ICounterModelListener;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import countermanager.prefs.Properties;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.AclEntry;
+import java.nio.file.attribute.AclEntryPermission;
+import java.nio.file.attribute.AclEntryType;
+import java.nio.file.attribute.AclFileAttributeView;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.nio.file.attribute.UserPrincipal;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 
 /**
@@ -17,38 +37,6 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  */
 public abstract class  Liveticker implements ICounterModelListener {
 
-    public static String encryptPassword(String pwd) {
-        if (pwd == null)
-            return null;
-        else if (pwd.isEmpty())
-            return "";
-        
-        try {
-            return Class.forName("countermanager.liveticker.ttm.TTMPrivate").getMethod("encryptPassword", String.class).invoke(null, pwd).toString();
-        } catch (Exception ex) {
-            
-        }
-
-        // In case of an error return the password to encrypt itself
-        return pwd;        
-    }
-    
-    public static String decryptPassword(String pwd) {
-        if (pwd == null)
-            return null;
-        else if (pwd.isEmpty())
-            return "";
-
-        try {
-            return Class.forName("countermanager.liveticker.ttm.TTMPrivate").getMethod("decryptPassword", String.class).invoke(null, pwd).toString();
-        } catch (Exception ex) {
-            
-        }
-        
-        // In case of an error return the password to decrypt itself
-        return pwd;        
-    }
-    
     public abstract void setMessage(int counter, String message);
     public abstract String getMessage(int counter);
     protected abstract void loadProperties();

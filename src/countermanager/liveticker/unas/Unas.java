@@ -8,6 +8,7 @@ import countermanager.liveticker.Liveticker;
 import countermanager.model.CounterModel;
 import countermanager.model.CounterModelMatch;
 import countermanager.model.database.IDatabase;
+import countermanager.prefs.PasswordCrypto;
 import countermanager.prefs.Preferences;
 import countermanager.prefs.Properties;
 import java.io.File;
@@ -441,14 +442,14 @@ public class Unas extends Liveticker {
         Preferences.loadProperties(this, this.getClass().getName(), true);
         
         if (!ftpPassword.isEmpty())
-            ftpPassword = decryptPassword(ftpPassword);        
+            ftpPassword = PasswordCrypto.decryptPassword(ftpPassword);        
     }
 
     @Override
     protected void saveProperties() {
         String savePwd = ftpPassword;
         if (!ftpPassword.isEmpty())
-            ftpPassword = encryptPassword(ftpPassword);
+            ftpPassword = PasswordCrypto.encryptPassword(ftpPassword);
         
         Preferences.saveProperties(this, this.getClass().getName(), true);
         
@@ -506,11 +507,11 @@ public class Unas extends Liveticker {
     // Read and write lastTimestamp in INI file
     // deliberately named readXxx / writeXxx so they don't appear in the settings
     private long readLastTimestamp() {
-        return Properties.getLong("Unas", "lastTimestamp", lastTimestamp);
+        return Properties.readLong("Unas", "lastTimestamp", lastTimestamp);
     }
     
     private void writeLastTimestamp(long currentMaxTimestamp) {
-        Properties.putLong("Unas", "lastTimestamp", currentMaxTimestamp);
+        Properties.writeLong("Unas", "lastTimestamp", currentMaxTimestamp);
         lastTimestamp = currentMaxTimestamp;
     }
 

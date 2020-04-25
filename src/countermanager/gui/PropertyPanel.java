@@ -27,7 +27,10 @@ public class PropertyPanel extends javax.swing.JPanel {
         public Component getTableCellRendererComponent(JTable table, Object value,
                               boolean isSelected, boolean hasFocus, int row, int column) {
             Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            ((DefaultTableCellRenderer) c).setText(String.format("%-" + value.toString().length() + "s", "").replace(' ', '*'));
+            if (value.toString().isEmpty())
+                ((DefaultTableCellRenderer) c).setText("");
+            else
+                ((DefaultTableCellRenderer) c).setText(String.format("%-" + value.toString().length() + "s", "").replace(' ', '*'));
             return c;
         }
     }

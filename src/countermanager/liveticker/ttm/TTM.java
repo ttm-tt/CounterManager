@@ -11,6 +11,7 @@ import countermanager.liveticker.Liveticker;
 import countermanager.liveticker.LivetickerAdmininstration;
 import countermanager.model.CounterModel;
 import countermanager.model.CounterModelMatch;
+import countermanager.prefs.PasswordCrypto;
 import countermanager.prefs.Preferences;
 import java.io.IOException;
 import java.util.List;
@@ -548,14 +549,14 @@ public final class TTM extends Liveticker {
         Preferences.loadProperties(this, this.getClass().getName(), true);
         
         if (!ftpPassword.isEmpty())
-            ftpPassword = decryptPassword(ftpPassword);
+            ftpPassword = PasswordCrypto.decryptPassword(ftpPassword);
     }
     
     @Override
     protected void saveProperties() {
         String savePwd = ftpPassword;
         if (!ftpPassword.isEmpty())
-            ftpPassword = encryptPassword(ftpPassword);
+            ftpPassword = PasswordCrypto.encryptPassword(ftpPassword);
         
         Preferences.saveProperties(this, this.getClass().getName(), true);
         

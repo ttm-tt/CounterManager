@@ -40,22 +40,27 @@ public class Properties extends java.util.Properties {
 
     
     public static File getIniFile() {
+        return getIniFile("countermanager.ini");
+    }
+    
+    
+    public static File getIniFile(String fileName) {
         File ini = null;
         
         // 1) Im aktuellen Verzeichnis nach countermanger.ini suchen
-        ini = new File(System.getProperty("user.dir"), "countermanager.ini");
+        ini = new File(System.getProperty("user.dir"), fileName);
         if (ini.exists())
             return ini;
         
         // 2) Nach CounterManager/countermanager.ini suchen
         //    Das File wird von einer Installation angelegt
-        ini = findPath("CounterManager" + File.separator + "countermanager.ini");
+        ini = findPath("CounterManager" + File.separator + fileName);
         if (ini != null)
             return ini;
         
         // 3) Wenn alles nichts hilft kommen wir nicht von einer Installation
         //    In dem Fall ini file im aktuellen Verzeichnis anlegen
-        ini = new File(System.getProperty("user.dir"), "countermanager.ini");
+        ini = new File(System.getProperty("user.dir"), fileName);
         try {
             ini.createNewFile();
         } catch (IOException ex) {
@@ -145,7 +150,7 @@ public class Properties extends java.util.Properties {
     
     
     // Read specific value form ini file
-    public static long getLong(String section, String key, long defaultValue) {
+    public static long readLong(String section, String key, long defaultValue) {
         org.ini4j.Ini ini = new org.ini4j.Ini();
         ini.setFile(getIniFile());
         
@@ -168,7 +173,7 @@ public class Properties extends java.util.Properties {
     }
         
     // Write specific value to ini file
-    public static void putLong(String section, String key, long val) {
+    public static void writeLong(String section, String key, long val) {
         org.ini4j.Ini ini = new org.ini4j.Ini();
         ini.setFile(getIniFile());
         
