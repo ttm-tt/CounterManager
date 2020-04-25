@@ -1,8 +1,6 @@
 /* Copyright (C) 2020 Christoph Theis */
 package countermanager.prefs;
 
-import countermanager.liveticker.Liveticker;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -93,12 +91,12 @@ public final class PasswordCrypto {
                     Files.getFileAttributeView(keyFile.toPath(), AclFileAttributeView.class).setAcl(aclList);
                 }                    
             } catch (NoSuchAlgorithmException ex) {
-                Logger.getLogger(Liveticker.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(PasswordCrypto.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
-                Logger.getLogger(Liveticker.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(PasswordCrypto.class.getName()).log(Level.SEVERE, null, ex);
             } catch (Throwable t) {    
                 // Anything else like WindowsExceptions (e.g. access denied)
-                Logger.getLogger(Liveticker.class.getName()).log(Level.SEVERE, null, t);
+                Logger.getLogger(PasswordCrypto.class.getName()).log(Level.SEVERE, null, t);
             }
         }
 
@@ -108,7 +106,7 @@ public final class PasswordCrypto {
             cipher.init(Cipher.ENCRYPT_MODE, sks, cipher.getParameters());
             return Base64.getEncoder().encodeToString(cipher.doFinal(pwd.getBytes()));
         } catch (Exception ex) {
-                Logger.getLogger(Liveticker.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PasswordCrypto.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // In case of an error return the password to encrypt itself
@@ -131,7 +129,7 @@ public final class PasswordCrypto {
             cipher.init(Cipher.DECRYPT_MODE, sks, cipher.getParameters());
             return new String(cipher.doFinal(Base64.getDecoder().decode(pwd)));
         } catch (Exception ex) {
-            Logger.getLogger(Liveticker.class.getName()).log(Level.SEVERE, null, ex); 
+            Logger.getLogger(PasswordCrypto.class.getName()).log(Level.SEVERE, null, ex); 
         }
         
         // In case of an error return the password to decrypt itself
