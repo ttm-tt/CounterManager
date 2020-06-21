@@ -79,6 +79,19 @@ function update(matches, args) {
 
             var ct = date.getTime();
 
+            // Sort array by table, date / time, nr and team match
+            data.sort(function(a, b) {
+                var res = a.mtTable - b.mtTable;
+                if (!res)
+                    res = a.mtDateTime - b.mtDateTime;
+                if (!res)
+                    res = a.mtNr - b.mtNr;
+                if (!res)
+                    res = a.mtMS - b.mtMS;
+
+                return res;
+            });
+                
             // A) Angefangene Spiele durch updates ersetzen
             // B) Fertige Spiele einmal anzeigen
 
@@ -189,7 +202,20 @@ function show(matches, start, mtTimestamp) {
 
     xmlrpc("../RPC2", "ttm.listNextMatches", [args],
         function success(data) {
-           for (var i = 0; i < data.length; i++) {
+            // Sort array by table, date / time, nr and team match
+            data.sort(function(a, b) {
+                var res = a.mtTable - b.mtTable;
+                if (!res)
+                    res = a.mtDateTime - b.mtDateTime;
+                if (!res)
+                    res = a.mtNr - b.mtNr;
+                if (!res)
+                    res = a.mtMS - b.mtMS;
+
+                return res;
+            });
+            
+            for (var i = 0; i < data.length; i++) {
                if (matches[data[i].mtTable] != undefined) {
                    // No resceduled matches, only updates of results
                    if (matches[data[i].mtTable].mtNr == data[i].mtNr && matches[data[i].mtTable].mtMS == data[i].mtMS)
@@ -347,7 +373,7 @@ function formatMatch(mt, rowCount) {
                 '<td class="names left" colspan="2">' + formatTeam(mt.tmAtmDesc) + '</td>' + 
                 '<td class="names center">' + '-' + '</td>' +
                 '<td class="names right" colspan="2">' + formatTeam(mt.tmXtmDesc) + '</td>' + 
-                '<td class="matches">' + mt.mtTeamResA + '&nbsp;:&nbsp;' + mt.mtTeamResX + '</td>';
+                '<td class="matches">' + mt.mttmResA + '&nbsp;:&nbsp;' + mt.mttmResX + '</td>';
         }  
 
         if ( isStarted(mt) && getParameterByName('individual', 0) > 0 ) {

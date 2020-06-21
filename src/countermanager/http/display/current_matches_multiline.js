@@ -9,8 +9,6 @@
  *      mintime:            default 60          Mindestzeit in Sekunden, die ein fertiges Spiel angezeigt wird
  *      fromTable:          default ''          Anzeige von Tisch
  *      toTable:            default ''          Anzeige bis Tisch
- *      tableList:          default ''          Anzeige beschraenkt auf Liste von Tischen
- *      day:                default 0           Auswahl Tag
  *      date:               default ''          Auswahl Datum
  *      all:                default 0           Alle Spiele anzeigen
  *      rows:               default 999         Max. Anzahl Zeilen
@@ -19,8 +17,8 @@
  *      lastNameLength:     default 0           Max. Laenge der Nachnamen (default: alles)
  *      teamNameLength:     default 0           Max. Laenge der Teamnamen (default: alles)
  *      showTeams:          default 0           Mannschaften statt Spieler anzeigen
- *      noFlag:             default 0           Anzeige der Flagge unterdruecken
- *      showService:        default 1          Show who has the srevice
+ *      flag:               default 'nation'    Choose either 'none', 'nation' or 'region' to show the flag
+ *      showService:        default 1           Show who has the srevice
  */
 
 var args = {};
@@ -29,7 +27,7 @@ var nameLength = 0;
 var lastNameLength = 0;
 var firstNameLength = 0;
 var teamNameLength = 0;
-var noFlag = false;
+var flag = 'nation';
 var showService = false;
 var prestart = 3600;
 
@@ -38,7 +36,7 @@ $(document).ready(function() {
     lastNameLength = getParameterByName("lastNameLength", nameLength);
     firstNameLength = getParameterByName("firstNameLength", nameLength);
     teamNameLength = getParameterByName("teamNameLength", nameLength);
-    noFlag = getParameterByName("noFlag", 0) != 0;
+    flag = getParameterByName("flag", "nation");
     showService = getParameterByName("showService", 1) != 0;
     prestart = parseInt(getParameterByName("prestart", prestart)) * 1000;
     
@@ -60,9 +58,6 @@ $(document).ready(function() {
         'notStarted': 0
     };
     
-    if (getParameterByName('day', 0) != 0)
-        args['day'] = getParameterByName('day', 0);
-    
     if (getParameterByName('date', '') != '')
         args['date'] = getParameterByName('date', formatDate(date));
     
@@ -71,16 +66,13 @@ $(document).ready(function() {
 
     if (getParameterByName('toTable', 0) != 0)
         args['toTable'] = getParameterByName('toTable', 0);
-    
-    if (getParameterByName('tableList', '') != '')
-        args['tableList'] = getParameterByName('tableList');
 
     // TODO: Nur bis jetzt, also 'to' : date anhaengen.
-    update({}, args);
+    update([], args);
 });
 
 function update(matches, args) {
-    if (parent != this && !parent.show())
+    if (parent !== null && parent != this && !parent.show())
         return;
 
     xmlrpc(
@@ -96,6 +88,19 @@ function update(matches, args) {
                     date.setDate(getParameterByName('day', date.getDate()));
                 
                 var ct = date.getTime();
+                
+                // Sort array by table, date / time, nr and team match
+                data.sort(function(a, b) {
+                    var res = a.mtTable - b.mtTable;
+                    if (!res)
+                        res = a.mtDateTime - b.mtDateTime;
+                    if (!res)
+                        res = a.mtNr - b.mtNr;
+                    if (!res)
+                        res = a.mtMS - b.mtMS;
+
+                    return res;
+                });
                 
                 // Prepare finished matches which were shown before
                 // If the match is finished remove the points so we show the final result only
@@ -176,7 +181,7 @@ function update(matches, args) {
 
 function show(matches, start, mtTimestamp) {
     if (size(matches) === 0) {
-        setTimeout(function() {update({}, args);}, 2000);
+        setTimeout(function() {update([], args);}, 2000);
         return;
     }
 
@@ -212,6 +217,19 @@ function show(matches, start, mtTimestamp) {
 
     xmlrpc("../RPC2", "ttm.listNextMatches", [args],
             function success(data) {
+                // Sort array by table, date / time, nr and team match
+                data.sort(function(a, b) {
+                    var res = a.mtTable - b.mtTable;
+                    if (!res)
+                        res = a.mtDateTime - b.mtDateTime;
+                    if (!res)
+                        res = a.mtNr - b.mtNr;
+                    if (!res)
+                        res = a.mtMS - b.mtMS;
+
+                    return res;
+                });
+                
                 for (var i = 0; i < data.length; i++) {
                     if (matches[data[i].mtTable] != undefined) {
                         // No resceduled matches, only updates of results
@@ -308,7 +326,7 @@ function isFinished(mt) {
     if (mt == undefined)
         return false;
 
-    if (mt.mtMatches > 1 && (2 * mt.mtTeamResA > mt.mtMatches || 2 * mt.mtTeamResX > mt.mtMatches))
+    if (mt.mtMatches > 1 && (2 * mt.mttmResA > mt.mtMatches || 2 * mt.mttmResX > mt.mtMatches))
         return true;
     
     if (mt.mtWalkOverA != 0 || mt.mtWalkOverX != 0)
@@ -328,7 +346,7 @@ function isStarted(mt) {
     if (isFinished(mt))
         return true;
     
-    if (mt.mtSets !== undefined && mt.mtSets.length > 0 && (mt.mtSets[0][0] > 0 || mt.mtSets[0][1] > 0))
+    if (mt.mtResult !== undefined && mt.mtResult.length > 0 && (mt.mtResult[0][0] > 0 || mt.mtResult[0][1] > 0))
         return true;
 
     var ct = new Date().getTime();
@@ -353,12 +371,12 @@ function formatMatch(mt, clazz) {
     var ret = '';
 
     var caption = '<tr class="caption last">';
-    caption += '<td class="table" colspan="' + (noFlag ? '1' : '2') + '">' + 'T.&nbsp;' + mt.mtTable + '</td>';
+    caption += '<td class="table" colspan="' + (flag === 'none' ? '1' : '2') + '">' + 'T.&nbsp;' + mt.mtTable + '</td>';
     if (showService) {
         caption += '<td class="playerservice"></td>';
     }
     caption += '<td class="time">' + formatTime(mt.mtDateTime) + '</td>';
-    caption += '<td class="event">' + mt.cpName + '&nbsp;' + mt.grDesc + (mt.grNofRounds === 1 ? '' : '&nbsp;' + mt.mtRoundStr) + '</td>';
+    caption += '<td class="event">' + mt.cpName + '&nbsp;' + mt.grDesc + '&nbsp;' + formatRound(mt) + '</td>';
     caption += '<td class="points">' + 'Pts' + '</td>';
     caption += '<td class="games">' + 'Gms' + '</td>';
     if (mt.cpType == 4)
@@ -369,25 +387,27 @@ function formatMatch(mt, clazz) {
     var left = '<tr class="players left last ' + clazz + ' ' + singleOrDouble + '">';
     var right = '<tr class="players right last ' + clazz + ' ' + singleOrDouble + '">';
 
-    if (!noFlag) {
+    if (flag !== 'none') {
         left += '<td class="flag">';
         right += '<td class="flag">';
         
-        if (mt.plAnaName !== undefined)
-            left += formatFlag(mt.plAnaName);
-        else if (mt.cpType === 4 && mt.tmAnaName !== undefined)
-            left += formatFlag(mt.tmAnaName);
+        var prop = flag === 'region' ? 'naRegion' : 'naName';
         
-        if (mt.plBnaName !== undefined && mt.plBnaName !== '')
-            left += '<br>' + formatFlag(mt.plBnaName);
+        if (mt['plA' + prop] !== undefined)
+            left += formatFlag(mt['plA' + prop]);
+        else if (mt.cpType === 4 && mt['tmA' + prop] !== undefined)
+            left += formatFlag(mt['tmA' + prop]);
+        
+        if (mt['plB' + prop] !== undefined && mt['plB' + prop] !== '')
+            left += '<br>' + formatFlag(mt['plB' + prop]);
     
-        if (mt.plXnaName !== undefined)
-            right += formatFlag(mt.plXnaName);
-        else if (mt.cpType === 4 && mt.tmXnaName !== undefined)
-            right += formatFlag(mt.tmXnaName);
+        if (mt['plX' + prop] !== undefined)
+            right += formatFlag(mt['plX' + prop]);
+        else if (mt.cpType === 4 && mt['tmX' + prop] !== undefined)
+            right += formatFlag(mt['tmX' + prop]);
         
-        if (mt.plYnaName !== undefined && mt.plYnaName !== '')
-            right += '<br>' + formatFlag(mt.plYnaName);
+        if (mt['plY' + prop] !== undefined && mt['plY' + prop] !== '')
+            right += '<br>' + formatFlag(mt['plY' + prop]);
         
         left += '</td>';
         right += '</td>';
@@ -459,15 +479,15 @@ function formatMatch(mt, clazz) {
             // In this case stick with the games
             left += '<td class="points"></td>';
             right += '<td class="points"></td>';            
-        } else if (mt.mtSets === undefined || mt.mtSets === null || mt.mtSets.length === 0) {
+        } else if (mt.mtResult === undefined || mt.mtResult === null || mt.mtResult.length === 0) {
             // Nothing, because we don't know any better
             left += '<td class="points"></td>';
             right += '<td class="points"></td>';
-        } else if (mt.mtSets.length <= (mt.mtResA + mt.mtResX)) {
+        } else if (mt.mtResult.length <= (mt.mtResA + mt.mtResX)) {
             // E.g. final result when all matches have been played
             // Take the last result
-            left += '<td class="points">' + mt.mtSets[mt.mtSets.length - 1][0] + '</td>';
-            right += '<td class="points">' + mt.mtSets[mt.mtSets.length - 1][1] + '</td>'; 
+            left += '<td class="points">' + mt.mtResult[mt.mtResult.length - 1][0] + '</td>';
+            right += '<td class="points">' + mt.mtResult[mt.mtResult.length - 1][1] + '</td>'; 
 
             // If the match has just finished show games as if we are still in the last game
             if (mtResA == mt.mtBestOf)
@@ -475,11 +495,11 @@ function formatMatch(mt, clazz) {
             if (mtResX == mt.mtBestOf)
                 --mtResX;
         } else if (mt.mtResA + mt.mtResX > 0 && 
-                mt.mtSets[mt.mtResA + mt.mtResX][0] == 0 && 
-                mt.mtSets[mt.mtResA + mt.mtResX][1] == 0) {
+                mt.mtResult[mt.mtResA + mt.mtResX][0] == 0 && 
+                mt.mtResult[mt.mtResA + mt.mtResX][1] == 0) {
             // Start of next game or match finished
-            left += '<td class="points">' + mt.mtSets[mt.mtResA + mt.mtResX - 1][0] + '</td>';
-            right += '<td class="points">' + mt.mtSets[mt.mtResA + mt.mtResX - 1][1] + '</td>';            
+            left += '<td class="points">' + mt.mtResult[mt.mtResA + mt.mtResX - 1][0] + '</td>';
+            right += '<td class="points">' + mt.mtResult[mt.mtResA + mt.mtResX - 1][1] + '</td>';            
 
             // If the match has just finished show games as if we are still in the last game
             if (mtResA == mt.mtBestOf)
@@ -488,8 +508,8 @@ function formatMatch(mt, clazz) {
                 --mtResX;
         } else {
             // During a game
-            left += '<td class="points">' + mt.mtSets[mt.mtResA + mt.mtResX][0] + '</td>';
-            right += '<td class="points">' + mt.mtSets[mt.mtResA + mt.mtResX][1] + '</td>';
+            left += '<td class="points">' + mt.mtResult[mt.mtResA + mt.mtResX][0] + '</td>';
+            right += '<td class="points">' + mt.mtResult[mt.mtResA + mt.mtResX][1] + '</td>';
         }
 
         // Games, which may have been changed above
@@ -498,9 +518,9 @@ function formatMatch(mt, clazz) {
     }
 
     if (mt.cpType == 4) {
-        if (isStarted(mt) || mt.mtTeamResA > 0 || mt.mtTeamResX > 0) {
-            left += '<td class="matches">' + mt.mtTeamResA + '</td>';
-            right += '<td class="matches">' + mt.mtTeamResX + '</td>';
+        if (isStarted(mt) || mt.mttmResA > 0 || mt.mttmResX > 0) {
+            left += '<td class="matches">' + mt.mttmResA + '</td>';
+            right += '<td class="matches">' + mt.mttmResX + '</td>';
         } else {
             left += '<td class="matches"></td>';
             right += '<td class="matches"></td>';
@@ -533,7 +553,7 @@ function formatPlayer(psLast, psFirst) {
 
 
 function formatFlag(name) {
-    if (name === undefined || name == '' || noFlag)
+    if (name === undefined || name == '' || flag === 'none')
         return '';
 
     return '<img src="' + '../flags/' + name + '.png"></img>';

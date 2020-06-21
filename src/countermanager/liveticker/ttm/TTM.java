@@ -434,7 +434,7 @@ public final class TTM extends Liveticker {
             updateMatch.timeoutRightRunning = false;
         }
         
-        if (counterMatch.mtReverse > 0)
+        if (counterMatch.mtReverse)
             updateMatch.reverse();
 
         String data = json.toJson(updateMatch);

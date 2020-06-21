@@ -12,7 +12,7 @@
  * toTable:   Bis Tisch
  * table:     Nur Tisch
  * tableList: Liste von Tichen
- * noFlag: Anzeige der Flagge unterdruecken
+ * flag: Choose either 'none', 'nation' or 'region' to show the flag
  * noUpdate: Anzeige stehen lassen
  * nameLength: Max. Laenge der Namen (default: alles)
  * firstNameLength: Max. Laenge der Voramen (default: alles)
@@ -26,12 +26,14 @@ var nameLength = 0;
 var lastNameLength = 0;
 var firstNameLength = 0;
 var teamNameLength = 0;
+var flag = 'nation';
 
 $(document).ready(function() {
     nameLength = getParameterByName("nameLength", 0);
     lastNameLength = getParameterByName("lastNameLength", nameLength);
     firstNameLength = getParameterByName("firstNameLength", nameLength);
     teamNameLength = getParameterByName("teamNameLength", nameLength);
+    flag = getParameterByName("flag", "nation");
     
     if (parent != undefined && parent.loadFromCache != undefined) {
         var data = parent.loadFromCache();
@@ -91,7 +93,20 @@ function update(matches, args) {
                     date.setDate(getParameterByName('day', date.getDate()));
                 
                 var ct = date.getTime();
+                
+                // Sort array by table, date / time, nr and team match
+                data.sort(function(a, b) {
+                    var res = a.mtTable - b.mtTable;
+                    if (!res)
+                        res = a.mtDateTime - b.mtDateTime;
+                    if (!res)
+                        res = a.mtNr - b.mtNr;
+                    if (!res)
+                        res = a.mtMS - b.mtMS;
 
+                    return res;
+                });
+        
                 // A) Angefangene Spiele durch updates ersetzen
                 // B) Fertige Spiele einmal anzeigen
 
@@ -250,7 +265,20 @@ function show(matches, start, idx, mtTimestamp) {
 
     xmlrpc("../RPC2", "ttm.listNextMatches", [args],
         function success(data) {
-           for (var i = 0; i < data.length; i++) {
+            // Sort array by table, date / time, nr and team match
+            data.sort(function(a, b) {
+                var res = a.mtTable - b.mtTable;
+                if (!res)
+                    res = a.mtDateTime - b.mtDateTime;
+                if (!res)
+                    res = a.mtNr - b.mtNr;
+                if (!res)
+                    res = a.mtMS - b.mtMS;
+
+                return res;
+            });
+ 
+            for (var i = 0; i < data.length; i++) {
                if (matches[data[i].mtTable] !== undefined && matches[data[i].mtTable][0] !== undefined) {
                    // No resceduled matches, only updates of results
                    if (matches[data[i].mtTable][0].mtNr == data[i].mtNr && matches[data[i].mtTable][0].mtMS == data[i].mtMS)
@@ -367,7 +395,7 @@ function isFinished(mt) {
     if (mt == undefined)
         return false;
 
-    if (mt.mtMatches > 1 && (2 * mt.mtTeamResA > mt.mtMatches || 2 * mt.mtTeamResX > mt.mtMatches))
+    if (mt.mtMatches > 1 && (2 * mt.mttmResA > mt.mtMatches || 2 * mt.mttmResX > mt.mtMatches))
         return true;
 
     if (mt.mtWalkOverA != 0 || mt.mtWalkOverX != 0)
@@ -383,13 +411,13 @@ function isStarted(mt) {
     if (mt == undefined)
         return false;
 
-    if (mt.mtSets === undefined)
+    if (mt.mtResult === undefined)
         return false;
 
     if (isFinished(mt))
         return true;
 
-    if (mt.mtSets.length > 0 && (mt.mtSets[0][0] > 0 || mt.mtSets[0][1] > 0))
+    if (mt.mtResult.length > 0 && (mt.mtResult[0][0] > 0 || mt.mtResult[0][1] > 0))
         return true;
 
     if ((mt.mtResA == 0 && mt.mtResX == 0) ||
@@ -407,9 +435,9 @@ function formatMatch(mt, idx) {
     var history = '';
     
     if (mt.cpType == 4) {
-        if (isStarted(mt) || mt.mtTeamResA > 0 || mt.mtTreamResX > 0) {
-            $('#top .matches').html(mt.mtTeamResA);
-            $('#bottom .matches').html(mt.mtTeamResX);
+        if (isStarted(mt) || mt.mttmResA > 0 || mt.mtTreamResX > 0) {
+            $('#top .matches').html(mt.mttmResA);
+            $('#bottom .matches').html(mt.mttmResX);
         } else {
             $('#top .matches').html('');
             $('#bottom .matches').html('');            
@@ -421,17 +449,17 @@ function formatMatch(mt, idx) {
         $('#top .games').html(mt.mtResA);
         $('#bottom .games').html(mt.mtResX);
 
-        $('#top .points').html(mt.mtSets[mt.mtResA + mt.mtResX - 1][0]);
-        $('#bottom .points').html(mt.mtSets[mt.mtResA + mt.mtResX - 1][1]);
+        $('#top .points').html(mt.mtResult[mt.mtResA + mt.mtResX - 1][0]);
+        $('#bottom .points').html(mt.mtResult[mt.mtResA + mt.mtResX - 1][1]);
 
-        for (var i = 0; i < mt.mtSets.length; i++) {
+        for (var i = 0; i < mt.mtResult.length; i++) {
             if (i >= mt.mtResA + mt.mtResX)
                 break;
 
-            if (mt.mtSets[i][0] > mt.mtSets[i][1])
-                history += '<span class="game">' + mt.mtSets[i][1] + '</span>';
+            if (mt.mtResult[i][0] > mt.mtResult[i][1])
+                history += '<span class="game">' + mt.mtResult[i][1] + '</span>';
             else
-                history += '<span class="game">-' + mt.mtSets[i][0] + '</span>';
+                history += '<span class="game">-' + mt.mtResult[i][0] + '</span>';
         }
     } else if (!isStarted(mt) && mt.mtDateTime > ct) {
         $('#caption .text').html('Next on Table ' + mt.mtTable);
@@ -462,27 +490,27 @@ function formatMatch(mt, idx) {
                     // In this case just stick with the games
                     $('#top .points').html('0');
                     $('#bottom .points').html('0');
-                } else if (mt.mtSets == undefined || mt.mtSets.length <= (mt.mtResA + mt.mtResX)) {
+                } else if (mt.mtResult == undefined || mt.mtResult.length <= (mt.mtResA + mt.mtResX)) {
                     $('#top .points').html('0');
                     $('#bottom .points').html('0');
                 } else if (mt.mtResA + mt.mtResX > 0 &&
-                        mt.mtSets[mt.mtResA + mt.mtResX][0] == 0 &&
-                        mt.mtSets[mt.mtResA + mt.mtResX][1] == 0) {
-                    $('#top .points').html(mt.mtSets[mt.mtResA + mt.mtResX - 1][0]);
-                    $('#bottom .points').html(mt.mtSets[mt.mtResA + mt.mtResX - 1][1]);
+                        mt.mtResult[mt.mtResA + mt.mtResX][0] == 0 &&
+                        mt.mtResult[mt.mtResA + mt.mtResX][1] == 0) {
+                    $('#top .points').html(mt.mtResult[mt.mtResA + mt.mtResX - 1][0]);
+                    $('#bottom .points').html(mt.mtResult[mt.mtResA + mt.mtResX - 1][1]);
                 } else {
-                    $('#top .points').html(mt.mtSets[mt.mtResA + mt.mtResX][0]);
-                    $('#bottom .points').html(mt.mtSets[mt.mtResA + mt.mtResX][1]);
+                    $('#top .points').html(mt.mtResult[mt.mtResA + mt.mtResX][0]);
+                    $('#bottom .points').html(mt.mtResult[mt.mtResA + mt.mtResX][1]);
                 }
 
-                for (var i = 0; i < mt.mtSets.length; i++) {
+                for (var i = 0; i < mt.mtResult.length; i++) {
                     if (i >= mt.mtResA + mt.mtResX)
                         break;
 
-                    if (mt.mtSets[i][0] > mt.mtSets[i][1])
-                        history += '<span class="game">' + mt.mtSets[i][1] + '</span>';
+                    if (mt.mtResult[i][0] > mt.mtResult[i][1])
+                        history += '<span class="game">' + mt.mtResult[i][1] + '</span>';
                     else
-                        history += '<span class="game">-' + mt.mtSets[i][0] + '</span>';
+                        history += '<span class="game">-' + mt.mtResult[i][0] + '</span>';
                 }
             }
         } else {
@@ -506,6 +534,8 @@ function formatMatch(mt, idx) {
         $('#what td').html(
                 mt.cpName + '&nbsp;&dash;&nbsp;' + mt.grDesc + (mt.grNofRounds === 1 ? '' : '&nbsp;&dash;&nbsp;' + mt.mtRoundStr));
 
+    var prop = flag === 'region' ? 'naRegion' : 'naName';
+        
     if (mt.cpType == 4) {
         var topPlayer = '';
         var botPlayer = '';
@@ -538,19 +568,25 @@ function formatMatch(mt, idx) {
             botPlayer = formatTeam(mt.tmXtmDesc);
         }
 
-        $('#top .assoc').html(formatFlag(mt.tmAnaName));
+        if (flag !== 'none')
+            $('#top .assoc').html(formatFlag(mt['tmA' + prop]));
         $('#top .names').html(topPlayer);
-        $('#bottom .assoc').html(formatFlag(mt.tmXnaName));
+        if (flag !== 'none')
+            $('#bottom .assoc').html(formatFlag(mt['tmA' + prop]));
         $('#bottom .names').html(botPlayer);
     } else if (mt.cpType == 1) {
-        $('#top .assoc').html(formatFlag(mt.plAnaName));
+        if (flag !== 'none')
+            $('#top .assoc').html(formatFlag(mt['plA' + prop]));
         $('#top .names').html(formatString(mt.plApsFirst) + ' ' + formatString(mt.plApsLast));
-        $('#bottom .assoc').html(formatFlag(mt.plXnaName));
+        if (flag !== 'none')
+            $('#bottom .assoc').html(formatFlag(mt['plX' + prop]));
         $('#bottom .names').html(formatString(mt.plXpsFirst) + ' ' + formatString(mt.plXpsLast));
     } else {
-        $('#top .assoc').html(formatFlag(mt.plAnaName) + '<br>' + formatFlag(mt.plBnaName));
+        if (flag !== 'none')
+            $('#top .assoc').html(formatFlag(mt['plA' + prop]) + '<br>' + formatFlag(mt['plB' + prop]));
         $('#top .names').html(formatString(mt.plApsFirst) + ' ' + formatString(mt.plApsLast) + '<br>' + formatString(mt.plBpsFirst) + ' ' + formatString(mt.plBpsLast));
-        $('#bottom .assoc').html(formatFlag(mt.plXnaName) + '<br>' + formatFlag(mt.plYnaName));
+        if (flag !== 'none')
+            $('#bottom .assoc').html(formatFlag(mt['plX' + prop]) + '<br>' + formatFlag(mt['plY' + prop]));
         $('#bottom .names').html(formatString(mt.plXpsFirst) + ' ' + formatString(mt.plXpsLast) + '<br>' + formatString(mt.plYpsFirst) + ' ' + formatString(mt.plYpsLast));
     }
     
@@ -576,9 +612,6 @@ function formatPlayer(psLast, psFirst) {
 function formatFlag(name) {
     if (name === undefined || name == '')
         return '';
-
-    if (getParameterByName('noFlag', 0) > 0)
-        return '<span class="assoc">' + name + '</span>';
 
     return '<img src="' + '../flags/' + name + '.png"></img>';
 }

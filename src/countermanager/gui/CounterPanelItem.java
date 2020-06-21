@@ -85,7 +85,7 @@ public final class CounterPanelItem extends javax.swing.JPanel {
         
         if (counterMatch != null) {
             if (counterData == null || counterData.getGameMode() == CounterData.GameMode.RESET)
-                str = String.format("%1$TH:%1$TM", new java.util.Date(counterMatch.mtDateTime));
+                str = String.format("%1$TH:%1$TM", new java.util.Date((long) counterMatch.mtDateTime));
             else if (counterData.getGameMode() == CounterData.GameMode.RUNNING)
                 str = counterData.getTimeMode().name();
             else 
@@ -978,10 +978,10 @@ public final class CounterPanelItem extends javax.swing.JPanel {
 
         boolean reverse = counterData == null ? false : counterData.isSwapped();
         
-        CounterModelMatch.Player plA = reverse ? counterMatch.plX : counterMatch.plA;
-        CounterModelMatch.Player plB = reverse ? counterMatch.plY : counterMatch.plB;
-        CounterModelMatch.Player plX = reverse ? counterMatch.plA : counterMatch.plX;
-        CounterModelMatch.Player plY = reverse ? counterMatch.plB : counterMatch.plY;
+        countermanager.model.database.Player plA = reverse ? counterMatch.plX : counterMatch.plA;
+        countermanager.model.database.Player plB = reverse ? counterMatch.plY : counterMatch.plB;
+        countermanager.model.database.Player plX = reverse ? counterMatch.plA : counterMatch.plX;
+        countermanager.model.database.Player plY = reverse ? counterMatch.plB : counterMatch.plY;
             
         String result = getResultString(reverse);
 

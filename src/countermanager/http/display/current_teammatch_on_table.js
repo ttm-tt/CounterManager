@@ -11,7 +11,6 @@
  * toTable:   Bis Tisch
  * table:     Nur Tisch
  * tableList: Liste von Tichen
- * noFlag: Anzeige der Flagge unterdruecken
  * noUpdate: Anzeige stehen lassen
  * nameLength: Max. Laenge der Namen (default: alles)
  * firstNameLength: Max. Laenge der Voramen (default: alles)

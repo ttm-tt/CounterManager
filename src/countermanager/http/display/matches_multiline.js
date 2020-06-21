@@ -61,15 +61,42 @@ function update(matches, args) {
         return;
 
     xmlrpc(
-            "../RPC2", "ttm.listMatches", [args],
+            "../RPC2", "ttm.listNextMatches", [args],
             function success(data) {
-                var i;                
+                var i;     
+                
                 // Get last update time
                 var mtTimestamp = undefined;
                 for (i = 0; i < data.length; i++) {
                     if (mtTimestamp == undefined || mtTimestamp < data[i].mtTimestamp)
                         mtTimestamp = data[i].mtTimestamp;
                 }
+                
+                data.sort(function(a, b) {
+                // " ORDER BY cp.cpName, gr.grStage, gr.grName, mt.mtRound, mt.mtMatch";
+                    if ((a.cpName || '') < (b.cpName || ''))
+                        return -1;
+                    if ((a.cpName || '') > (b.cpName || ''))
+                        return +1;
+                    if ((a.grStage || '') < (b.grStage || ''))
+                        return -1;
+                    if ((a.grStage || '') > (b.grStage || ''))
+                        return +1;
+                    if ((a.grName || '') < (b.grName || ''))
+                        return -1;
+                    if ((a.grName || '') > (b.grName || ''))
+                        return +1;
+                    if ((a.mtRound || 0) < (b.mtRound || 0))
+                        return -1;
+                    if ((a.mtRound || 0) > (b.mtRound || 0))
+                        return +1;
+                    if ((a.mtMatch || 0) < (b.mtMatch || 0))
+                        return -1;
+                    if ((a.mtMatch || 0) > (b.mtMatch || 0))
+                        return +1;
+                    
+                    return 0;
+                });
 
                 show(data, 0, mtTimestamp);
             }
@@ -135,7 +162,7 @@ function isFinished(mt) {
     if (mt == undefined)
         return false;
 
-    if (mt.mtMatches > 1 && (2 * mt.mtTeamResA > mt.mtMatches || 2 * mt.mtTeamResX > mt.mtMatches))
+    if (mt.mtMatches > 1 && (2 * mt.mttmResA > mt.mtMatches || 2 * mt.mttmResX > mt.mtMatches))
         return true;
     
     if (mt.mtWalkOverA != 0 || mt.mtWalkOverX != 0)
@@ -155,7 +182,7 @@ function isStarted(mt) {
     if (isFinished(mt))
         return true;
     
-    if (mt.mtSets !== undefined && mt.mtSets.length > 0 && (mt.mtSets[0][0] > 0 || mt.mtSets[0][1] > 0))
+    if (mt.mtResult !== undefined && mt.mtResult.length > 0 && (mt.mtResult[0][0] > 0 || mt.mtResult[0][1] > 0))
         return true;
 
     var ct = new Date().getTime();
@@ -260,9 +287,9 @@ function formatMatch(mt, clazz) {
     }
 
     if (mt.cpType == 4) {
-        if (isStarted(mt) || mt.mtTeamResA > 0 || mt.mtTeamResX > 0) {
-            left += '<td class="matches">' + mt.mtTeamResA + '</td>';
-            right += '<td class="matches">' + mt.mtTeamResX + '</td>';
+        if (isStarted(mt) || mt.mttmResA > 0 || mt.mttmResX > 0) {
+            left += '<td class="matches">' + mt.mttmResA + '</td>';
+            right += '<td class="matches">' + mt.mttmResX + '</td>';
         } else {
             left += '<td class="matches"></td>';
             right += '<td class="matches"></td>';            

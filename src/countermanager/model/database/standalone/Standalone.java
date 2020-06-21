@@ -4,8 +4,11 @@
 package countermanager.model.database.standalone;
 
 import countermanager.model.CounterModelMatch;
+import countermanager.model.database.Entry;
 import countermanager.model.database.IDatabase;
 import countermanager.model.database.IDatabaseSettings;
+import countermanager.model.database.Player;
+import countermanager.model.database.Match;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -109,10 +112,10 @@ public class Standalone implements IDatabase {
     public List<CounterModelMatch> update(int fromTable, int toTable, java.time.LocalDate when, boolean all) {
         List<CounterModelMatch> list = new java.util.ArrayList<>();
         
-        java.util.Collections.sort(database.matches, new java.util.Comparator<Match>() {
+        java.util.Collections.sort(database.matches, new java.util.Comparator<countermanager.model.database.standalone.Match>() {
 
             @Override
-            public int compare(Match o1, Match o2) {
+            public int compare(countermanager.model.database.standalone.Match o1, countermanager.model.database.standalone.Match o2) {
                 if (o1.mtDateTime < o2.mtDateTime)
                     return -1;
                 if (o1.mtDateTime > o2.mtDateTime)
@@ -129,7 +132,7 @@ public class Standalone implements IDatabase {
 
         Set<Integer> set = new java.util.HashSet<>();
 
-        for (Match match : database.matches) {
+        for (countermanager.model.database.standalone.Match match : database.matches) {
             if (match.mtTable < fromTable || match.mtTable > toTable)
                 continue;
 
@@ -152,7 +155,7 @@ public class Standalone implements IDatabase {
 
     @Override
     public boolean updateResult(int mtNr, int mtMS, int[][] mtSets, int mtWalkOverA, int mtWalkOverX) {
-        for (Match match : database.matches) {
+        for (countermanager.model.database.standalone.Match match : database.matches) {
             if (match.mtNr == mtNr) {
                 match.setResult(mtSets);
 
@@ -222,6 +225,29 @@ public class Standalone implements IDatabase {
 
     @Override
     public long getMaxMtTimestamp() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public Player[] listPlayers(String naName) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public Match[] listMatches(
+            long mtTimestamp, java.time.LocalDateTime from, java.time.LocalDateTime to, int fromTable, int toTable, 
+            boolean individual, boolean notStarted, boolean notFinished) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public Entry[] listEntries(List<String> cpNames, String grStage, List<String> grNames) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+
+    @Override
+    public List<Long> getTimes(int day) {
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 }

@@ -3,8 +3,11 @@
 package countermanager.model.database.league;
 
 import countermanager.model.CounterModelMatch;
+import countermanager.model.database.Entry;
 import countermanager.model.database.IDatabase;
 import countermanager.model.database.IDatabaseSettings;
+import countermanager.model.database.Player;
+import countermanager.model.database.Match;
 import countermanager.model.database.league.MatchDetails.MatchType;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
@@ -32,7 +35,68 @@ public class League implements IDatabase {
 
     @Override
     public long getMaxMtTimestamp() {
+        double max = 0;
+        for (CounterModelMatch match : database.list) {
+            if (match.mtTimestamp > max)
+                max = match.mtTimestamp;
+        }
+        
+        return (long) max;
+    }
+
+    @Override
+    public Player[] listPlayers(String naName) {
+        java.util.Set<Player> set = new java.util.HashSet<>();
+        
+        for (CounterModelMatch match : database.list) {
+            if (match.plA != null)
+                set.add(match.plA);
+            if (match.plB != null)
+                set.add(match.plB);
+            if (match.plX != null)
+                set.add(match.plX);
+            if (match.plY != null)
+                set.add(match.plY);
+        }
+        
+        return set.toArray(new Player[0]);        
+    }
+
+    @Override
+    public Match[] listMatches(long mtTimestamp, java.time.LocalDateTime from, java.time.LocalDateTime to, int fromTable, int toTable, boolean individual, boolean notStarted, boolean notFinished) {
+        List<Match> list = new java.util.ArrayList<>();
+        
+        for (CounterModelMatch match : database.list) {
+            if (mtTimestamp > 0 && mtTimestamp <= match.mtTimestamp)
+                continue;
+            if (from.compareTo(new java.sql.Timestamp((long) match.mtDateTime).toLocalDateTime()) > 0)
+                continue;
+            if (to.compareTo(new java.sql.Timestamp((long) match.mtDateTime).toLocalDateTime()) < 0)
+                continue;
+            if (notStarted && (match.mtResult[0][0] > 0 || match.mtResult[0][1] > 0))
+                continue;
+            if (notFinished && (2 * match.mtResA > match.mtBestOf || 2 * match.mtResX > match.mtBestOf))
+                continue;
+            
+            list.add(match);
+        }
+        
+        return list.toArray(new Match[0]);
+    }
+
+    @Override
+    public Entry[] listEntries(List<String> cpNames, String grStage, List<String> grNames) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
+    @Override
+    public List<Long> getTimes(int day) {
+       List<Long> list = new java.util.ArrayList<>();
+       if (database.list.size() > 0)
+           list.add((long) database.list.get(0).mtDateTime);
+       
+       return list;
     }
 
     @XmlRootElement
@@ -248,7 +312,7 @@ public class League implements IDatabase {
             detail.tmXtmDesc = match.tmX.tmDesc;
             detail.tmXnaName = match.tmX.naName;
             detail.mtTable = match.mtTable;
-            detail.mtDateTime = match.mtDateTime;
+            detail.mtDateTime = (long) match.mtDateTime;
             detail.mtBestOf = match.mtBestOf > 0 ? match.mtBestOf : 5;
                         
             detailList.add(detail);
@@ -284,11 +348,11 @@ public class League implements IDatabase {
             match.plA.plNr = 101 + idx;
             match.plA.psFirst = detail.plApsFirst;
             match.plA.psLast = detail.plApsLast;
-            match.plA.naName = detail.tmAtmName;
+            match.plA.naName = detail.tmAnaName;
             match.plX.plNr = 301 + idx;
             match.plX.psFirst = detail.plXpsFirst;
             match.plX.psLast = detail.plXpsLast;
-            match.plX.naName = detail.tmXtmName;
+            match.plX.naName = detail.tmXnaName;
             
             if (detail.type == MatchType.Double) {
                 match.plB.psFirst = detail.plBpsFirst;
@@ -296,14 +360,14 @@ public class League implements IDatabase {
                 match.plY.psFirst = detail.plYpsFirst;
                 match.plY.psLast = detail.plYpsLast;
                 if (detail.plBpsLast != null && !detail.plBpsLast.isEmpty()) {
-                    match.plB.naName = detail.tmAtmName;
+                    match.plB.naName = detail.tmAnaName;
                     match.plB.plNr = 201 + idx;
                 } else {
                     match.plB.naName = "";
                     match.plB.plNr = 0;
                 }
                 if (detail.plYpsLast != null && !detail.plYpsLast.isEmpty()) {
-                    match.plY.naName = detail.tmXtmName;
+                    match.plY.naName = detail.tmXnaName;
                     match.plY.plNr = 401 + idx;
                 } else {
                     match.plY.naName = "";

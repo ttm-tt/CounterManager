@@ -260,16 +260,17 @@ public class HTTP {
             }            
         });
         
-        // Zum debuggen haben die Files aus dem src-Zweig Vorrang
-        httpServer.createContext("/", new StaticFileHandler(new File[] {
-            new File("../src/countermanager/http/"),
-            new File(Properties.getIniFile().getParent() + File.separator + "http")
-        }, null));
-
         for (Map.Entry<String, HttpHandler> set : handlerMap.entrySet()) {
             httpServer.createContext(set.getKey(), set.getValue());
         }
         
+        // Zum debuggen haben die Files aus dem src-Zweig Vorrang
+        httpServer.createContext("/", new StaticFileHandler(new File[] {
+            new File("../src/countermanager/http/"),
+            new File(Properties.getIniFile().getParent() + File.separator + "http"),
+            new File("../test/countermanager/http/"),
+        }, null));
+
         httpServer.start();
         
         return true;

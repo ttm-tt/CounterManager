@@ -81,7 +81,7 @@ public class Match {
         match.mtMS = 0;
         match.mtRound = mtRound;
         match.mtMatch = 1;
-        match.mtReverse = 0;
+        match.mtReverse = false;
         match.mtBestOf = cp.mtBestOf;
         match.mtMatches = 0;
         match.mtDateTime = mtDateTime;
@@ -90,7 +90,7 @@ public class Match {
         if (plA != null) {
             match.plA.naName = plA.nation.naName;
             match.plA.naRegion = plA.nation.naRegion;
-            match.plA.plExtId = "";
+            match.plA.plExtID = "";
             match.plA.plNr = plA.plNr;
             match.plA.psFirst = plA.psFirst;
             match.plA.psLast = plA.psLast;
@@ -99,7 +99,7 @@ public class Match {
         if (plB != null) {
             match.plB.naName = plB.nation.naName;
             match.plB.naRegion = plB.nation.naRegion;
-            match.plB.plExtId = "";
+            match.plB.plExtID = "";
             match.plB.plNr = plB.plNr;
             match.plB.psFirst = plB.psFirst;
             match.plB.psLast = plB.psLast;
@@ -108,7 +108,7 @@ public class Match {
         if (plX != null) {
             match.plX.naName = plX.nation.naName;
             match.plX.naRegion = plX.nation.naRegion;
-            match.plX.plExtId = "";
+            match.plX.plExtID = "";
             match.plX.plNr = plX.plNr;
             match.plX.psFirst = plX.psFirst;
             match.plX.psLast = plX.psLast;
@@ -117,7 +117,7 @@ public class Match {
         if (plY != null) {
             match.plY.naName = plY.nation.naName;
             match.plY.naRegion = plY.nation.naRegion;
-            match.plY.plExtId = "";
+            match.plY.plExtID = "";
             match.plY.plNr = plY.plNr;
             match.plY.psFirst = plY.psFirst;
             match.plY.psLast = plY.psLast;

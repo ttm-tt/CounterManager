@@ -78,7 +78,7 @@ class UpdateMatch {
         }
         this.mtNr = counterMatch.mtNr;
         this.mtMS = counterMatch.mtMS;
-        this.mtDateTime = new Date(counterMatch.mtDateTime);
+        this.mtDateTime = new Date((long) counterMatch.mtDateTime);
         this.mtTable = counterMatch.mtTable;
         this.cpType = counterMatch.cpType;
         this.cpName = counterMatch.cpName;
@@ -90,7 +90,7 @@ class UpdateMatch {
         this.mtRoundString = roundToString(counterMatch);
         this.mtMatch = counterMatch.mtMatch;
         this.mtBestOf = counterMatch.mtBestOf;
-        this.mtReverse = counterMatch.mtReverse != 0;
+        this.mtReverse = counterMatch.mtReverse;
     }
     
     public void copyGames(int[][] mtSets) {

@@ -114,6 +114,47 @@ function formatISODate(date) {
     return cts;
 }
 
+function formatRound(match) {
+    if (typeof match !== 'object')
+        return '';
+    
+    if (!match.grModus || !match.mtRound || !match.mtMatch)
+        return '';
+    
+    // Default where we don't use or can't use special round strings
+    if (match.grModus == 1)
+        return 'Rd.&nbsp;' + match.mtRound;
+    if (match.grNofRounds || match.grNofMatches)
+        return 'Rd.&nbsp;' + match.mtRound;
+    if (match.grWinner != 1)
+        return 'Rd.&nbsp;' + match.mtRound;
+    if (!match.grSize)
+        return 'Rd.&nbsp;' + match.mtRound;
+    
+    // Final, Semifinal, Quarterfinal
+    // First we need max number of rounds
+    var maxRounds = 1;
+    while ((1 << maxRounds) < match.grSize)
+        ++maxRounds;
+    
+    if (match.mtRound == maxRounds && match.mtMatch == 1)
+        return 'F';
+    if (match.mtRound == maxRounds - 1 && match.mtMatch <= 2)
+        return 'SF';
+    if (match.mtRound == maxRounds - 2 && match.mtMatch <= 4)
+        return 'QF';
+    
+    // KO: Use "Rd of ..."
+    if (match.grModus == 2)
+        return 'Rd.&nbsp;of&nbsp;' + (1 << (maxRounds - match.mtRound + 1));
+    
+    // PLO: Use Pos x .. y
+    var chunksize = match.grSize >> match.mtRound;
+    var chunkno = Math.floor((match.mtMatch - 1) / chunksize);
+    
+    return 'Pos&nbsp;' + (1 + 2 * chunkno * chunksize) + '&mdash;' + (1 + 2 * (chunkno + 1) * chunksize - 1);    
+}
+
 function beep(duration) {
     var ctx = new(window.audioContext || window.webkitAudioContext);
     var type = 0;  // 0: sinus, 1: rechteck, 2: saegezahn, 3: dreieck

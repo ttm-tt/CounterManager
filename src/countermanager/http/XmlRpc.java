@@ -139,7 +139,7 @@ public class XmlRpc implements HttpHandler {
             v.add(h);
 
             XmlRpcClient xmlrpcClient = new XmlRpcClient("http://localhost/RPC2", false);
-            Object ret = xmlrpcClient.invoke("ttm.listSeeding", v);
+            Object ret = xmlrpcClient.invoke("ttm.listSchedules", v);
             System.out.println(ret);
         }
         catch (XmlRpcException ex) {

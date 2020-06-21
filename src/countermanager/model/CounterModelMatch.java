@@ -6,17 +6,21 @@ import javax.xml.bind.annotation.*;
 
 
 @XmlRootElement
-public class CounterModelMatch implements countermanager.driver.IGameData {
+public class CounterModelMatch extends countermanager.model.database.Match implements countermanager.driver.IGameData {
 
+    public CounterModelMatch() {
+        plA = new Player();
+        plB = new Player();
+        plX = new Player();
+        plY = new Player();
+        
+        tmA = new Team();
+        tmX = new Team();
+    }
+    
     @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Player {
-        public int    plNr;
-        public String plExtId = "";
-        public String psLast = "";
-        public String psFirst = "";
-        public String naName = "";
-        public String naRegion = "";
+    public static class Player extends countermanager.model.database.Player {
 
         /**
          * @return the plNr
@@ -28,8 +32,8 @@ public class CounterModelMatch implements countermanager.driver.IGameData {
         /**
          * @return the plExtId
          */
-        public String getPlExtId() {
-            return plExtId;
+        public String getPlExtID() {
+            return plExtID;
         }
 
         /**
@@ -54,6 +58,13 @@ public class CounterModelMatch implements countermanager.driver.IGameData {
         }
 
         /**
+         * @return the naDesc
+         */
+        public String getNaDesc() {
+            return naDesc;
+        }
+
+        /**
          * @return the naRegion
          */
         public String getNaRegion() {
@@ -63,18 +74,22 @@ public class CounterModelMatch implements countermanager.driver.IGameData {
     
     @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Team {
-        public String naName = "";
-        public String naRegion = "";
-        public String tmName = "";
-        public String tmDesc = "";
+    public static class Team extends countermanager.model.database.Team {
 
         public String getNaName() {
             return naName;
         }
-
+        
         public void setNaName(String naName) {
             this.naName = naName;
+        }
+
+        public String getNaDesc() {
+            return naDesc;
+        }
+        
+        public void setNaDesc(String naDesc) {
+            this.naDesc = naDesc;
         }
 
         public String getNaRegion() {
@@ -101,47 +116,6 @@ public class CounterModelMatch implements countermanager.driver.IGameData {
             this.tmDesc = tmDesc;
         }
     }
-    
-    public int      cpType;
-    public int      grModus;
-    
-    public String   cpName; 
-    public String   cpDesc;
-    public String   grName;
-    public String   grDesc;
-    public String   grStage;
-    public int      grSize;
-    public int      grWinner;
-    public int      grNofRounds;
-    public int      grNofMatches;
-    public int      mtNr;
-    public int      mtMS;
-    public int      mtRound;
-    public int      mtMatch;
-    public int      mtReverse;
-    public int      mtBestOf;
-    public int      mtMatches;
-    
-    public long     mtDateTime;        
-    public int      mtTable;
-    
-    public Player   plA = new Player();
-    public Player   plB = new Player();
-    public Player   plX = new Player();
-    public Player   plY = new Player();
-    
-    public int      mtResA;
-    public int      mtResX;
-
-    public Team     tmA = new Team();
-    public Team     tmX = new Team();
-
-    public int      mttmResA;
-    public int      mttmResX;
-
-    public int      mtResult[][];
-    
-    public long     mtTimestamp;
     
     // The following is required to allow XmlRpc to inspect and retrieve the fields
     /**
@@ -231,7 +205,7 @@ public class CounterModelMatch implements countermanager.driver.IGameData {
     /**
      * @return the mtReverse
      */
-    public int getMtReverse() {
+    public boolean getMtReverse() {
         return mtReverse;
     }
 
@@ -253,7 +227,7 @@ public class CounterModelMatch implements countermanager.driver.IGameData {
      * @return the mtDateTime
      */
     public long getMtDateTime() {
-        return mtDateTime;
+        return (long) mtDateTime;
     }
 
     /**
@@ -267,28 +241,28 @@ public class CounterModelMatch implements countermanager.driver.IGameData {
      * @return the plA
      */
     public Player getPlA() {
-        return plA;
+        return (Player) plA;
     }
 
     /**
      * @return the plB
      */
     public Player getPlB() {
-        return plB;
+        return (Player) plB;
     }
 
     /**
      * @return the plX
      */
     public Player getPlX() {
-        return plX;
+        return (Player) plX;
     }
 
     /**
      * @return the plY
      */
     public Player getPlY() {
-        return plY;
+        return (Player) plY;
     }
     
     
@@ -296,14 +270,14 @@ public class CounterModelMatch implements countermanager.driver.IGameData {
      * @return tmA
      */
     public Team getTmA() {
-        return tmA;
+        return (Team) tmA;
     }
     
     /**
      * @return tmX
      */
     public Team getTmX() {
-        return tmX;
+        return (Team) tmX;
     }
 
     /**
@@ -340,7 +314,7 @@ public class CounterModelMatch implements countermanager.driver.IGameData {
     }
 
     public java.util.Date getMtTimestamp() {
-        return new java.util.Date(mtTimestamp);
+        return new java.util.Date((long) mtTimestamp);
     }
 
 }

@@ -7,12 +7,18 @@
 package countermanager.model.database.ttm;
 
 import countermanager.model.CounterModelMatch;
+import countermanager.model.database.Entry;
 import countermanager.model.database.IDatabase;
 import countermanager.model.database.IDatabaseSettings;
+import countermanager.model.database.Match;
+import countermanager.model.database.Player;
+import countermanager.model.database.Match;
+import countermanager.model.database.Team;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -436,7 +442,7 @@ public final class TTM implements IDatabase {
                         long    mtDateTime  = getTime(result, idx++);
                         int     mtBestOf    = result.getInt(idx++);
                         int     mtMatches   = result.getInt(idx++);
-                        int     mtReverse   = result.getInt(idx++);
+                        boolean mtReverse   = result.getBoolean(idx++);
                         int     mtResA      = result.getInt(idx++);
                         int     mtResX      = result.getInt(idx++);
                         
@@ -515,28 +521,28 @@ public final class TTM implements IDatabase {
                         match.mtResX      = mtResX;
 
                         match.plA.plNr    = plAplNr % 10000;
-                        match.plA.plExtId = plAplExtId;
+                        match.plA.plExtID = plAplExtId;
                         match.plA.psLast  = plApsLast;
                         match.plA.psFirst = plApsFirst;
                         match.plA.naName  = plAnaName;
                         match.plA.naRegion = plAnaRegion;
 
                         match.plB.plNr    = plBplNr % 10000;
-                        match.plB.plExtId = plBplExtId;
+                        match.plB.plExtID = plBplExtId;
                         match.plB.psLast  = plBpsLast;
                         match.plB.psFirst = plBpsFirst;
                         match.plB.naName  = plBnaName;
                         match.plB.naRegion = plBnaRegion;
 
                         match.plX.plNr    = plXplNr % 10000;
-                        match.plX.plExtId = plXplExtId;
+                        match.plX.plExtID = plXplExtId;
                         match.plX.psLast  = plXpsLast;
                         match.plX.psFirst = plXpsFirst;
                         match.plX.naName  = plXnaName;
                         match.plX.naRegion = plXnaRegion;
 
                         match.plY.plNr    = plYplNr % 10000;
-                        match.plY.plExtId = plYplExtId;
+                        match.plY.plExtID = plYplExtId;
                         match.plY.psLast  = plYpsLast;
                         match.plY.psFirst = plYpsFirst;
                         match.plY.naName  = plYnaName;
@@ -688,5 +694,347 @@ public final class TTM implements IDatabase {
     private static long getTime(java.sql.ResultSet res, int idx) throws SQLException {
         Date date = res.getTimestamp(idx);
         return date == null ? 0 : date.getTime();
+    }
+    
+    
+    private static Player getPlayer(java.sql.ResultSet res, int idx) throws SQLException {
+        Player pl = new Player();
+        
+        pl.plNr = res.getInt(++idx) % 10000;
+        pl.psLast = getString(res, ++idx);
+        pl.psFirst = getString(res, ++idx);
+        pl.naName = getString(res, ++idx);
+        pl.naDesc = getString(res, ++idx);
+        pl.naRegion = getString(res, ++idx);
+        pl.plExtID = getString(res, ++idx);
+     
+        return pl;
+    }
+    
+    
+    private static Team getTeam(java.sql.ResultSet res, int idx) throws SQLException {
+        Team tm = new Team();
+
+        tm.tmName = getString(res, ++idx);
+        tm.tmDesc = getString(res, ++idx);
+        tm.naName = getString(res, ++idx);
+        tm.naDesc = getString(res, ++idx);
+        tm.naRegion = getString(res, ++idx);
+        
+        return tm;
+    }
+    
+    
+    private static int[][] getResult(java.sql.ResultSet res, int idx) throws SQLException {
+        int[][] games = new int[7][2];
+        
+        for (int i = 0; i < games.length; i++) {
+            games[i][0] = res.getInt(++idx);
+            games[i][1] = res.getInt(++idx);
+        }
+        
+        return games;
+    }
+    
+    
+    // Methods below are accessed from scripts
+
+    @Override
+    public Player[] listPlayers(String naName) {
+        var sql = "SELECT plNr, psLast, psFirst, naName, naDesc, naRegion, plExtID FROM PlList";
+
+        if (naName != null)
+          sql += " WHERE naName = ?";
+
+        sql += " ORDER BY plNr";
+
+        List<Player> list = new java.util.ArrayList<>();
+        
+        try {
+            synchronized(syncUpdateMatch) {
+                if (!testConnection(updateMatchConnection)) {
+                    stmtMap.clear();                    
+                    updateMatchConnection = getConnection(connectionString, true);
+                }
+                
+                if (!stmtMap.containsKey(sql))
+                    stmtMap.put(sql, updateMatchConnection.prepareStatement(sql));
+                
+                PreparedStatement updateMatchStmt = stmtMap.get(sql);
+        
+                int par = 0;
+
+                if (naName != null)
+                    updateMatchStmt.setString(++par, naName);
+
+                try (java.sql.ResultSet result = updateMatchStmt.executeQuery()) {  
+                    while (result.next()) {
+                        int idx = 0;
+                        Player pl = getPlayer(result, idx);
+
+                        list.add(pl);
+                    }
+                }    
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();                
+            try {
+                updateMatchConnection.close();
+            } catch (java.sql.SQLException ex) {
+                
+            }
+            
+            updateMatchConnection = null;
+            
+            list.clear();
+        }
+        
+        return list.toArray(new Player[0]);
+    }
+
+    @Override
+    public Match[] listMatches(
+            long mtTimestamp, java.time.LocalDateTime from, java.time.LocalDateTime to, int fromTable, int toTable, 
+            boolean individual, boolean notStarted, boolean notFinished) {
+        List<Match> list = new java.util.ArrayList<>();
+        
+        String sql;
+        
+        String where = 
+            " AND mtTimestamp > ? " +
+            " AND mtDateTime >= ? " +
+            " AND mtDateTime <= ? " +
+            " AND mtTable >= ? " +
+            " AND mtTable <= ? ";
+        
+        String whereTeam = where;
+        
+        if (notStarted) {
+            where += " AND mtSet1.mtResA = 0 AND mtSet1.mtResX = 0 ";
+            whereTeam += " AND mt.mtResA = 0 AND mt.mtResX = 0 ";
+        }
+        
+        if (notFinished) {
+            where += " AND 2 * mt.mtResA < mtBestOf AND 2 * mt.mtResX < mtBestOf ";
+            whereTeam += " AND 2 * mt.mtResA < mtMatches AND 2 * mt.mtResX < mtMatches ";
+        }
+            
+
+        sql =
+            "SELECT cpName, cpDesc, cpType, grName, grDesc, grModus, grSize, grWinner, grNofRounds, grNofMatches, " +
+            "   mtRound, mtMatch, 1 AS mtMatches, mtBestOf, mtNr, 0 AS mtMS, mtWalkOverA, mtWalkOverX, mt.mtResA, mt.mtResX, 0 AS mtReverse, " +
+            "   plAplNr, plApsLast, plApsFirst, plAnaName, plAnaDesc, plAnaRegion, plAplExtID, " +
+            "   NULL AS plBplNr, NULL AS plBpsLast, NULL AS plBpsFirst, NULL AS plBnaName, NULL AS plBnaDesc, NULL AS plBnaRegion, NULL AS plBplExtID, " +
+            "   plXplNr, plXpsLast, plXpsFirst, plXnaName, plXnaDesc, plXnaRegion, plXplExtID, " +
+            "   NULL AS plYplNr, NULL AS plYpsLast, NULL AS plYpsFirst, NULL AS plYnaName, NULL AS plYnaDesc, NULL AS plYnaRegion, NULL AS plYplExtID, " +
+            "   NULL AS tmAtmName, NULL AS tmAtmDesc, NULL AS tmAnaName, NULL AS tmAnaDesc, NULL AS tmAnaRegion, " +
+            "   NULL AS tmXtmName, NULL AS tmXtmDesc, NULL AS tmXnaName, NULL AS tmXnaDesc, NULL AS tmXnaRegion, " +
+            "   NULL AS mttmResA, NULL AS mttmResX, " +
+            "   mtDateTime, mtTable, mtTimeStamp, " +
+            "   mtSet1.mtResA, mtSet1.mtResX, mtSet2.mtResA, mtSet2.mtResX, " +
+            "   mtSet3.mtResA, mtSet3.mtResX, mtSet4.mtResA, mtSet4.mtResX, " +
+            "   mtSet5.mtResA, mtSet5.mtResX, mtSet6.mtResA, mtSet6.mtResX, " +
+            "   mtSet7.mtResA, mtSet7.mtResX " +
+            "  FROM MtSingleList mt " +
+            "    INNER JOIN GrList gr ON mt.grID = gr.grID " +
+            "    INNER JOIN CpList cp ON gr.cpID = cp.cpID AND cp.cpType = 1 " +
+            "    LEFT OUTER JOIN MtSet mtSet1 ON mtSet1.mtID = mt.mtID AND mtSet1.mtSet = 1 " +
+            "    LEFT OUTER JOIN MtSet mtSet2 ON mtSet2.mtID = mt.mtID AND mtSet2.mtSet = 2 " +
+            "    LEFT OUTER JOIN MtSet mtSet3 ON mtSet3.mtID = mt.mtID AND mtSet3.mtSet = 3 " +
+            "    LEFT OUTER JOIN MtSet mtSet4 ON mtSet4.mtID = mt.mtID AND mtSet4.mtSet = 4 " +
+            "    LEFT OUTER JOIN MtSet mtSet5 ON mtSet5.mtID = mt.mtID AND mtSet5.mtSet = 5 " +
+            "    LEFT OUTER JOIN MtSet mtSet6 ON mtSet6.mtID = mt.mtID AND mtSet6.mtSet = 6 " +
+            "    LEFT OUTER JOIN MtSet mtSet7 ON mtSet7.mtID = mt.mtID AND mtSet7.mtSet = 7 " +
+            " WHERE mtDateTime IS NOT NULL AND mtTable IS NOT NULL " +
+            "       AND plAplNr IS NOT NULL AND plXplNR IS NOT NULL " +
+            where
+        ;
+        
+        sql += " UNION " +
+            "SELECT cpName, cpDesc, cpType, grName, grDesc, grModus, grSize, grWinner, grNofRounds, grNofMatches, " +
+            "   mtRound, mtMatch, 1 AS mtMatches, mtBestOf, mtNr, 0 AS mtMS, mtWalkOverA, mtWalkOverX, mt.mtResA, mt.mtResX, 0 AS mtReverse, " +
+            "   plAplNr, plApsLast, plApsFirst, plAnaName, plAnaDesc, plAnaRegion, plAplExtID, " +
+            "   plBplNr, plBpsLast, plBpsFirst, plBnaName, plBnaDesc, plBnaRegion, plBplExtID, " +
+            "   plXplNr, plXpsLast, plXpsFirst, plXnaName, plXnaDesc, plXnaRegion, plXplExtID, " +
+            "   plYplNr, plYpsLast, plYpsFirst, plYnaName, plYnaDesc, plYnaRegion, plYplExtID, " +
+            "   NULL AS tmAtmName, NULL AS tmAtmDesc, NULL AS tmAnaName, NULL AS tmAnaDesc, NULL AS tmAnaRegion, " +
+            "   NULL AS tmXtmName, NULL AS tmXtmDesc, NULL AS tmXnaName, NULL AS tmXnaDesc, NULL AS tmXnaRegion, " +
+            "   NULL AS mttmResA, NULL AS mttmResX, " +
+            "   mtDateTime, mtTable, mtTimeStamp, " +
+            "   mtSet1.mtResA, mtSet1.mtResX, mtSet2.mtResA, mtSet2.mtResX, " +
+            "   mtSet3.mtResA, mtSet3.mtResX, mtSet4.mtResA, mtSet4.mtResX, " +
+            "   mtSet5.mtResA, mtSet5.mtResX, mtSet6.mtResA, mtSet6.mtResX, " +
+            "   mtSet7.mtResA, mtSet7.mtResX " +
+            "  FROM MtDoubleList mt " +
+            "    INNER JOIN GrList gr ON mt.grID = gr.grID " +
+            "    INNER JOIN CpList cp ON gr.cpID = cp.cpID AND (cp.cpType = 2 OR cp.cpType = 3) " +
+            "    LEFT OUTER JOIN MtSet mtSet1 ON mtSet1.mtID = mt.mtID AND mtSet1.mtSet = 1 " +
+            "    LEFT OUTER JOIN MtSet mtSet2 ON mtSet2.mtID = mt.mtID AND mtSet2.mtSet = 2 " +
+            "    LEFT OUTER JOIN MtSet mtSet3 ON mtSet3.mtID = mt.mtID AND mtSet3.mtSet = 3 " +
+            "    LEFT OUTER JOIN MtSet mtSet4 ON mtSet4.mtID = mt.mtID AND mtSet4.mtSet = 4 " +
+            "    LEFT OUTER JOIN MtSet mtSet5 ON mtSet5.mtID = mt.mtID AND mtSet5.mtSet = 5 " +
+            "    LEFT OUTER JOIN MtSet mtSet6 ON mtSet6.mtID = mt.mtID AND mtSet6.mtSet = 6 " +
+            "    LEFT OUTER JOIN MtSet mtSet7 ON mtSet7.mtID = mt.mtID AND mtSet7.mtSet = 7 " +
+            " WHERE mtDateTime IS NOT NULL AND mtTable IS NOT NULL " +
+            "       AND plAplNr IS NOT NULL AND plXplNR IS NOT NULL " +
+            where
+        ;
+        
+        if (!individual)
+            sql += " UNION " +
+                "SELECT cpName, cpDesc, cpType, grName, grDesc, grModus, grSize, grWinner, grNofRounds, grNofMatches, " +
+                "   mtRound, mtMatch, mtMatches, mtBestOf, mtNr, 0 AS mtMS, mtWalkOverA, mtWalkOverX, mt.mtResA, mt.mtResX, mtReverse, " +
+                "   NULL AS plAplNr, NULL AS plApsLast, NULL AS plApsFirst, NULL AS plAnaName, NULL AS plAnaDesc, NULL AS plAnaRegion, NULL AS plAplExtID, " +
+                "   NULL AS plBplNr, NULL AS plBpsLast, NULL AS plBpsFirst, NULL AS plBnaName, NULL AS plBnaDesc, NULL AS plBnaRegion, NULL AS plBplExtID, " +
+                "   NULL AS plXplNr, NULL AS plXpsLast, NULL AS plXpsFirst, NULL AS plXnaName, NULL AS plXnaDesc, NULL AS plXnaRegion, NULL AS plXplExtID, " +
+                "   NULL AS plYplNr, NULL AS plYpsLast, NULL AS plYpsFirst, NULL AS plYnaName, NULL AS plYnaDesc, NULL AS plYnaRegion, NULL AS plYplExtID, " +
+                "   mt.mtResA AS mttmResA, mt.mtResX AS mttmResX, " +
+                "   tmAtmName, tmAtmDesc, tmAnaName, tmAnaDesc, tmAnaRegion, " +
+                "   tmXtmName, tmXtmDesc, tmXnaName, tmXnaDesc, tmXnaRegion, " +
+                "   mtDateTime, mtTable, mtTimeStamp, " +
+                "   NULL AS mtSet1mtResA, NULL AS mtSet1mtResX, NULL AS mtSet2mtResA, NULL AS mtSet2mtResX, " +
+                "   NULL AS mtSet3mtResA, NULL AS mtSet3mtResX, NULL AS mtSet4mtResA, NULL AS mtSet4mtResX, " +
+                "   NULL AS mtSet5mtResA, NULL AS mtSet5mtResX, NULL AS mtSet6mtResA, NULL AS mtSet6mtResX, " +
+                "   NULL AS mtSet7mtResA, NULL AS mtSet7mtResX " +
+                "  FROM MtTeamList mt" +
+                "       INNER JOIN GrList gr ON mt.grID = gr.grID " +
+                "       INNER JOIN CpList cp ON gr.cpID = cp.cpID AND cp.cpType = 4" +
+                " WHERE mtDateTime IS NOT NULL AND mtTable IS NOT NULL " +
+                "       AND tmAtmName IS NOT NULL AND tmXtmName IS NOT NULL " +
+                whereTeam
+            ;
+        else 
+            sql += " UNION " +
+                "SELECT cpName, cpDesc, cpType, grName, grDesc, grModus, grSize, grWinner, grNofRounds, grNofMatches, " +
+                "   mtRound, mtMatch, 1 AS mtMatches, mtBestOf, mtNr, mtMS, mtWalkOverA, mtWalkOverX, mt.mtResA, mt.mtResX, mtReverse, " +
+                "   plAplNr, plApsLast, plApsFirst, plAnaName, plAnaDesc, plAnaRegion, plAplExtID, " +
+                "   plBplNr, plBpsLast, plBpsFirst, plBnaName, plBnaDesc, plBnaRegion, plBplExtID, " +
+                "   plXplNr, plXpsLast, plXpsFirst, plXnaName, plXnaDesc, plXnaRegion, plXplExtID, " +
+                "   plYplNr, plYpsLast, plYpsFirst, plYnaName, plYnaDesc, plYnaRegion, plYplExtID, " +
+                "   NULL AS tmAtmName, NULL AS tmAtmDesc, NULL AS tmAnaName, NULL AS tmAnaDesc, NULL AS tmAnaRegion, " +
+                "   NULL AS tmXtmName, NULL AS tmXtmDesc, NULL AS tmXnaName, NULL AS tmXnaDesc, NULL AS tmXnaRegion, " +
+                "   mt.mttmResA, mt.mttmResX, " +
+                "   mtDateTime, mtTable, mtTimeStamp, " +
+                "   mtSet1.mtResA, mtSet1.mtResX, mtSet2.mtResA, mtSet2.mtResX, " +
+                "   mtSet3.mtResA, mtSet3.mtResX, mtSet4.mtResA, mtSet4.mtResX, " +
+                "   mtSet5.mtResA, mtSet5.mtResX, mtSet6.mtResA, mtSet6.mtResX, " +
+                "   mtSet7.mtResA, mtSet7.mtResX " +
+                "  FROM MtIndividualList mt " +
+                "    INNER JOIN GrList gr ON mt.grID = gr.grID " +
+                "    INNER JOIN CpList cp ON gr.cpID = cp.cpID AND cp.cpType = 4 " +
+                "    LEFT OUTER JOIN MtSet mtSet1 ON mtSet1.mtID = mt.mtID AND mtSet1.mtSet = 1 AND mtSet1.mtMS = mt.mtMS " +
+                "    LEFT OUTER JOIN MtSet mtSet2 ON mtSet2.mtID = mt.mtID AND mtSet2.mtSet = 2 AND mtSet1.mtMS = mt.mtMS " +
+                "    LEFT OUTER JOIN MtSet mtSet3 ON mtSet3.mtID = mt.mtID AND mtSet3.mtSet = 3 AND mtSet1.mtMS = mt.mtMS " +
+                "    LEFT OUTER JOIN MtSet mtSet4 ON mtSet4.mtID = mt.mtID AND mtSet4.mtSet = 4 AND mtSet1.mtMS = mt.mtMS " +
+                "    LEFT OUTER JOIN MtSet mtSet5 ON mtSet5.mtID = mt.mtID AND mtSet5.mtSet = 5 AND mtSet1.mtMS = mt.mtMS " +
+                "    LEFT OUTER JOIN MtSet mtSet6 ON mtSet6.mtID = mt.mtID AND mtSet6.mtSet = 6 AND mtSet1.mtMS = mt.mtMS " +
+                "    LEFT OUTER JOIN MtSet mtSet7 ON mtSet7.mtID = mt.mtID AND mtSet7.mtSet = 7 AND mtSet1.mtMS = mt.mtMS " +
+                " WHERE mtDateTime IS NOT NULL AND mtTable IS NOT NULL " +
+                "       AND plAplNr IS NOT NULL AND plXplNR IS NOT NULL " +
+                where
+            ;
+        
+        sql += " ORDER BY mtDateTime, mtTable, mtNr, mtMS ";
+        
+        try {
+            synchronized(syncUpdateMatch) {
+                if (!testConnection(updateMatchConnection)) {
+                    stmtMap.clear();                    
+                    updateMatchConnection = getConnection(connectionString, true);
+                }
+                
+                if (!stmtMap.containsKey(sql))
+                    stmtMap.put(sql, updateMatchConnection.prepareStatement(sql));
+                
+                PreparedStatement updateMatchStmt = stmtMap.get(sql);
+        
+                int par = 0;
+                for(int i = 0; i < 3; i++) {
+                    updateMatchStmt.setDate(++par, new java.sql.Date(mtTimestamp));
+                    updateMatchStmt.setObject(++par, from);
+                    updateMatchStmt.setObject(++par, to);
+                    updateMatchStmt.setInt(++par, fromTable);
+                    updateMatchStmt.setInt(++par, toTable);
+                }
+
+                try (java.sql.ResultSet result = updateMatchStmt.executeQuery()) {  
+                    while (result.next()) {
+                        int idx = 0;
+                        Match mt = new Match();
+                        mt.cpName = getString(result, ++idx);
+                        mt.cpDesc = getString(result, ++idx);
+                        mt.cpType = result.getInt(++idx);
+                        mt.grName = getString(result, ++idx);
+                        mt.grDesc = getString(result, ++idx);
+                        mt.grModus = result.getInt(++idx);
+                        mt.grSize = result.getInt(++idx);
+                        mt.grWinner = result.getInt(++idx);
+                        mt.grNofRounds = result.getInt(++idx);
+                        mt.grNofMatches = result.getInt(++idx);
+                        mt.mtRound = result.getInt(++idx);
+                        mt.mtMatch = result.getInt(++idx);
+                        mt.mtMatches = result.getInt(++idx);
+                        mt.mtBestOf = result.getInt(++idx);
+                        mt.mtNr = result.getInt(++idx);
+                        mt.mtMS = result.getInt(++idx);
+                        mt.mtWalkOverA = result.getBoolean(++idx);
+                        mt.mtWalkOverX = result.getBoolean(++idx);
+                        mt.mtResA = result.getInt(++idx);
+                        mt.mtResX = result.getInt(++idx);
+                        mt.mtReverse = result.getBoolean(++idx);
+
+                        mt.plA = getPlayer(result, idx);
+                        idx += 7;
+
+                        mt.plB = getPlayer(result, idx);
+                        idx += 7;
+
+                        mt.plX = getPlayer(result, idx);
+                        idx += 7;
+
+                        mt.plY = getPlayer(result, idx);
+                        idx += 7;
+
+                        mt.tmA = getTeam(result, idx);
+                        idx += 5;
+                        
+                        mt.tmX = getTeam(result, idx);
+                        idx += 5;
+
+                        mt.mttmResA = result.getInt(++idx);
+                        mt.mttmResX = result.getInt(++idx);
+                        
+                        mt.mtDateTime = result.getTimestamp(++idx).getTime();
+                        mt.mtTable = result.getInt(++idx);
+                        mt.mtTimestamp = result.getTimestamp(++idx).getTime();
+
+                        list.add(mt);
+                    }
+                }    
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();                
+            try {
+                updateMatchConnection.close();
+            } catch (java.sql.SQLException ex) {
+                
+            }
+            
+            updateMatchConnection = null;
+            
+            list.clear();
+        }
+        return list.toArray(new Match[0]);
+    }
+
+    @Override
+    public Entry[] listEntries(List<String> cpNames, String grStage, List<String> grNames) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+
+    @Override
+    public List<Long> getTimes(int day) {
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 }
