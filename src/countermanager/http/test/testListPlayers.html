@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="../scripts/jquery.js"></script>
+        <script type="text/javascript" src="../scripts/xmlrpcclient.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                xmlrpc(
+                    "../RPC2", "ttm.listPlayers", [], 
+                    function success(data) {
+                        if (data.length === 0)
+                            return;
+                        
+                        var h = '';
+                        for (var key in data[0])
+                            h += '<th>' + key + '</th>';
+                        
+                        $('table#result thead').append(h);
+                        
+                        for (var row = 0; row < data.length;  row++) {
+                            var r = '';
+                            for (var key in data[0])
+                                r += '<td>' + data[row][key] + '</td>';
+                            
+                            $('table#result tbody').append('<tr>' + r + '</tr>');
+                        }
+                    }
+                );
+            });
+            
+        </script>
+    </head>
+    <body>
+        <div>
+            <table id="result">
+                <thead>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+                    
+            </table>
+        </div>
+    </body>
+</html>
