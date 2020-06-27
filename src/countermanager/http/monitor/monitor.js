@@ -16,11 +16,29 @@
  *   noFlag:                Anzeige der Flagge unterdruecken
  *   noUpdate:              No updates of content (for debugging)
  *   showService:           Indicates who has the service
- *   nameLength:            Max. Laenge der Namen (default: 10)
+ *   nameLength:            Max. Laenge der Namen (default: alles)
+ *   firstNameLength:       Max. Laenge der Voramen (default: alles)
+ *   lastNameLength:        Max. Laenge der Nachnamen (default: alles)
  *   showRunningTimeout:    Flag if a running timeout is shown (default: 1)
  *   prestart:              Zeit vor Spielstart, ab wann angezeigt wird
  *   
  */
+
+
+var table = 1;
+var compareTimeout = 2;
+var timeToBlank = 30;
+var errorTimeout = 60;
+var noFlag = 0;
+var currentMatch = null;
+var currentData = null;
+var lastUpdateTime = null;
+var noUpdate = false;
+var showRunningTimeout = true;
+var prestart = 3600;
+var nameLength = 0;
+var lastNameLength = 0;
+var firstNameLength = 0;
 
 
 $(document).ready(function() {
@@ -33,6 +51,10 @@ $(document).ready(function() {
     showService = parseInt(getParameterByName('showService', 1)) !== 0;
     showRunningTimeout = parseInt(getParameterByName('showRunningTimeout',1)) !== 0;
     prestart = parseInt(getParameterByName('prestart', 600));
+    nameLength = getParameterByName("nameLength", 0);
+    lastNameLength = getParameterByName("lastNameLength", nameLength);
+    firstNameLength = getParameterByName("firstNameLength", nameLength);
+    teamNameLength = getParameterByName("teamNameLength", nameLength);
     
     if (!showRunningTimeout) {
         $('<style>')
@@ -65,18 +87,6 @@ $(document).ready(function() {
     update();
 });
 
-
-var table = 1;
-var compareTimeout = 2;
-var timeToBlank = 30;
-var errorTimeout = 60;
-var noFlag = 0;
-var currentMatch = null;
-var currentData = null;
-var lastUpdateTime = null;
-var noUpdate = false;
-var showRunningTimeout = true;
-var prestart = 3600;
 
 /*
  * Invisible:
@@ -705,7 +715,12 @@ function setNames(swap) {
 
 function formatName(pl) {
     // return pl.psFirst.substring(0, 1) + '.&nbsp;' + pl.psLast.substring(0, 10);
-    return formatString(pl.psLast, getParameterByName("nameLength", 10)) + '&nbsp;' + formatString(pl.psFirst, 1);
+    var last = formatString(pl.psLast, lastNameLength);
+    var first = formatString(pl.psFirst, firstNameLength);
+    
+    var name = '' + (first === '' ? last : last + '&nbsp;' + first);
+    
+    return formatString(name, nameLength);
 }
 
 
