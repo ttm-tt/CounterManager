@@ -15,6 +15,8 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import countermanager.http.HTTP;
+
 
 public class CommonJsTest {
 
@@ -25,11 +27,13 @@ public class CommonJsTest {
     
     @BeforeClass
     public static void setUpClass() {
-         WebDriverManager.chromedriver().setup();
+        HTTP.getDefaultInstance().startHttpServer(80);
+        WebDriverManager.chromedriver().setup();
     }
     
     @AfterClass
     public static void tearDownClass() {
+        HTTP.getDefaultInstance().stopHttpServer();
     }
     
     @Before

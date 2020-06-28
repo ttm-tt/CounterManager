@@ -30,6 +30,8 @@
         <dependency org="org.seleniumhq.selenium" name="selenium-java" rev="3.141.59" conf="test->default;sources->sources;javadoc->javadoc"/>        
         <!-- https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
         <dependency org="io.github.bonigarcia" name="webdrivermanager" rev="4.0.0" conf="test->default;sources->sources;javadoc->javadoc"/>        
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+        <dependency org="org.slf4j" name="slf4j-simple" rev="1.7.30"/>        
         <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency org="junit" name="junit" rev="4.13" conf="test->default;sources->sources;javadoc->javadoc" />
         
