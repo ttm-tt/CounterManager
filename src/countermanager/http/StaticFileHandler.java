@@ -85,7 +85,16 @@ class StaticFileHandler implements HttpHandler {
             file = index;
         }
         
-        String mime = Files.probeContentType(file.toPath());
+        String mime = null;
+        
+        // Sometimes probeContentType will return text/plain for html and js files
+        if (file.getName().endsWith(".html"))
+            mime = "text/html";
+        else if (file.getName().endsWith(".js"))
+            mime = "text/javascript";
+        else
+            mime = Files.probeContentType(file.toPath());
+        
         he.getResponseHeaders().add("Content-Type", mime == null ? "application/octet-stream" : mime);
         
         String etag = Integer.toHexString( (file.getAbsolutePath() + file.lastModified() + "" + file.length()).hashCode() );
