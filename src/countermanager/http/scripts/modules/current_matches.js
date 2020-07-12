@@ -5,34 +5,8 @@
  */
 
 
-/**
- * A list of matches, grouped by table
- */
-export var matches = [];
-
-// Max mtTimestamp, we need it quite often
-export var mtTimestamp = 0;
-
 // Enable debug
-export var debug = false;
-
-// Minimal time to show a result before it is replaced with the next match
-var minTime = 60;  // [s]
-// Maximal time to show a result before the match is due
-var prestart = 3600;  // [s]
-
-/**
- * Setup the module
- * @param {type} minTime
- * @param {type} prestart
- */
-export function setup(minTime, prestart) {
-    if (minTime !== undefined)
-        this.minTime = minTime;
-    if (prestart !== undefined)
-        this.prestart = prestart;
-}
-
+var debug = false;
 
 /**
  * Set debug flag
@@ -45,16 +19,19 @@ export function setDebug(b) {
 /**
  * Rebuild matches with new data with removing finished matches
  * Finished and expired matches are discarded and new matches added to the list
+ * @param matches the current list of matches
  * @param data list of matches from the server
  * @param ct current time
+ * @param minTime minimum time a finished match should be shown
+ * @param prestart time before schedule from when a match may be shown
  */
-export function rebuild(data, ct = ((new Date()).getTime())) {
+export function rebuild(matches, data, ct = ((new Date()).getTime()), minTime = 60, prestart = 3600) {
     sortData(data);
 
-    initialize();
-    removeFinished(data, ct);
-    updateUnfinished(data);
-    finalize(data, ct);
+    initialize(matches);
+    removeFinished(matches, data, ct, minTime);
+    updateUnfinished(matches, data);
+    finalize(matches, data, ct, prestart);
 
     updateMtTimestamp(data);
 }
@@ -62,13 +39,14 @@ export function rebuild(data, ct = ((new Date()).getTime())) {
 /**
  * Update matches with new data. but don't remove finished
  * Finished and expired matches are discarded and new matches added to the list
+ * @param matches the current list of matches
  * @param {type} data
  */
-export function update(data) {
+export function update(matches, data) {
     sortData(data);
     
     // Only first match per table is updated
-    updateResult(data);
+    updateResult(matches, data);
 
     updateMtTimestamp(data);
 }
@@ -100,20 +78,29 @@ export function sortData(data) {
 }
 
 
-export function updateMtTimestamp(data) {
+/**
+ * Get the maximum mtTimestamp of new data and current one
+ * @param {type} data
+ * @param {type} mtTimestamp
+ * @returns updated mtTimestamp
+ */
+export function updateMtTimestamp(data, mtTimestamp) {
     if (!data)
-        return;
+        return mtTimestamp;
     for (const i in data) {
         if (data[i].mtTimestamp > mtTimestamp)
             mtTimestamp = data[i].mtTimestamp;
     }
+    
+    return mtTimestamp;
 }
 
 
 /**
  * Initializes matches structure: each entry is just a plain match
+ * @param matches the current list of matches
  */
-export function initialize() {
+export function initialize(matches) {
     // Iterate over nun-numeric arrays with for..in
     for (const i in matches) {
         if (Array.isArray(matches[i]))
@@ -124,8 +111,9 @@ export function initialize() {
 
 /**
  * Clear result from all finished matches so we don't show them again
+ * @param matches the current list of matches
  */
-export function clearResult() {
+export function clearResult(matches) {
     for (const i in matches) {
         if (isFinished(matches[i]))
             matches[i].mtResult = null;
@@ -135,24 +123,12 @@ export function clearResult() {
 
 /**
  * Remove finished matches from matches no longer displayed
+ * @param matches the current list of matches
  * @param data
  * @param ct current time
+ * @param minTime the minimum time a finished match schal be shown
  */
-export function removeFinished(data, ct) {
-    // Do we need that? 
-    /*    
-    for (const i in data) {
-        if (isFinished(matches[data[i].mtTable]) && !isFinished(data[i])) {
-            if (data[i].mtDateTime > (ct + prestart))
-                ;  // Naechstes Spiel nicht zu frueh anzeigen
-            else if (matches[data[i].mtTable].mtTimestamp > (ct - minTime))
-                ;  // Ergebnis mindestens minTime anzeigen (mtTimestamp ist die letzte Aenderung)
-            else
-                matches[data[i].mtTable] = undefined;  // Spiel loeschen
-        }
-    }
-     */
-
+export function removeFinished(matches, data, ct, minTime) {
     for (const i in matches) {
         if (isFinished(matches[i]) && matches[i].mtTimestamp < (ct - minTime * 1000)) {
             if (debug)
@@ -174,18 +150,12 @@ export function removeFinished(data, ct) {
 
 
 /**
- * Insert next match, if there is any
- * @param data
+ * Update all unfinished matches with new result
+ * @param matches the current list of matches
+ * @param {type} data
+ * @returns {undefined}
  */
-export function insertNext(data) {
-    for (const i in data) {
-        if (!isFinished(data) && matches[data[i].mtTable] === null)
-            matches[data[i].mtTable] = data[i];
-    }
-}
-
-
-export function updateUnfinished(data) {
+export function updateUnfinished(matches, data) {
     for (const i in data) {
         const mtTable = data[i].mtTable;
         
@@ -218,10 +188,12 @@ export function updateUnfinished(data) {
 /**
  * Finalize matches list: 
  * each entry is a list of current and upcoming matches per table
+ * @param matches the current list of matches
  * @param data
  * @param ct current time
+ * @param prestart time before the schedule a match may be shown
  */
-export function finalize(data, ct) {
+export function finalize(matches, data, ct, prestart) {
 
     for (const i in matches) {
         matches[i] = [matches[i]];
@@ -265,9 +237,10 @@ export function finalize(data, ct) {
 
 /**
  * Update results of first match per table, but don't change matches
+ * @param matches the current list of matches
  * @param {type} data
  */
-export function updateResult(data) {
+export function updateResult(matches, data) {
     if (!data)
         return;
 

@@ -27,6 +27,11 @@ var lastNameLength = 0;
 var firstNameLength = 0;
 var teamNameLength = 0;
 var flag = 'nation';
+var minTime = 60;
+var prestart = 3600;
+
+var matches = [];
+var mtTimestamp = 0;
 
 import * as Matches from '../scripts/modules/current_matches.js';
 
@@ -35,8 +40,8 @@ lastNameLength = getParameterByName("lastNameLength", nameLength);
 firstNameLength = getParameterByName("firstNameLength", nameLength);
 teamNameLength = getParameterByName("teamNameLength", nameLength);
 flag = getParameterByName("flag", "nation");
-
-var date = new Date();
+minTime = getParameterByName("minTime", minTime);
+prestart = getParameterByName("prestart", prestart);
 
 args = {
     'all' : getParameterByName('all', 1),
@@ -45,7 +50,7 @@ args = {
 };
 
 if (getParameterByName('date', '') != '')
-    args['date'] = getParameterByName('date', formatDate(date));
+    args['date'] = getParameterByName('date', formatDate(new Date()));
 
 if (getParameterByName('fromTable', 0) != 0)
     args['fromTable'] = getParameterByName('fromTable', 0);
@@ -64,7 +69,7 @@ if (parent != undefined && parent.loadFromCache != undefined) {
     if (data != undefined && data.length > 0) {
         data = JSON.parse(data);
         
-        Matches.rebuild(data.matches);
+        Matches.rebuild(matches, data.matches, (new Date()).getTime(), minTime, prestart);
         args['mtTimestamp'] = data.mtTimestamp;
     }
 }
@@ -78,28 +83,31 @@ function update(args) {
 
     xmlrpc(
             "../RPC2", "ttm.listNextMatches", [args],
-            function success(data) {Matches.rebuild(data);},
+            function success(data) {
+                Matches.rebuild(matches, data, (new Date()).getTime(), minTime, prestart);
+                mtTimestamp = Matches.updateMtTimestamp(data, mtTimestamp);
+            },
             function error(err) {},
-            function final() {show(0, 0, Matches.mtTimestamp);}
+            function final() {show(0, 0, mtTimestamp);}
     );
 }
 
 
 function show(start, idx, mtTimestamp) {
-    if (size(Matches.matches) === 0) {
+    if (size(matches) === 0) {
         setTimeout(function() {update(args);}, 2000);
         return;
     }
 
-    if (start >= size(Matches.matches)) {
+    if (start >= size(matches)) {
         // Reload
         var from = null;
-        for (const i in Matches.matches) {
-            if (Matches.matches[i] === null)
+        for (const i in matches) {
+            if (matches[i] === null)
                 continue;
 
-            if (from === null || from > Matches.matches[i].mtDateTime)
-                from = Matches.matches[i].mtDateTime;
+            if (from === null || from > matches[i].mtDateTime)
+                from = matches[i].mtDateTime;
         }
 
         // Reset attribute
@@ -118,23 +126,24 @@ function show(start, idx, mtTimestamp) {
     }
 
     // Get latest matches
-    args['mtTimestamp'] = Matches.mtTimestamp;
+    args['mtTimestamp'] = mtTimestamp;
 
     // But with finished matches, too
     delete args['notFinished'];
 
     xmlrpc("../RPC2", "ttm.listNextMatches", [args],
-        function success(data) {Matches.updateResult(data);},
+        function success(data) {
+            Matches.updateResult(matches, data);
+            mtTimestamp = Matches.updateMtTimestamp(data, mtTimestamp);
+        },
         function error(e) {},
         function final() {doShow(start, idx, Matches.mtTimestamp);}
     );
 }
 
 function doShow(start, idx, mtTimestamp) {
-    const matches = Matches.matches;
-    
     if (parent != undefined && parent.storeInCache != undefined)
-        parent.storeInCache(JSON.stringify({'matches' : matches, 'mtTimestamp' : Matches.mtTimestamp}));
+        parent.storeInCache(JSON.stringify({'matches' : matches, 'mtTimestamp' : mtTimestamp}));
 
     var date = new Date();
 

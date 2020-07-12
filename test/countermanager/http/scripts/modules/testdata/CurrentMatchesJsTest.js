@@ -8,6 +8,8 @@
 
 export var testct = 0; 
 
+var matches = [];
+
 // Initial data: 2 matches, one overdue, one in the future
 var basedata = [
     {
@@ -133,41 +135,41 @@ export function testIsFinished(mt) {
  * Empty initiaizer
  */
 export function testEmptyInitialize() {
-    Matches.initialize();
-    return Matches.matches;
+    Matches.initialize(matches);
+    return matches;
 }
 
 /*
  * Initialize with start data
  */
 export function testInitialize() {
-    Matches.initialize();
-    return Matches.matches;
+    Matches.initialize(matches);
+    return matches;
 }
 
 
 export function testRemoveFinished(data, ct) {
-    Matches.removeFinished(data, ct);
-    return Matches.matches;
+    Matches.removeFinished(matches, data, ct);
+    return matches;
 }
 
 
 export function testUpdateUnfinished(data) {
-    Matches.updateUnfinished(data);
-    return Matches.matches;
+    Matches.updateUnfinished(matches, data);
+    return matches;
 }
 
 export function testFinalize(data, ct) {
-    Matches.finalize(data, ct);
-    return Matches.matches;
+    Matches.finalize(matches, data, ct);
+    return matches;
 }
 
 export function testRebuild(data, ct) {
-    Matches.rebuild(data, ct);
-    return Matches.matches;
+    Matches.rebuild(matches, data, ct);
+    return matches;
 }
 
 export function testUpdate(data, ct) {
-    Matches.update(data, ct);
-    return Matches.matches;
+    Matches.update(matches, data, ct);
+    return matches;
 }
