@@ -72,13 +72,13 @@ if (parent != undefined && parent.loadFromCache != undefined) {
     if (data != undefined && data.length > 0) {
         data = JSON.parse(data);
         
-        Matches.rebuild(matches, data.matches);
-        args['mtTimestamp'] = data.mtTimestamp;
+        matches = data.matches;
+        mtTimestamp = data.mtTimestamp;
     }
 }
 
 // TODO: Nur bis jetzt, also 'to' : date anhaengen.
-update(args );
+update(args);
 
 function update(args) {
     if (parent !== this && parent.show !== undefined && !parent.show())
@@ -140,7 +140,7 @@ function show(start, idx, mtTimestamp) {
             mtTimestamp = Matches.updateMtTimestamp(data, mtTimestamp);
         },
         function error(e) {},
-        function final() {doShow(start, idx, Matches.mtTimestamp);}
+        function final() {doShow(start, idx, mtTimestamp);}
     );
 }
 

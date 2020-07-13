@@ -25,48 +25,48 @@ var lastNameLength = 0;
 var firstNameLength = 0;
 var teamNameLength = 0;
 
-$(document).ready(function() {
-    nameLength = getParameterByName("nameLength", 0);
-    lastNameLength = getParameterByName("lastNameLength", nameLength);
-    firstNameLength = getParameterByName("firstNameLength", nameLength);
-    teamNameLength = getParameterByName("teamNameLength", nameLength);
-    
-    if (parent != undefined && parent.loadFromCache != undefined) {
-        var data = parent.loadFromCache();
-        if (data != undefined && data.length > 0) {
-            data = JSON.parse(data);
-            show(data['matches'], size(data['matches']), data['mtTimestamp']);
+var matches = [];
+var mtTimestamp = 0;
 
-            return;
-        }
+import * as Matches from '../scripts/modules/current_matches.js';
+
+nameLength = getParameterByName("nameLength", 0);
+lastNameLength = getParameterByName("lastNameLength", nameLength);
+firstNameLength = getParameterByName("firstNameLength", nameLength);
+teamNameLength = getParameterByName("teamNameLength", nameLength);
+
+// Set configuration
+Matches.setConfig({includeAllTeamMatches: true});
+
+if (parent != undefined && parent.loadFromCache != undefined) {
+    var data = parent.loadFromCache();
+    if (data != undefined && data.length > 0) {
+        data = JSON.parse(data);
+        
+        Matches.rebuild(matches, data.matches);
+        mtTimestamp = data.mtTimestamp;
     }
-    
-    update({}, args);
-});
+}
+
+update(args);
 
 
-function update(matches, args) {
+function update(args) {
     if (parent != this && !parent.show())
         return;
 
     xmlrpc(
         "../RPC2", "ttm.getCurrentTeamMatches", [args],
         function success(data) {
-            show(data, 0, undefined);
-        }
-        , function error(e) {
-        }
-        , function final() {        
-            // Show next data (if there is any)
-            var timeout = getParameterByName('timeout', 1) * 1000;
-            if (getParameterByName('noUpdate', 0) == 0)
-                setTimeout(function() { update(matches, args); }, timeout);
-        }               
+            Matches.rebuild(matches, data);
+        },
+        function error(err) {},
+        function final() {show();}
     );    
 }
 
 
-function show(matches, start, mtTimestamp) {
+function show() {
     var tr;
     
     $('#table tbody').empty();
@@ -80,10 +80,15 @@ function show(matches, start, mtTimestamp) {
             $('table tbody').append(tr);
         }
     }
+    
+    // Show next data (if there is any)
+    var timeout = getParameterByName('timeout', 1) * 1000;
+    if (getParameterByName('noUpdate', 0) == 0)
+        setTimeout(function() { update(args); }, timeout);
 }
 
 
-function formatCaption(matches) {
+function formatCaption() {
     var tr;
     
     tr = '<tr class="caption">';
@@ -108,7 +113,7 @@ function formatCaption(matches) {
     return tr;
 }
 
-function formatMatch(matches, ms) {
+function formatMatch(ms) {
     var tr;
     var match = matches[ms];
     

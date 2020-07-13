@@ -22,149 +22,69 @@
 
 var args = {};
 
-$(document).ready(function() {
-    if (parent != undefined && parent.loadFromCache != undefined) {
-        var data = parent.loadFromCache();
-        if (data != undefined && data.length > 0) {
-            data = JSON.parse(data);
-            show(data['matches'], size(data['matches']), data['mtTimestamp']);
+var minTime = 60;    // [s]
+var prestart = 3600; // [s]
 
-            return;
-        }
+var matches = [];
+var mtTimestamp = 0;
+
+import * as Matches from '../scripts/modules/current_matches.js';
+
+minTime = getParameterByName("minTime", minTime);
+prestart = getParameterByName("prestart", prestart);
+
+// Set configuration
+Matches.setConfig({minTime: minTime, prestart: prestart});
+
+if (parent != undefined && parent.loadFromCache != undefined) {
+    var data = parent.loadFromCache();
+    if (data != undefined && data.length > 0) {
+        data = JSON.parse(data);
+        Matches.rebuild(matches, data.matches);
+        mtTimestamp = data.mtTimestamp;
     }
+}
 
-    var date = new Date();
+args = {
+    'all': getParameterByName('all', 1),
+    'notFinished': 1,
+    'notStarted': 0
+};
 
-    args = {
-        'all': getParameterByName('all', 1),
-        'notFinished': 1,
-        'notStarted': 0
-    };
-    
-    if (getParameterByName('day', 0) != 0)
-        args['day'] = getParameterByName('day', 0);
-    
-    if (getParameterByName('date', '') != '')
-        args['date'] = getParameterByName('date', formatDate(date));
-    
-    if (getParameterByName('fromTable', 0) != 0)
-        args['fromTable'] = getParameterByName('fromTable', 0);
+if (getParameterByName('date', '') != '')
+    args['date'] = getParameterByName('date', formatDate(date));
 
-    if (getParameterByName('toTable', 0) != 0)
-        args['toTable'] = getParameterByName('toTable', 0);
+if (getParameterByName('fromTable', 0) != 0)
+    args['fromTable'] = getParameterByName('fromTable', 0);
 
-    if (getParameterByName('tableList', '') != '')
-        args['tableList'] = getParameterByName('tableList');
+if (getParameterByName('toTable', 0) != 0)
+    args['toTable'] = getParameterByName('toTable', 0);
 
-    // TODO: Nur bis jetzt, also 'to' : date anhaengen.
-    update({}, args);
-});
+if (getParameterByName('tableList', '') != '')
+    args['tableList'] = getParameterByName('tableList');
 
-function update(matches, args) {
-    if (parent != this && !parent.show())
+// TODO: Nur bis jetzt, also 'to' : date anhaengen.
+update(args);
+
+function update(args) {
+    if (parent != this && parent.show !== undefined && !parent.show())
         return;
 
     xmlrpc(
         "../RPC2", "ttm.listNextMatches", [args], 
-        function success(data) {
-            var i;
-            var prestart = parseInt(getParameterByName('prestart', '3600')) * 1000;
-            var minTime = parseInt(getParameterByName('mintime', '60')) * 1000;
-            var date = new Date();
-
-            if (getParameterByName('date', '') !== '')
-                date = new Date(getParameterByName('date', formateDate(date)));
-            else if (getParameterByName('day', '') !== '')
-                date.setDate(getParameterByName('day', date.getDate()));
-
-            var ct = date.getTime();
-
-            // Sort array by table, date / time, nr and team match
-            data.sort(function(a, b) {
-                var res = a.mtTable - b.mtTable;
-                if (!res)
-                    res = a.mtDateTime - b.mtDateTime;
-                if (!res)
-                    res = a.mtNr - b.mtNr;
-                if (!res)
-                    res = a.mtMS - b.mtMS;
-
-                return res;
-            });
-                
-            // A) Angefangene Spiele durch updates ersetzen
-            // B) Fertige Spiele einmal anzeigen
-
-            // 1) Fertige Spiele in der Vergangenheit koennen neu auftauchen
-
-            // First: Replace all finished matches with the next unfinished one, if there is one
-            for (i = 0; i < data.length; i++) {
-                if (isFinished(matches[data[i].mtTable]) && !isFinished(data[i])) {
-                    if (data[i].mtDateTime > (ct + prestart))
-                        ;  // Naechstes Spiel nicht zu frueh anzeigen
-                    else if (matches[data[i].mtTable].mtTimestamp > (ct - minTime))
-                        ;  // Ergebnis mindestens minTime anzeigen (mtTimestamp ist die letzte Aenderung)
-                    else
-                        matches[data[i].mtTable] = undefined;  // Spiel loeschen
-                }
-            }
-
-            // And remove all last finished matches
-            for (i in matches) {
-                if (isFinished(matches[i]) && matches[i].mtTimestamp < (ct - minTime))
-                    matches[i] = undefined;
-            }
-
-            for (i = 0; i < data.length; i++) {
-                if (matches[data[i].mtTable] == undefined) {
-                    // If there is no match on a table, only replace with unfinished once.
-                    // Finished matches which had been displayed once were already removed.
-                    if (!isFinished(data[i]))
-                        matches[data[i].mtTable] = data[i];
-                }
-            }
-
-            // Second: Replace all matches with an update
-            for (i = 0; i < data.length; i++) {
-                if (matches[data[i].mtTable] != undefined &&
-                        matches[data[i].mtTable].mtNr == data[i].mtNr &&
-                        matches[data[i].mtTable].mtMS == data[i].mtMS) {
-                    matches[data[i].mtTable] = data[i];
-                }
-            }
-
-            // Third: Replace all unfinished matches with the first unfinished one
-            for (i in matches) {
-                if (!isFinished(matches[i]))
-                    matches[i] = undefined;
-            }
-
-            for (i = 0; i < data.length; i++) {
-                if (matches[data[i].mtTable] == undefined) {
-                    if (!isFinished(data[i]))
-                        matches[data[i].mtTable] = data[i];
-                }
-            }
-
-            // Get last update time
-            var mtTimestamp = undefined;
-            for (i = 0; i < data.length; i++) {
-                if (mtTimestamp == undefined || mtTimestamp < data[i].mtTimestamp)
-                    mtTimestamp = data[i].mtTimestamp;
-            }
-
-            show(matches, 0, mtTimestamp);
-        }                     
-        , function error(e) {                            
-            show(matches, 0, undefined);
-        }
+            function success(data) {
+                Matches.rebuild(matches, data);
+                mtTimestamp = Matches.updateMtTimestamp(data, mtTimestamp);
+            },
+            function error(err) {},
+            function final() {show(0, mtTimestamp);}
     );
 }
 
 
-function show(matches, start, mtTimestamp) {
+function show(start, mtTimestamp) {
     if (size(matches) === 0) {
-        setTimeout(function() {update({}, args);}, 2000);
+        setTimeout(function() {update(args);}, 2000);
         return;
     }
 
@@ -189,7 +109,7 @@ function show(matches, start, mtTimestamp) {
         delete args['mtTimestamp'];
         
         // TODO: to berechnen
-        update(matches, args);
+        update(args);
 
         return;
     }
@@ -202,68 +122,40 @@ function show(matches, start, mtTimestamp) {
 
     xmlrpc("../RPC2", "ttm.listNextMatches", [args],
         function success(data) {
-            // Sort array by table, date / time, nr and team match
-            data.sort(function(a, b) {
-                var res = a.mtTable - b.mtTable;
-                if (!res)
-                    res = a.mtDateTime - b.mtDateTime;
-                if (!res)
-                    res = a.mtNr - b.mtNr;
-                if (!res)
-                    res = a.mtMS - b.mtMS;
-
-                return res;
-            });
-            
-            for (var i = 0; i < data.length; i++) {
-               if (matches[data[i].mtTable] != undefined) {
-                   // No resceduled matches, only updates of results
-                   if (matches[data[i].mtTable].mtNr == data[i].mtNr && matches[data[i].mtTable].mtMS == data[i].mtMS)
-                       matches[data[i].mtTable] = data[i];
-               }
-
-               if (mtTimestamp == undefined || mtTimestamp < data[i].mtTimestamp)
-                   mtTimestamp = data[i].mtTimestamp;
-           } 
-        }
-        , function error(e) {
-        }
-        , function final() {
-            doShow(matches, start, mtTimestamp);
-        }
+            Matches.updateResult(matches, data);
+            mtTimestamp = Matches.updateMtTimestamp(data, mtTimestamp);
+        },
+        function error(e) {},
+        function final() {doShow(start, mtTimestamp);}
     );
 }
 
 
-function doShow(matches, start, mtTimestamp) {
-    var data = [];
-    var i;
-    
+function doShow(start, mtTimestamp) {
     if (parent != undefined && parent.storeInCache != undefined)
         parent.storeInCache(JSON.stringify({'matches' : matches, 'mtTimestamp' : mtTimestamp}));
-
-    for (i in matches) 
-        data[data.length] = matches[i];
-
-    data.sort(function(a, b) {return a.mtTable - b.mtTable;});
 
     $('#matches tbody').empty();
 
     var rowCount = 0;
     var count = getParameterByName('rows', 999);  
-    while (count > 0 && start < data.length) {
-        if (data[start] == undefined) {
+    var tables = Object.keys(matches);
+
+    while (count > 0 && start < tables.length) {
+        var table = tables[start];
+        
+        if (matches[table] == undefined) {
             ++start;
             continue;
         }
 
         // Ignore matches withouot table
-        if (data[start].mtTable == 0) {
+        if (matches[table][0].mtTable == 0) {
             ++start;
             continue;
         }
 
-        var mt = data[start];
+        var mt = matches[table][0];
 
         // Double / Mixed need at least 2 rows
         if ( (mt.cpType == 2 || mt.cpType == 3) && count < 2)
@@ -273,7 +165,7 @@ function doShow(matches, start, mtTimestamp) {
         if (mt.cpType == 2 || mt.cpType == 3)
             need += 1;
         else if (mt.cpType == 4) {
-            if (isStarted(mt) && getParameterByName('individual', 0) > 0) {
+            if (Matches.isStarted(mt) && getParameterByName('individual', 0) > 0) {
                 if (mt.plBplNr > 0)
                     need += 2;
                 else if (mt.plAplNr > 0)
@@ -297,68 +189,26 @@ function doShow(matches, start, mtTimestamp) {
         start += 1;
         count -= need;
 
-        if (start == data.length)
+        if (start == tables.length)
             break;
-    }
-
-    if (false) {
-        while (count-- > 0)
-            $('#matches tbody').append(
-                '<tr class="' + ((++rowCount % 2) ? 'odd' : 'even') + '">' +
-                '<td colspan="8">&nbsp;</td>' +
-                '</tr>'
-            );
     }
 
     // Show next data (if there is any)
     var timeout = getParameterByName('timeout', 2 * rowCount) * 1000;
     if (getParameterByName('noUpdate', 0) == 0)
-        setTimeout(function() {show(matches, start);}, timeout);
+        setTimeout(function() {show(start);}, timeout);
 }
 
 
 // ----------------------------------------------------------------
 // Helpers
-function isFinished(data) {
-    if (data == undefined)
-        return false;
-
-    if (2 * data.mtResA < data.mtBestOf && 2 * data.mtResX < data.mtBestOf)
-        return false;
-
-    return true;
-} 
-
-
-function isStarted(mt) {
-    if (mt == undefined)
-        return false;
-    
-    var ct = new Date().getTime();
-    
-    if (mt.cpType == 4) {
-        if ( (mt.mtDateTime > ct && mt.mtResA == 0 && mt.mtResX == 0) || 
-             (mt.plAplNr == undefined || mt.plAplNr == 0 || mt.plXplNr == undefined || mt.plXplNr == 0)) { 
-             return false;
-        }
-    } else {
-        if ( (mt.mtDateTime > ct && mt.mtResA == 0 && mt.mtResX == 0) || 
-             (mt.plAplNr == undefined || mt.plAplNr == 0 || mt.plXplNr == undefined || mt.plXplNr == 0)) {     
-             return false;
-        }                           
-    }
-
-    return true;
-}
-
-
 function formatMatch(mt, rowCount) {
     var ct = new Date().getTime();
     var ret;           
     ret = '<tr class="' + ((rowCount % 2) ? 'odd' : 'even') + '" style="visibility:hidden">';
 
     if (mt.cpType == 4) {
-        if ( !isStarted(mt) ) {
+        if ( !Matches.isStarted(mt) ) {
             ret += 
                 '<td class="table">' + 'T.&nbsp;' + mt.mtTable + '</td>' +
                 '<td class="event">' + mt.cpName + '</td>' +
@@ -376,7 +226,7 @@ function formatMatch(mt, rowCount) {
                 '<td class="matches">' + mt.mttmResA + '&nbsp;:&nbsp;' + mt.mttmResX + '</td>';
         }  
 
-        if ( isStarted(mt) && getParameterByName('individual', 0) > 0 ) {
+        if ( Matches.isStarted(mt) && getParameterByName('individual', 0) > 0 ) {
             if (mt.plBplNr > 0) {
                 ret += '</tr>';
                 ret += '<tr class="individual ' + ((rowCount % 2) ? 'odd' : 'even') + '" style="visibility:hidden">';
@@ -400,7 +250,7 @@ function formatMatch(mt, rowCount) {
             }
         }
     } else if (mt.cpType == 1) {
-        if ( !isStarted(mt) ) {
+        if ( !Matches.isStarted(mt) ) {
             ret +=
                 '<td class="table">' + 'T.&nbsp;' + mt.mtTable + '</td>' +
                 '<td class="event">' + mt.cpName + '</td>' +

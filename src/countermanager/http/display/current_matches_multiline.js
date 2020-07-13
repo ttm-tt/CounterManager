@@ -29,159 +29,71 @@ var firstNameLength = 0;
 var teamNameLength = 0;
 var flag = 'nation';
 var showService = false;
-var prestart = 3600;
+var minTime = 60;    // [s]
+var prestart = 3600; // [s]
 
-$(document).ready(function() {
-    nameLength = getParameterByName("nameLength", 0);
-    lastNameLength = getParameterByName("lastNameLength", nameLength);
-    firstNameLength = getParameterByName("firstNameLength", nameLength);
-    teamNameLength = getParameterByName("teamNameLength", nameLength);
-    flag = getParameterByName("flag", "nation");
-    showService = getParameterByName("showService", 1) != 0;
-    prestart = parseInt(getParameterByName("prestart", prestart)) * 1000;
-    
-    if (parent != undefined && parent.loadFromCache != undefined) {
-        var data = parent.loadFromCache();
-        if (data != undefined && data.length > 0) {
-            data = JSON.parse(data);
-            show(data['matches'], size(data['matches']), data['mtTimestamp']);
+var matches = [];
+var mtTimestamp = 0;
 
-            return;
-        }
+import * as Matches from '../scripts/modules/current_matches.js';
+
+nameLength = getParameterByName("nameLength", nameLength);
+lastNameLength = getParameterByName("lastNameLength", nameLength);
+firstNameLength = getParameterByName("firstNameLength", nameLength);
+teamNameLength = getParameterByName("teamNameLength", nameLength);
+flag = getParameterByName("flag", "nation");
+showService = getParameterByName("showService", 1) != 0;
+minTime = getParameterByName("minTime", minTime);
+prestart = getParameterByName("prestart", prestart);
+
+// Set configuration
+Matches.setConfig({minTime: minTime, prestart: prestart});
+
+if (parent != undefined && parent.loadFromCache != undefined) {
+    var data = parent.loadFromCache();
+    if (data != undefined && data.length > 0) {
+        data = JSON.parse(data);
+        Matches.rebuild(matches, data.matches);
+        mtTimestamp = data.mtTimestamp;
     }
+}
 
-    var date = new Date();
+args = {
+    'all': getParameterByName('all', 1),
+    'notFinished': 1,
+    'notStarted': 0
+};
 
-    args = {
-        'all': getParameterByName('all', 1),
-        'notFinished': 1,
-        'notStarted': 0
-    };
-    
-    if (getParameterByName('date', '') != '')
-        args['date'] = getParameterByName('date', formatDate(date));
-    
-    if (getParameterByName('fromTable', 0) != 0)
-        args['fromTable'] = getParameterByName('fromTable', 0);
+if (getParameterByName('date', '') != '')
+    args['date'] = getParameterByName('date', formatDate(date));
 
-    if (getParameterByName('toTable', 0) != 0)
-        args['toTable'] = getParameterByName('toTable', 0);
+if (getParameterByName('fromTable', 0) != 0)
+    args['fromTable'] = getParameterByName('fromTable', 0);
 
-    // TODO: Nur bis jetzt, also 'to' : date anhaengen.
-    update([], args);
-});
+if (getParameterByName('toTable', 0) != 0)
+    args['toTable'] = getParameterByName('toTable', 0);
 
-function update(matches, args) {
-    if (parent !== null && parent != this && !parent.show())
+// TODO: Nur bis jetzt, also 'to' : date anhaengen.
+update(args);
+
+function update(args) {
+    if (parent !== null && parent != this && parent.show !== undefined && !parent.show())
         return;
 
     xmlrpc(
             "../RPC2", "ttm.listNextMatches", [args],
             function success(data) {
-                var i;
-                var minTime = parseInt(getParameterByName('mintime', '60')) * 1000;
-                var date = new Date();
-                
-                if (getParameterByName('date', '') !== '')
-                    date = new Date(getParameterByName('date', formateDate(date)));
-                else if (getParameterByName('day', '') !== '')
-                    date.setDate(getParameterByName('day', date.getDate()));
-                
-                var ct = date.getTime();
-                
-                // Sort array by table, date / time, nr and team match
-                data.sort(function(a, b) {
-                    var res = a.mtTable - b.mtTable;
-                    if (!res)
-                        res = a.mtDateTime - b.mtDateTime;
-                    if (!res)
-                        res = a.mtNr - b.mtNr;
-                    if (!res)
-                        res = a.mtMS - b.mtMS;
-
-                    return res;
-                });
-                
-                // Prepare finished matches which were shown before
-                // If the match is finished remove the points so we show the final result only
-                for (i in matches) {
-                    if (isFinished(matches[i]))
-                        matches[i].mtResult = null;
-                }
-
-                // A) Angefangene Spiele durch updates ersetzen
-                // B) Fertige Spiele einmal anzeigen
-
-                // 1) Fertige Spiele in der Vergangenheit koennen neu auftauchen
-
-                // First: Replace all finished matches with the next unfinished one, if there is one
-                //        but only if the next match is due to be displayed
-                for (i = 0; i < data.length; i++) {
-                    if (isFinished(matches[data[i].mtTable]) && !isFinished(data[i])) {
-                        if (data[i].mtDateTime > (ct + prestart))
-                            ;  // Naechstes Spiel nicht zu frueh anzeigen
-                        else if (matches[data[i].mtTable].mtTimestamp > (ct - minTime))
-                            ;  // Ergebnis mindestens minTime anzeigen (mtTimestamp ist die letzte Aenderung)
-                        else
-                            matches[data[i].mtTable] = undefined;  // Spiel loeschen
-                    }
-                }
-                
-                // And remove all last finished matches
-                for (i in matches) {
-                    if (isFinished(matches[i]) && matches[i].mtTimestamp < (ct - minTime))
-                        matches[i] = undefined;
-                }
-
-                for (i = 0; i < data.length; i++) {
-                    if (matches[data[i].mtTable] == undefined) {
-                        // If there is no match on a table, only replace with unfinished once.
-                        // Finished matches which had been displayed once were already removed.
-                        if (!isFinished(data[i]))
-                            matches[data[i].mtTable] = data[i];
-                    }
-                }
-
-                // Second: Replace all matches with an update
-                for (i = 0; i < data.length; i++) {
-                    if (matches[data[i].mtTable] != undefined &&
-                            matches[data[i].mtTable].mtNr == data[i].mtNr &&
-                            matches[data[i].mtTable].mtMS == data[i].mtMS) {
-                        matches[data[i].mtTable] = data[i];
-                    }
-                }
-
-                // Third: Replace all unfinished matches with the first unfinished one
-                for (i in matches) {
-                    if (!isFinished(matches[i]))
-                        matches[i] = undefined;
-                }
-
-                for (i = 0; i < data.length; i++) {
-                    if (matches[data[i].mtTable] == undefined) {
-                        if (!isFinished(data[i]))
-                            matches[data[i].mtTable] = data[i];
-                    }
-                }
-
-                // Get last update time
-                var mtTimestamp = undefined;
-                for (i = 0; i < data.length; i++) {
-                    if (mtTimestamp == undefined || mtTimestamp < data[i].mtTimestamp)
-                        mtTimestamp = data[i].mtTimestamp;
-                }
-
-                show(matches, 0, mtTimestamp);
-            }
-    , function error(e) {
-        show(matches, 0, undefined);
-    }
+                Matches.rebuild(matches, data);
+                mtTimestamp = Matches.updateMtTimestamp(data, mtTimestamp);
+            },
+            function error(err) {},
+            function final() {show(0, mtTimestamp);}
     );
 }
 
-function show(matches, start, mtTimestamp) {
+function show(start, mtTimestamp) {
     if (size(matches) === 0) {
-        setTimeout(function() {update([], args);}, 2000);
+        setTimeout(function() {update(args);}, 2000);
         return;
     }
 
@@ -206,96 +118,50 @@ function show(matches, start, mtTimestamp) {
             delete args['from'];
         
         // TODO: to berechnen
-        update(matches, args);
+        update(args);
 
         return;
     }
 
     // Get latest matches
-    if (mtTimestamp != undefined)
-        args['mtTimestamp'] = mtTimestamp;
+    args['mtTimestamp'] = mtTimestamp;
 
     xmlrpc("../RPC2", "ttm.listNextMatches", [args],
-            function success(data) {
-                // Sort array by table, date / time, nr and team match
-                data.sort(function(a, b) {
-                    var res = a.mtTable - b.mtTable;
-                    if (!res)
-                        res = a.mtDateTime - b.mtDateTime;
-                    if (!res)
-                        res = a.mtNr - b.mtNr;
-                    if (!res)
-                        res = a.mtMS - b.mtMS;
-
-                    return res;
-                });
-                
-                for (var i = 0; i < data.length; i++) {
-                    if (matches[data[i].mtTable] != undefined) {
-                        // No resceduled matches, only updates of results
-                        if (matches[data[i].mtTable].mtNr == data[i].mtNr && matches[data[i].mtTable].mtMS == data[i].mtMS) {
-                            matches[data[i].mtTable] = data[i];
-                        }
-                    }
-
-                    if (mtTimestamp == undefined || mtTimestamp < data[i].mtTimestamp)
-                        mtTimestamp = data[i].mtTimestamp;
-                }
-            }
-            , function error(e) {
-            }
-            , function final() {
-                doShow(matches, start, mtTimestamp);
-            }
+        function success(data) {
+            Matches.updateResult(matches, data);
+            mtTimestamp = Matches.updateMtTimestamp(data, mtTimestamp);
+        },
+        function error(e) {},
+        function final() {doShow(start, mtTimestamp);}
     );
 }
 
-function doShow(matches, start, mtTimestamp) {
-    var data = [];
-    var i;
-
+function doShow(start, mtTimestamp) {
     if (parent != undefined && parent.storeInCache != undefined)
         parent.storeInCache(JSON.stringify({'matches': matches, 'mtTimestamp': mtTimestamp}));
-
-    for (i in matches)
-        data[data.length] = matches[i];
-
-    data.sort(function(a, b) {
-        return a.mtTable - b.mtTable;
-    });
 
     $('#table tbody').empty();
 
     var matchCount = 0;
     var count = getParameterByName('rows', 999);
-    var date = new Date();
+    var tables = Object.keys(matches);
 
-    if (getParameterByName('date', '') !== '')
-        date = new Date(getParameterByName('date', formateDate(date)));
-    else if (getParameterByName('day', '') !== '')
-        date.setDate(getParameterByName('day', date.getDate()));
+    while (count > 0 && start < tables.length) {
+        var table = tables[start];
 
-    var ct = date.getTime();
-    
-    while (count > 0 && start < data.length) {
-        if (data[start] == undefined) {
+        if (matches[table] === null){
             ++start;
             continue;
         }
 
         // Ignore matches withouot table
-        if (data[start].mtTable == 0) {
+        if (matches[table][0].mtTable == 0) {
             ++start;
             continue;
         }
 
-        var mt = data[start];
+        var mt = matches[table][0];
         
-        if (!isStarted(mt) && mt.mtDateTime > (ct + prestart)) {
-            ++start;
-            continue;
-        }
-
         var tr = formatMatch(mt, ((++matchCount % 2) == 0 ? 'even' : 'odd'));
         $('#table tbody').append(tr);
 
@@ -309,63 +175,19 @@ function doShow(matches, start, mtTimestamp) {
         start += 1;
         count -= 1;
 
-        if (start == data.length)
+        if (start === tables.length)
             break;
     }
 
     // Show next data (if there is any)
     var timeout = getParameterByName('timeout', 3 * matchCount + 1) * 1000;
     if (getParameterByName('noUpdate', 0) == 0)
-        setTimeout(function() { show(matches, start); }, timeout);
+        setTimeout(function() { show(start); }, timeout);
 }
 
 
 // ----------------------------------------------------------------
 // Helpers
-function isFinished(mt) {
-    if (mt == undefined)
-        return false;
-
-    if (mt.mtMatches > 1 && (2 * mt.mttmResA > mt.mtMatches || 2 * mt.mttmResX > mt.mtMatches))
-        return true;
-    
-    if (mt.mtWalkOverA != 0 || mt.mtWalkOverX != 0)
-        return true;
-    
-    if (2 * mt.mtResA > mt.mtBestOf || 2 * mt.mtResX > mt.mtBestOf)
-        return true;
-
-    return false;
-}
-
-
-function isStarted(mt) {
-    if (mt == undefined)
-        return false;
-
-    if (isFinished(mt))
-        return true;
-    
-    if (mt.mtResult !== undefined && mt.mtResult.length > 0 && (mt.mtResult[0][0] > 0 || mt.mtResult[0][1] > 0))
-        return true;
-
-    var ct = new Date().getTime();
-
-    if (mt.cpType == 4) {
-        if ((mt.mtDateTime > ct && mt.mtResA == 0 && mt.mtResX == 0) ||
-                (mt.plAplNr == undefined || mt.plAplNr == 0 || mt.plXplNr == undefined || mt.plXplNr == 0)) {
-            return false;
-        }
-    } else {
-        if ((mt.mtDateTime > ct && mt.mtResA == 0 && mt.mtResX == 0) ||
-                (mt.plAplNr == undefined || mt.plAplNr == 0 || mt.plXplNr == undefined || mt.plXplNr == 0)) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 
 function formatMatch(mt, clazz) {
     var ret = '';
@@ -467,7 +289,7 @@ function formatMatch(mt, clazz) {
     
     var mtResA = mt.mtResA, mtResX = mt.mtResX;
 
-    if (!isStarted(mt)) {
+    if (!Matches.isStarted(mt)) {
         left += '<td class="points"></td>';
         right += '<td class="points"></td>';
 
@@ -518,7 +340,7 @@ function formatMatch(mt, clazz) {
     }
 
     if (mt.cpType == 4) {
-        if (isStarted(mt) || mt.mttmResA > 0 || mt.mttmResX > 0) {
+        if (Matches.isStarted(mt) || mt.mttmResA > 0 || mt.mttmResX > 0) {
             left += '<td class="matches">' + mt.mttmResA + '</td>';
             right += '<td class="matches">' + mt.mttmResX + '</td>';
         } else {

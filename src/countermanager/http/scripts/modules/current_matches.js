@@ -6,8 +6,9 @@
 
 // Options
 var config = {
-    minTime: 60,   // [s]
-    prestart: 3600 // [s]
+    minTime: 60,   // [s] minimum time a finished match must be schown
+    prestart: 3600, // [s] time before start a match is schown
+    includeAllTeamMatches: false  // Flag if all team matches are included
 };
 
 // Enable debug
@@ -227,7 +228,7 @@ export function finalize(matches, data, ct) {
         const length = matches[mtTable].length;
 
         // Only one next team match of current match
-        if (length > 1 && matches[mtTable][length - 1].mtNr === data[i].mtNr)
+        if (!config.includeAllTeamMatches && length > 1 && matches[mtTable][length - 1].mtNr === data[i].mtNr)
             continue;
 
         // A previous match (which means data[i] is finished)
