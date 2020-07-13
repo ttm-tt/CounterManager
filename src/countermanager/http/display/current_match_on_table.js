@@ -43,6 +43,9 @@ flag = getParameterByName("flag", "nation");
 minTime = getParameterByName("minTime", minTime);
 prestart = getParameterByName("prestart", prestart);
 
+// Set configuration
+Matches.setConfig({minTime: minTime, prestart: prestart});
+
 args = {
     'all' : getParameterByName('all', 1),
     'notFinished' : 1, 
@@ -69,7 +72,7 @@ if (parent != undefined && parent.loadFromCache != undefined) {
     if (data != undefined && data.length > 0) {
         data = JSON.parse(data);
         
-        Matches.rebuild(matches, data.matches, (new Date()).getTime(), minTime, prestart);
+        Matches.rebuild(matches, data.matches);
         args['mtTimestamp'] = data.mtTimestamp;
     }
 }
@@ -84,7 +87,7 @@ function update(args) {
     xmlrpc(
             "../RPC2", "ttm.listNextMatches", [args],
             function success(data) {
-                Matches.rebuild(matches, data, (new Date()).getTime(), minTime, prestart);
+                Matches.rebuild(matches, data);
                 mtTimestamp = Matches.updateMtTimestamp(data, mtTimestamp);
             },
             function error(err) {},
@@ -152,8 +155,6 @@ function doShow(start, idx, mtTimestamp) {
     else if (getParameterByName('day', '') !== '')
         date.setDate(getParameterByName('day', date.getDate()));
 
-    var ct = date.getTime();
-    
     var tables = Object.keys(matches);
     
     var mt = undefined;
@@ -192,15 +193,7 @@ function doShow(start, idx, mtTimestamp) {
             continue;
         }
         
-        // Ignore matches not due and all after
-        if (!Matches.isStarted(mt) && mt.mtDateTime > (ct + parseInt(getParameterByName('prestart', '1800')) * 1000)) {
-            idx = 0;
-            ++start;
-            continue;
-        }
-
-
-        // Ignore matches withoutteams or players and all after
+        // Ignore matches without teams or players and all after
         // Not existing values in the database will not be set in the match object
         if (mt.cpType == 4 && (mt.tmAtmName === undefined || mt.tmXtmName === undefined)) {
             idx = 0;

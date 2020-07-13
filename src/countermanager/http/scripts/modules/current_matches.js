@@ -4,9 +4,22 @@
  * It is up to the implementation to request and update the data
  */
 
+// Options
+var config = {
+    minTime: 60,   // [s]
+    prestart: 3600 // [s]
+};
 
 // Enable debug
 var debug = false;
+
+/**
+ * Set config
+ * @param cfg
+ */
+export function setConfig(cfg) {
+    config = Object.assign({}, config, cfg);
+}
 
 /**
  * Set debug flag
@@ -22,16 +35,14 @@ export function setDebug(b) {
  * @param matches the current list of matches
  * @param data list of matches from the server
  * @param ct current time
- * @param minTime minimum time a finished match should be shown
- * @param prestart time before schedule from when a match may be shown
  */
-export function rebuild(matches, data, ct = ((new Date()).getTime()), minTime = 60, prestart = 3600) {
+export function rebuild(matches, data, ct = ((new Date()).getTime())) {
     sortData(data);
 
     initialize(matches);
-    removeFinished(matches, data, ct, minTime);
+    removeFinished(matches, data, ct);
     updateUnfinished(matches, data);
-    finalize(matches, data, ct, prestart);
+    finalize(matches, data, ct);
 
     updateMtTimestamp(data);
 }
@@ -128,9 +139,9 @@ export function clearResult(matches) {
  * @param ct current time
  * @param minTime the minimum time a finished match schal be shown
  */
-export function removeFinished(matches, data, ct, minTime) {
+export function removeFinished(matches, data, ct) {
     for (const i in matches) {
-        if (isFinished(matches[i]) && matches[i].mtTimestamp < (ct - minTime * 1000)) {
+        if (isFinished(matches[i]) && matches[i].mtTimestamp < (ct - config.minTime * 1000)) {
             if (debug)
                 console.log("Remove inished: remove nr " + matches[i].mtNr);
             
@@ -141,7 +152,7 @@ export function removeFinished(matches, data, ct, minTime) {
                         "Remove finished: keep nr " + matches[i].mtNr + 
                         " finished = " + isFinished(matches[i]) + "," + 
                         " timestamp = " + matches[i].mtTimestamp + "," +
-                        " ct - minTime = " + (ct - minTime * 1000)
+                        " ct - minTime = " + (ct - config.minTime * 1000)
                 );
             }
         }
@@ -191,9 +202,8 @@ export function updateUnfinished(matches, data) {
  * @param matches the current list of matches
  * @param data
  * @param ct current time
- * @param prestart time before the schedule a match may be shown
  */
-export function finalize(matches, data, ct, prestart) {
+export function finalize(matches, data, ct) {
 
     for (const i in matches) {
         matches[i] = [matches[i]];
@@ -203,7 +213,7 @@ export function finalize(matches, data, ct, prestart) {
         const mtTable = data[i].mtTable;
         
         // Match is too far in the future and should not be shown yet
-        if (data[i].mtDateTime > ct + (prestart * 1000))
+        if (data[i].mtDateTime > ct + (config.prestart * 1000))
             continue;
         
         // No more matches, but safety condition
