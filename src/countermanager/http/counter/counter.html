@@ -13,7 +13,7 @@
         <![endif]-->
         <script type="text/javascript" src="../scripts/jquery.js"></script>
         <script type="text/javascript" src="../scripts/common.js"></script>
-        <script type="text/javascript" src="counter.js"></script>
+        <script type="module" src="counter.js"></script>
         
     </head>
     <body>
@@ -40,7 +40,7 @@
             </div>
             <p>
             <div id="counter" class="counter">
-                <table>
+                <table id="caption">
                     <tr class="teams hidden" id="teams">
                         <td class="team left" id="teamleft" colspan="2"></td>
                         <td class="team result center" id="teamresult"></td>
@@ -52,26 +52,26 @@
                     </tr>
                     
                     <tr class="names" id="names">
-                        <td class="name left" colspan="2">Player Left</td>
+                        <td class="name left" id="nameleft" colspan="2">Player Left</td>
                         <td class="name center" id="games">0&nbsp;-&nbsp;0</td>
-                        <td class="name right" colspan="2">Player Right</td>
+                        <td class="name right" id="nameright" colspan="2">Player Right</td>
                     </tr>
 
                     <tr class="spacer"><td colspan="5"><br></td></tr>
                     
                     <tr class="flags" id="flags">
                         <td class="flags left" colspan="2">
-                            <button type="button" class="toggle service left" id="serviceleft" onclick="setService($(this));">Service</button>
-                            <button type="button" class="toggle timeout left" id="timeoutleft" onclick="timeout($(this));">Timeout</button>
-                            <button type="button" class="toggle wo left" id="woleft" onclick="wo($(this));">Lost w/o</button>
-                            <!-- <button type="button" class="toggle injured left" id="injuredleft" onclick="injured($(this))">Injured</button> -->
+                            <button type="button" class="toggle service left" id="serviceleft" data-counter='setServiceLeft'>Service</button>
+                            <button type="button" class="toggle timeout left" id="timeoutleft" data-counter='setTimeoutLeft'>Timeout</button>
+                            <button type="button" class="toggle wo left" id="woleft" data-counter='setWOLeft'>Lost w/o</button>
+                            <!-- <button type="button" class="toggle injured left" id="injuredleft" data-counter='setInjuredLeft'>Injured</button> -->
                         </td>
-                        <td rowspan="2" class="center">&nbsp;<button type="button" id="swap" onclick="swapSides();">&lt;-&gt;</button>&nbsp;</td>
+                        <td rowspan="2" class="center">&nbsp;<button type="button" id="swap" data-counter='swapSides'>&lt;-&gt;</button>&nbsp;</td>
                         <td class="flags right" colspan="2">
                             <!-- <button type="button" class="toggle injured right" id="injuredright" onclick="injured($(this))">Injured</button> -->
-                            <button type="button" class="toggle wo right" id="woright" onclick="wo($(this));">Lost w/o</button>
-                            <button type="button" class="toggle timeout right" id="timeoutright" onclick="timeout($(this));">Timeout</button>
-                            <button type="button" class="toggle service right" id="serviceright" onclick="setService($(this));">Service</button>
+                            <button type="button" class="toggle wo right" id="woright" data-counter='setWORight'>Lost w/o</button>
+                            <button type="button" class="toggle timeout right" id="timeoutright" data-counter='setTimeoutRight'>Timeout</button>
+                            <button type="button" class="toggle service right" id="serviceright" data-counter='setServiceRight'>Service</button>
                         </td>
                     </tr>
                     
@@ -82,107 +82,107 @@ Problem:
 -->
                     <tr class="cards" id="cards">
                         <td class="cards left" colspan="2">
-                            <button type="button" class="toggle yellow left" id="yellowleft" onclick="setCard($(this));">Yellow</button>
-                            <button type="button" class="toggle yr1p left" id="yr1pleft" onclick="setCard($(this));">YR 1P</button>
-                            <button type="button" class="toggle yr2p left" id="yr2pleft" onclick="setCard($(this));">YR 2P</button>
+                            <button type="button" class="toggle yellow left" id="yellowleft" data-counter='setYLeft'>Yellow</button>
+                            <button type="button" class="toggle yr1p left" id="yr1pleft" data-counter='setYR1Left'>YR 1P</button>
+                            <button type="button" class="toggle yr2p left" id="yr2pleft" data-counter='setYR2Left'>YR 2P</button>
                         </td>
                         <!-- <td class="cards center"> </td> -->
                             
                         <td class="cards right" colspan="2">
-                            <button type="button" class="toggle yellow right" id="yellowright" onclick="setCard($(this));">Yellow</button>
-                            <button type="button" class="toggle yr1p right" id="yr1pright" onclick="setCard($(this));">YR 1P</button>
-                            <button type="button" class="toggle yr2p right" id="yr2pright" onclick="setCard($(this));">YR 2P</button>
+                            <button type="button" class="toggle yellow right" id="yellowright" data-counter='setYRight'>Yellow</button>
+                            <button type="button" class="toggle yr1p right" id="yr1pright" data-counter='setYR1Right'>YR 1P</button>
+                            <button type="button" class="toggle yr2p right" id="yr2pright" data-counter='setYR2Right'>YR 2P</button>
                     </tr>
                     <tr class="spacer"><td colspan="5"><br></td></tr>
                     <tr class="game" id="game1">
                         <td class="action left">
-                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
-                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                            <button type="button" class="minus" data-counter='subPointLeft'>-</button>
+                            <button type="button" class="plus" data-counter='addPointLeft'>+</button>
                         </td>
                         <td class="points left">0</td>
                         <td class="points center">&nbsp;-&nbsp;</td>
                         <td class="points right">0</td>
                         <td class="action right">
-                            <button type="button" class="plus" onclick="increment($(this));">+</button>
-                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                            <button type="button" class="plus" data-counter='addPointRight'>+</button>
+                            <button type="button" class="minus" data-counter='subPointRight'>-</button>
                         </td>
                     </tr>
                     <tr class="game" id="game2">
                         <td class="action left">
-                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
-                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                            <button type="button" class="minus" data-counter='subPointLeft'>-</button>
+                            <button type="button" class="plus" data-counter='addPointLeft'>+</button>
                         </td>
                         <td class="points left">0</td>
                         <td class="points center">&nbsp;-&nbsp;</td>
                         <td class="points right">0</td>
                         <td class="action right">
-                            <button type="button" class="plus" onclick="increment($(this));">+</button>
-                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                            <button type="button" class="plus" data-counter='addPointRight'>+</button>
+                            <button type="button" class="minus" data-counter='subPointRight'>-</button>
                         </td>
                     </tr>
                     <tr class="game" id="game3">
                         <td class="action left">
-                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
-                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                            <button type="button" class="minus" data-counter='subPointLeft'>-</button>
+                            <button type="button" class="plus" data-counter='addPointLeft'>+</button>
                         </td>
                         <td class="points left">0</td>
                         <td class="points center">&nbsp;-&nbsp;</td>
                         <td class="points right">0</td>
                         <td class="action right">
-                            <button type="button" class="plus" onclick="increment($(this));">+</button>
-                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                            <button type="button" class="plus" data-counter='addPointRight'>+</button>
+                            <button type="button" class="minus" data-counter='subPointRight'>-</button>
                         </td>
                     </tr>
                     <tr class="game" id="game4">
                         <td class="action left">
-                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
-                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                            <button type="button" class="minus" data-counter='subPointLeft'>-</button>
+                            <button type="button" class="plus" data-counter='addPointLeft'>+</button>
                         </td>
                         <td class="points left">0</td>
                         <td class="points center">&nbsp;-&nbsp;</td>
                         <td class="points right">0</td>
                         <td class="action right">
-                            <button type="button" class="plus" onclick="increment($(this));">+</button>
-                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                            <button type="button" class="plus" data-counter='addPointRight'>+</button>
+                            <button type="button" class="minus" data-counter='subPointRight'>-</button>
                         </td>
                     </tr>
                     <tr class="game" id="game5">
                         <td class="action left">
-                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
-                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                            <button type="button" class="minus" data-counter='subPointLeft'>-</button>
+                            <button type="button" class="plus" data-counter='addPointLeft'>+</button>
                         </td>
                         <td class="points left">0</td>
                         <td class="points center">&nbsp;-&nbsp;</td>
                         <td class="points right">0</td>
                         <td class="action right">
-                            <button type="button" class="plus" onclick="increment($(this));">+</button>
-                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                            <button type="button" class="plus" data-counter='addPointRight'>+</button>
+                            <button type="button" class="minus" data-counter='subPointRight'>-</button>
                         </td>
                     </tr>
                     <tr class="game" id="game6">
                         <td class="action left">
-                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
-                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                            <button type="button" class="minus" data-counter='subPointLeft'>-</button>
+                            <button type="button" class="plus" data-counter='addPointLeft'>+</button>
                         </td>
                         <td class="points left">0</td>
                         <td class="points center">&nbsp;-&nbsp;</td>
                         <td class="points right">0</td>
                         <td class="action right">
-                            <button type="button" class="plus" onclick="increment($(this));">+</button>
-                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                            <button type="button" class="plus" data-counter='addPointRight'>+</button>
+                            <button type="button" class="minus" data-counter='subPointRight'>-</button>
                         </td>
                     </tr>
                     <tr class="game" id="game7">
                         <td class="action left">
-                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
-                            <button type="button" class="plus" onclick="increment($(this));">+</button>
+                            <button type="button" class="minus" data-counter='subPointLeft'>-</button>
+                            <button type="button" class="plus" data-counter='addPointLeft'>+</button>
                         </td>
                         <td class="points left">0</td>
                         <td class="points center">&nbsp;-&nbsp;</td>
                         <td class="points right">0</td>
                         <td class="action right">
-                            <button type="button" class="plus" onclick="increment($(this));">+</button>
-                            <button type="button" class="minus" onclick="decrement($(this));">-</button>
+                            <button type="button" class="plus" data-counter='addPointRight'>+</button>
+                            <button type="button" class="minus" data-counter='subPointRight'>-</button>
                         </td>
                     </tr>
                 </table>
@@ -198,10 +198,10 @@ Problem:
             </div>
             <div id="commands" class="commands">
                 <div id="left">
-                    <button type="button" class="toggle start" id="startGame" onclick="startGame($(this));">Start Game</button>
-                    <button type="button" class="toggle expedite" id="setExpedite" onclick="setExpedite($(this));">Expedite</button>
-                    <button type="button" class="swapPlayers" id="swapPlayers" onclick="swapPlayers();">Swap Names</button>
-                    <button type="button" class="toggle endMatch" id="endMatch" onclick="endMatch();">End Match</button>
+                    <button type="button" class="toggle start" id="startGame" data-counter='toggleStartGame'>Start Game</button>
+                    <button type="button" class="toggle expedite" id="setExpedite" data-counter='toggleExpedite'>Expedite</button>
+                    <button type="button" class="swapPlayers" id="swapPlayers" data-couter='swapPlayers'>Swap Names</button>
+                    <button type="button" class="toggle endMatch" id="endMatch" data-counter='endMatch'>End Match</button>
                 </div>
                 <div id="right">
                     <button id="setAlert" onclick="setAlert();">Help</button>
