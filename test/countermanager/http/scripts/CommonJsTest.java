@@ -2,56 +2,17 @@
 package countermanager.http.scripts;
 
 import org.junit.Assert;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.chrome.ChromeOptions;
-
-import countermanager.http.HTTP;
 
 
-public class CommonJsTest {
+public class CommonJsTest extends BaseJsTest{
 
     private WebDriver driver;    
     
     public CommonJsTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-        HTTP.getDefaultInstance().startHttpServer(80);
-        WebDriverManager.chromedriver().setup();
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-        HTTP.getDefaultInstance().stopHttpServer();
-    }
-    
-    @Before
-    public void setUp() {
-        ChromeOptions options = new ChromeOptions();
-        // Tested in Google Chrome 59 on Linux. More info on:
-        // https://developers.google.com/web/updates/2017/04/headless-chrome
-        options.addArguments("--headless");
-        options.addArguments("--disable-gpu");
-
-        driver = new ChromeDriver(options);
-    }
-    
-    @After
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }        
     }
     
     @Test

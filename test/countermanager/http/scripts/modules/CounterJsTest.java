@@ -2,123 +2,55 @@
 package countermanager.http.scripts.modules;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import static org.junit.Assert.*;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.chrome.ChromeOptions;
-
-import countermanager.http.HTTP;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import java.util.Date;
+import countermanager.http.scripts.BaseJsTest;
 import java.util.List;
 import java.util.Map;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.logging.LogEntries;
-import org.openqa.selenium.logging.LogEntry;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.CapabilityType;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class CounterJsTest {
-    
-    private WebDriver driver;    
+public class CounterJsTest extends BaseJsTest {
     
     public CounterJsTest() {
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-        HTTP.getDefaultInstance().startHttpServer(80);
-        WebDriverManager.chromedriver().setup();
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-        HTTP.getDefaultInstance().stopHttpServer();
-    }
-    
     @Before
+    @Override
     public void setUp() {
-        ChromeOptions options = new ChromeOptions();
-        // Tested in Google Chrome 59 on Linux. More info on:
-        // https://developers.google.com/web/updates/2017/04/headless-chrome
-        options.addArguments("--headless");
-        options.addArguments("--disable-gpu");
-        
-        // Enable loging in chrome including Level.INFO (but that doesn't work yet)
-        options.addArguments("--enable-logging=stderr --v=1");  
-        
-        // Enable logging in webdriver
-        LoggingPreferences logPrefs = new LoggingPreferences();
-        logPrefs.enable(LogType.BROWSER, java.util.logging.Level.ALL);
-        options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
-
-        driver = new ChromeDriver(options);
+        super.setUp();
 
         // Load some piece of html with the script tag
         driver.get("http://localhost/scripts/modules/CounterJsTest.html");
     }
     
     @After
+    @Override
     public void tearDown() {
-        if (driver != null) {
-            LogEntries logs = driver.manage().logs().get(LogType.BROWSER);
-            for (LogEntry log : logs) {
-                Date date = new Date(log.getTimestamp());
-                Logger.getLogger(getClass().getName()).log(log.getLevel(), "[" + date.toString() + "]: " + log.getMessage());
-            }
-            
-            for (WebElement we : driver.findElements(By.cssSelector("#log span"))) {
-                Logger.getLogger(getClass().getName()).log(Level.INFO, we.getText());
-            }
-            
-            driver.quit();
-        }        
+        super.tearDown();
     }
     
-    // Execute script and catch exception
-    private Object executeScript(String script)
-    {
-        try {
-            return ((JavascriptExecutor) driver).executeScript(script);            
-        } catch (Exception ex) {
-            Logger.getLogger(getClass().getName()).log(Level.INFO, ex.getLocalizedMessage(), ex);
-            throw(ex);
-        }
-    }
- 
+
     @Test
     public void test_01_gameStarted() {
         String script;
         Boolean ret;
         
-        script = "return Testdata.testGameStarted();";
+        script = "return Testdata.testGameStarted(Testdata.data[0], 0);";
         ret = (Boolean) ((JavascriptExecutor) driver).executeScript(script);
         assertFalse(ret);                
         
-        script = "return Testdata.testGameStarted(null);";
+        script = "return Testdata.testGameStarted(Object.assign({}, Testdata.data[0], Testdata.midFirstGame), 0);";
         ret = (Boolean) ((JavascriptExecutor) driver).executeScript(script);
-        assertFalse(ret);                
+        assertTrue(ret);                
         
-        script = "return Testdata.testGameStarted([0,0]);";
-        ret = (Boolean) ((JavascriptExecutor) driver).executeScript(script);
-        assertFalse(ret);                
-        
-        script = "return Testdata.testGameStarted([1,0]);";
+        script = "return Testdata.testGameStarted(Object.assign({}, Testdata.data[0], Testdata.finishedFirstGame), 0);";
         ret = (Boolean) ((JavascriptExecutor) driver).executeScript(script);
         assertTrue(ret);                
     }
@@ -128,24 +60,61 @@ public class CounterJsTest {
         String script;
         Boolean ret;
         
-        script = "return Testdata.testGameFinished();";
+        script = "return Testdata.testGameFinished(Testdata.data[0], 0);";
         ret = (Boolean) ((JavascriptExecutor) driver).executeScript(script);
         assertFalse(ret);                
         
-        script = "return Testdata.testGameFinished(null);";
+        script = "return Testdata.testGameFinished(Object.assign({}, Testdata.data[0], Testdata.midFirstGame), 0);";
         ret = (Boolean) ((JavascriptExecutor) driver).executeScript(script);
         assertFalse(ret);                
         
-        script = "return Testdata.testGameFinished([0,0]);";
+        script = "return Testdata.testGameFinished(Object.assign({}, Testdata.data[0], Testdata.finishedFirstGame), 0);";
         ret = (Boolean) ((JavascriptExecutor) driver).executeScript(script);
-        assertFalse(ret);                
+        assertTrue(ret);    
+    }
+    
+    
+    @Test
+    public void test_03_toggleService() {
+        String script;
+        Map ret;
         
-        script = "return Testdata.testGameFinished([1,0]);";
-        ret = (Boolean) ((JavascriptExecutor) driver).executeScript(script);
-        assertFalse(ret);                
+        script = "return Testdata.testToggleServiceLeft(Testdata.data[0]);";
+        ret = (Map) ((JavascriptExecutor) driver).executeScript(script);
         
-        script = "return Testdata.testGameFinished([11,0]);";
-        ret = (Boolean) ((JavascriptExecutor) driver).executeScript(script);
-        assertTrue(ret);                
+        assertNotNull(ret.get("service"));
+        assertEquals(-1, ((Number) ret.get("service")).intValue());
+        assertNotNull(ret.get("firstService"));
+        assertEquals(-1, ((Number) ret.get("firstService")).intValue());
+    }
+    
+    
+    @Test
+    public void test_04_swapSides() {
+        String script;
+        Map ret;
+        
+        script = "return Testdata.testSwapSides(Testdata.data[0]);";
+        ret = (Map) ((JavascriptExecutor) driver).executeScript(script);
+        
+        assertTrue((Boolean) ret.get("swapped"));
+        assertTrue((Boolean) ret.get("swappedPlayers"));
+        assertEquals(-2, ((Number) ret.get("playerNrLeft")).shortValue());
+        assertEquals(-1, ((Number) ret.get("playerNrRight")).shortValue());
+    }
+    
+    
+    @Test
+    public void test_05_addPointLeft() {
+        String script;
+        Object ret;
+        
+        script = "return Testdata.testAddPointLeft(Testdata.data[0]);";
+        ret = executeScript(script);        
+        assertNotNull(ret);
+                
+        assertEquals("RUNNING", ((Map) ret).get("gameMode"));
+        assertEquals("MATCH", ((Map) ret).get("timeMode"));
+        assertEquals(1L, ((Map<String, List<List>>) ret).get("setHistory").get(0).get(0));
     }
 }

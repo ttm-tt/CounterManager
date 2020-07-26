@@ -18,6 +18,11 @@ export const endFirstGame = {
     setHistory : [[10,3], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]]    
 };
 
+// Finished first game
+export const finishedFirstGame = {
+    setHistory : [[11,3], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]]    
+};
+
 // Mid last game (best-of 5)
 export const midLastGame = {
     bestOf : 5,
@@ -60,12 +65,12 @@ export var data = [
 
 
 // -----------------------------------------------------------------------
-export function testGameStarted(data) {
-    return Counter.gameStarted(data);
+export function testGameStarted(data, idx) {
+    return data.gameStarted(idx);
 }
 
-export function testGameFinished(data) {
-    return Counter.gameFinished(data);
+export function testGameFinished(data, idx) {
+    return data.gameFinished(idx);
 }
 
 export function testAddPointLeft(data) {
@@ -90,5 +95,15 @@ export function testSubPointRight(data) {
 
 export function testSwapSides(data) {
     Counter.swapSides(data);
+    return data;
+}
+
+export function testToggleServiceLeft(data) {
+    Counter.toggleServiceLeft(data);
+    return data;
+}
+
+export function testToggleServiceRight(data) {
+    Counter.toggleServiceRight(data);
     return data;
 }

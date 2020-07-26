@@ -69,17 +69,18 @@ export const PlayerDefault = Object.freeze({
 export function create() {
     return {
         /* SideChange    */ sideChange : SideChange.NONE,
-        /* Service       */ firstService : Service.NONE,
-        /* ServiceDouble */ firstServiceDouble : ServiceDouble.NONE,
         /* Sevice        */ service : Service.NONE,
         /* ServiceDouble */ serviceDouble : ServiceDouble.NONE,
+        /* Service       */ firstService : Service.NONE,
+        /* ServiceDouble */ firstServiceDouble : ServiceDouble.NONE,
+        /* Sevice        */ lastService : Service.NONE,
+        /* ServiceDouble */ lastServiceDouble : ServiceDouble.NONE,
         
         /* boolean       */ woLeft : false,
         /* boolean       */ woRight : false,
         
-        /* int           */ resA : 0,
-        /* int           */ resX : 0,
-
+        /* boolean       */ swappedPlayers: false,
+        
         /* String  */  alertText : '',
         /* boolean */  expedite : false,
         /* int     */  gameTime : 0,
@@ -114,22 +115,25 @@ export function create() {
 
 
         swap : function() {
-            this.swapPlayer();
+            this.swapPlayers();
             this.swapCard();
             this.swapService();
-            this.swapServiceDouble();
             this.swapTimeout();
             this.swapTimeoutRunning();
             this.swapInjured();
             this.swapInjuredRunning();
             this.swapSets();
             this.swapSetHistory();
+            
+            this.swapped = !this.swapped;
         },
 
-        swapPlayer : function() {
+        swapPlayers : function() {
             const player = this.playerNrLeft;
             this.playerNrLeft = this.playerNrRight;
             this.playerNrRight = player;
+            
+            this.swappedPlayers = !this.swappedPlayers;
         },
 
         swapCard : function () {
@@ -166,9 +170,8 @@ export function create() {
             const service = this.serviceLeft;
             this.serviceLeft = this.serviceRight;
             this.serviceRight = service;
-        },
-
-        swapServiceDouble : function() {
+            
+            this.service = -this.service;
             this.serviceDouble = -this.serviceDouble;
         },
 
@@ -200,7 +203,7 @@ export function create() {
             if (this.gameMode === GameMode.END)
                 return true;
 
-            let resA = this.resA, resX = this.resX;
+            let resA = this.setsLeft, resX = this.setsRight;
             
             // Finished by looking at games
             if (2 * resA > this.bestOf || 2 * resX > this.bestOf)
@@ -210,7 +213,7 @@ export function create() {
                 return false;
 
             // Not finished by games, but what about the current one?
-            if (!gameFinished(resA + resX))
+            if (!this.gameFinished(resA + resX))
                 return false;
 
             // Current game is finished, so add to resA + resX and check again
@@ -226,7 +229,7 @@ export function create() {
         },
         
         gameStarted : function(idx) {
-            if (this.setHistory.length <= idx)
+            if (idx < 0 || idx >= this.setHistory.length)
                 return false;
 
             if (this.setHistory[idx][0] > 0 || this.setHistory[idx][1] > 0)
@@ -237,7 +240,7 @@ export function create() {
         },
         
         gameFinished : function(idx) {
-            if (this.setHistory.length <= idx)
+            if (idx < 0 || idx >= this.setHistory.length)
                 return false;
 
             if (this.setHistory[idx][0] >= 11 && this.setHistory[idx][0] >= this.setHistory[idx][1] + 2)

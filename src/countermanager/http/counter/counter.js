@@ -24,7 +24,9 @@ var showTimer = false;
  */
 
 
-// formatted names of players
+// formatted names of teams and players
+var teamA = null;
+var teamX = null;
 var namePlA = 'Player A';
 var namePlB = null;
 var namePlX = 'Player X';
@@ -270,13 +272,45 @@ function getData(msg) {
 // Command from server: set game data
 function setMatch(match) {
     // Don't overwrite a running match
-    if (counterData != null && counterData.gameMode != 'RESET')
+    if (counterData != null && counterData.gameMode != 'RESET') {
+        // TODO: Update Players
+        
         return;
+    }
     
-    if (match === null)
-        return;
+    counterMatch = match;   
+    counterData = CounterData.create();
+
+    if (match !== null) {
+        counterData.bestOf = counterMatch.mtBestOf;
+
+        counterData.playerNrLeft = match.plA.plNr;
+        counterData.playerNrRight = match.plX.plNr;
+        
+        if (match.cpType == 4) {
+            teamA = formatTeam(match.tmA);
+            teamX = formatTeam(match.tmX);
+        } else {
+            teamA = null;
+            teamX = null;
+        }
+        
+        namePlA = formatPlayer(match.plA);
+        namePlB = formatPlayer(match.plB);
+        namePlX = formatPlayer(match.plX);
+        namePlY = formatPlayer(match.plY);
+        
+    } else {
+        teamA = 'Team A';
+        teamX = 'Team X';
+        
+        nameplA = 'Player A';
+        nameplB = null;
+        nameplX = 'Player X';
+        nameplY = null;
+    }
     
-    counterMatch = match;     
+    updateScreen();
     
     checkPrestart();
 }
@@ -285,6 +319,8 @@ function setMatch(match) {
 function resetMatch() {
     counterMatch = null;
     counterData = CounterData.create();
+    
+    updateScreen();
 }
 
 function updateLastUpdateTime() {
@@ -334,6 +370,36 @@ function checkPrestart() {
 
 
 // -----------------------------------------------------------------------
+// Format team
+function formatTeam(tm) {
+    if (!tm || !tm.tmName)
+        return null;
+    
+    return tm.tmDesc;
+}
+
+
+// Format players name
+function formatPlayer(pl) {
+    if (!pl || !pl.plNr)
+        return null;
+    
+    var str = '' + pl.plNr + '&nbsp;';
+    if (pl.psFirst != '')
+        str += pl.psFirst.substring(0, 1) + '.' + '&nbsp;';
+    
+    if (window.matchMedia("(orientation: landscape)").matches)
+        str += pl.psLast;
+    else
+        str += formatString(pl.psLast, 7);
+    
+    if (pl.naName != '')
+        str += '&nbsp;' + '(' + pl.naName + ')';
+    
+    return str;
+}
+
+// -----------------------------------------------------------------------
 function updateData(input) {
     const what = input.data('counter');
     Counter[what](counterData);
@@ -344,24 +410,46 @@ function updateScreen() {
     if (counterData === null)
         counterData = CounterData.create();
     
-    const swap = 
-        counterData.playerNrLeft === CounterData.PlayerDefault.RIGHT ||
-        counterMatch !== null && counterMatch.plA !== null && counterMatch.plA.plNr === counterData.playerNrRight;
+    const cg = counterData.setsLeft + counterData.setsRight;
 
     // Header
     $('#schedule .table').html('Table: ' + table);
     if (counterMatch) {
         $('#schedule .start').html('Start: ' + formatTime(counterMatch.mtDateTime));
         $('#schedule .event').html('Event: ' + counterMatch.cpDesc);
-        
-        $('#caption #nameleft').html(namePlB === null ? namePlA : namePlA + '<br>' + namePlB);
-        $('#caption #nameright').html(namePlY === null ? namePlX : namePlX + '<br>' + namePlY);
+        $('#schedule .nr').html('Match: ' + counterMatch.mtNr + (counterMatch.mtMS > 0 ? ' - Individual Match: ' + counterMatch.mtMS : ''));
+        $('#teamresult').html(counterMatch.mttmResA + '&nbsp;-&nbsp;' + counterMatch.mttmResX);        
     } else {
         $('#schedule .start').html('');
         $('#schedule .event').html('');
+        $('#schedule .nr').html('');
+        $('#teamresult').html('');        
     }
     
-    $('#caption #games').html(counterData.resA + '&nbsp;-&nbsp;' + counterData.resX);
+    if (counterMatch && counterMatch.cpType == 4) {
+        // Team match
+        $('#caption #teams').removeClass('hidden');
+    } else {
+        $('#caption #teams').addClass('hidden');
+    }
+    
+    if (counterData.swappedPlayers) {
+        $('#caption #teamleft').html(teamX);
+        $('#caption #teamright').html(teamA);
+    } else {
+        $('#caption #teamleft').html(teamA);
+        $('#caption #teamright').html(teamX);        
+    }
+
+    if (counterData.swappedPlayers) {
+        $('#caption #nameleft').html(namePlY === null ? namePlX : namePlX + '<br>' + namePlY);
+        $('#caption #nameright').html(namePlB === null ? namePlA : namePlA + '<br>' + namePlB);            
+    } else {
+        $('#caption #nameleft').html(namePlB === null ? namePlA : namePlA + '<br>' + namePlB);
+        $('#caption #nameright').html(namePlY === null ? namePlX : namePlX + '<br>' + namePlY);
+    }
+    
+    $('#caption #games').html(counterData.setsLeft + '&nbsp;-&nbsp;' + counterData.setsRight);
     
     $('#serviceleft').attr('checked', counterData.serviceLeft);
     $('#timeoutleft').attr('checked', counterData.timeoutLeft);
@@ -379,17 +467,57 @@ function updateScreen() {
     $('#yr1pleft').attr('checked', counterData.cardRight > CounterData.Cards.YELLOW);
     $('#yr2pleft').attr('checked', counterData.cardRight > CounterData.Cards.YR1P);
         
+    // Games beyond bestOf are hidden
+    for (let i = 0; i < 7; ++i) {
+        if (i < counterData.bestOf)
+            $('tr#game' + (i+1)).removeClass('hidden');
+        else
+            $('tr#game' + (i+1)).addClass('hidden');
+    }
+    
     for (let i = 0; i < counterData.setHistory.length; ++i) {
+        // Set game result
         $('tr#game' + (i+1) + ' td.points.left').html(counterData.setHistory[i][0]);
         $('tr#game' + (i+1) + ' td.points.right').html(counterData.setHistory[i][1]);
         
-        if (i + 1 < counterData.resA + counterData.resX)
+        // Current game is active, all others are inactive
+        if (i === cg)
+            $('tr#game' + (i+1)).removeClass('inactive');
+        else
+            $('tr#game' + (i+1)).addClass('inactive');
+        
+        if (i + 1 < counterData.setsLeft + counterData.setsRight)
             $('#result' + (i+1)).html(counterData.setHistory[i][0] > counterData.setHistory[i][1] ? 
                 '' + counterData.setHistory[i][1] : '-' + counterData.setHistory[i][0]);
     }
     
+    if (counterData.sideChange === CounterData.SideChange.BEFORE)
+        $('tr#game' + (cg + 1) + ' td.action .plus').addClass('disabled');
+    else
+        $('tr#game' + (cg + 1) + ' td.action .plus').removeClass('disabled');
+    
+    if (counterData.sideChange === CounterData.SideChange.AFTER)
+        $('tr#game' + (cg + 1) + ' td.action .minus').addClass('disabled');
+    else
+        $('tr#game' + (cg + 1) + ' td.action .minus').removeClass('disabled');
+    
+    // History
+    for (let i = 0; i < counterData.setHistory.length; ++i) {
+        if (i >= counterData.setsLeft + counterData.setsRight)
+            $('#results #result' + (i+1)).html('');
+        else if (counterData.setHistory[i][0] > counterData.setHistory[i][1])
+            $('#results #result' + (i+1)).html(counterData.setHistory[i][1]);
+        else
+            $('#results #result' + (i+1)).html('-' + counterData.setHistory[i][0]);
+    }
+    
+    // Command buttons
     $('#startGame').attr('checked', counterData.timeMode === CounterData.TimeMode.MATCH);
     $('#expedite').attr('checked', counterData.expedite);
     // Nothing for swap names
+    if (counterData.matchFinished())
+        $('#endMatch').removeClass('disabled');
+    else
+        $('#endMatch').addClass('disabled');
     $('#endMatch').attr('checked', counterData.GameMode === CounterData.GameMode.END);
 }
