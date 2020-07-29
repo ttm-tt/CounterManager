@@ -86,10 +86,18 @@ public class BaseJsTest {
     protected Object executeScript(String script) {
         try {
             // Clear log
-            ((JavascriptExecutor) driver).executeScript("document.getElementById('log').innerHTML = '';");
+            ((JavascriptExecutor) driver).executeScript(
+                    "document.getElementById('log').innerHTML = '';");
             
+            // Embed the script in a try-catch clause and write the stack trace 
+            // with <br> instead of \n to the log
             return ((JavascriptExecutor) driver).executeScript(
-                " try { " + script + "} catch (e) { console.log(e.message); console.log(e.stack.replace(/(?:\\r\\n|\\r|\\n)/g, '<br>')); throw e;}"
+                "try { " + script + 
+                "} catch (e) { " +
+                "    console.log(e.message); " +
+                "    console.log(e.stack.replace(/(?:\\r\\n|\\r|\\n)/g, '<br>')); " +
+                "    throw e;" +
+                "}"
             );  
         } catch (JavascriptException ex) {
             return null;

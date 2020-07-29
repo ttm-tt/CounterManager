@@ -46,17 +46,24 @@ export const Service = Object.freeze({
     RIGHT : +1
 });
 
+/*
+        B
+    4 /   \ 1
+     Y     X
+    3 \   / 2
+        A
+ */
 // Service Double
 export const ServiceDouble = Object.freeze({
     NONE : 0,
-    BX : 1,    // B -> X
-    XA : 2,    // X -> A
-    AY : 3,    // A -> Y
-    YB : 4,    // Y -> B
-    XB : -1,   // X -> B
-    AX : -2,   // A -> X
-    YA : -3,   // Y -> A
-    BY : -4    // B -> Y
+    BX :   1,    // B -> X
+    XA :   2,    // X -> A
+    AY :   3,    // A -> Y
+    YB :   4,    // Y -> B
+    XB :  -1,   // X -> B
+    AX :  -2,   // A -> X
+    YA :  -3,   // Y -> A
+    BY :  -4    // B -> Y
 });
 
 // Default player left / right

@@ -125,12 +125,29 @@ export function toggleServiceRight(data) {
 }
 
 
-export function setTimeoutLeft(data) {
+export function toggleServiceDoubleLeft(data) {
+    if (!toggleServiceDouble(data, Side.LEFT))
+        return;
+    
+    fireListeners();
+}
+
+
+export function toggleServiceDoubleRight(data) {
+    if (!toggleServiceDouble(data, Side.RIGHT))
+        return;
+    
+    fireListeners();
     
 }
 
 
-export function setTimeoutRight(data) {
+export function toggleTimeoutLeft(data) {
+    
+}
+
+
+export function toggleTimeoutRight(data) {
     
 }
 
@@ -237,12 +254,17 @@ function addPoint(data, side) {
     if (data.gameFinished(cg))
         return false;
     
+    // We can't add a point just before a side change in the last game
+    if (data.sideChange === CounterData.SideChange.BEFORE)
+        return false;
+    
     // Add point
     data.setHistory[cg][side] += 1;
     
     // Calculate new state:
     if (data.gameFinished(cg)) {
         // Game finished, change side required (or match is finished)
+        // No difference to matchFinished, we can just ignore the changes
         data.sideChange = CounterData.SideChange.BEFORE;
         
         // Remember who had the last service
@@ -256,12 +278,13 @@ function addPoint(data, side) {
     }
     
     // In the last game at 5:x change side required
-    if (cg === data.bestOf && 
-            data.setHistory[cg][side] === 5 && 
-            data.setHistory[cg][side == Side.LEFT ? Side.RIGHT : Side.LEFT] < 5) {
-        data.sideChange = CounterData.SideChange.BEFORE;
-    } else if (data.sideChange === CounterData.SideChange.AFTER) {
+    // The next point removes that flag
+    if (data.sideChange === CounterData.SideChange.AFTER)
         data.sideChange = CounterData.SideChange.NONE;
+    else if (cg === data.bestOf - 1 && 
+            data.setHistory[cg][side] === 5 && 
+            data.setHistory[cg][side === Side.LEFT ? Side.RIGHT : Side.LEFT] < 5) {
+        data.sideChange = CounterData.SideChange.BEFORE;
     }
     
     // And update match and time status
@@ -289,15 +312,26 @@ function subPoint(data, side) {
     if (!data.gameStarted(cg))
         return false;
     
+    // We can't sub a point just after a side change in the last game
+    if (data.sideChange == CounterData.SideChange.AFTER)
+        return false;
+    
     if (changeServiceRequired(data)) {
         // Not finished, but change service required
         changeServicePrev(data);
     }
     
     data.setHistory[cg][side] -= 1;
-    
-    // We can't be at a side change
-    data.sideChange = CounterData.SideChange.NONE;
+
+    // In the last game at 5:x a side change is required
+    // Going further back removes that flag
+    if (data.sideChange == CounterData.SideChange.BEFORE)
+        data.sideChange = CounterData.SideChange.NONE;
+    else if (cg === data.bestOf - 1 && 
+            data.setHistory[cg][side] == 5 &&
+            data.setHistory[cg][side === Side.LEFT ? Side.RIGHT : Side.LEFT] < 5) {
+        data.sideChange = CounterData.SideChange.AFTER;
+    }
     
     return true;
 }
@@ -327,7 +361,7 @@ function toggleService(data, side) {
             data.serviceDouble = -data.serviceDouble;
         }
     }
-    
+        
     // Calculate back who started with the service
     // We can do that only if we are not in expedite
     if (!data.expedite) {
@@ -335,17 +369,7 @@ function toggleService(data, side) {
             data.firstService = CounterData.Service.NONE;
             data.firstServiceDouble = CounterData.ServiceDouble.NONE;
         } else {
-            const cg = data.setsLeft + data.setsRight;
-            const cp = data.setHistory[cg][0] + data.setHistory[cg][1];
-            
-            // Service repeats every 4th point for 2 points
-            if ( (cp % 4) / 2 )
-                data.firstService = -data.service; // 2nd and 3rd rally
-            else 
-                data.firstService = data.service;  // 0th and 1st rally
-            
-            // Double repeats every 8th point
-            // TODO
+            calculateFirstService(data);
         }
     }
 
@@ -359,6 +383,57 @@ function toggleService(data, side) {
     }
     
     return true;
+}
+
+
+// Toggle service double
+function toggleServiceDouble(data, side) {
+    // Nothing to do if no side has the service
+    if (data.service === CounterData.Service.NONE)
+        return false;
+    
+    // Toggle side with service: change both sides (BX becomes AY)
+    if ( side === Side.LEFT && data.service === CounterData.Service.LEFT ||
+         side === Side.RIGHT && data.service === CounterData.Service.RIGHT ) {
+        
+        // BX becomes AY, XB becomes YA, etc.        
+        // So we advance by 2, but we have to check for overflows
+        data.serviceDouble += 2;
+        
+        if (data.serviceDouble < 0) {
+            // [-4,-3] -> [-2,-1]
+            // OK, no overflow from negative values
+        } else if (data.serviceDouble < 2) {
+            // [-2,-1] -> [0,1]
+            // Overflow from negative values
+            data.serviceDouble -= 4;
+        } else if (data.serviceDouble < 4) {
+            // [1,2] -> [3,4]
+            // OK, no overflow from positive values
+        } else if (data.serviceDouble > 4) {
+            // [3,4] -> [5,6]
+            // Overflow from positive values
+            data.serviceDouble -= 4;
+        }
+    } else {
+        // BX becomes BY, XB becomes XY
+        /*
+           +1 -> -4     -1 -> +2
+           +2 -> -1     -2 -> +3
+           +3 -> -2     -3 -> +4
+           +4 -> -3     -4 -> +1
+         */
+        // One step back, the other one will serve to us
+        data.serviceDouble -= 1;
+        // Overflow: 1 became 0
+        if (data.serviceDouble == 0)
+            data.serviceDouble = 4;
+        // Reverse service
+        data.serviceDouble = -data.serviceDouble;
+    }
+
+    // Now calculate who would have the first service in this game
+    calculateFirstServiceDouble(data);
 }
 
 
@@ -400,6 +475,53 @@ function changeServicePrev(data) {
         if (data.serviceDouble === 0)
             data.serviceDouble = 4;
     }
+}
+
+
+// Calculate who had the service at the beginning of the match
+function calculateFirstService(data) {
+    const cg = data.setsLeft + data.setsRight;
+    const cp = data.setHistory[cg][0] + data.setHistory[cg][1];
+
+    // Service repeats every 4th point for 2 points
+    if ( Math.floor((cp % 4) / 2 ) )
+        data.firstService = -data.service; // 2nd and 3rd rally
+    else 
+        data.firstService = data.service;  // 0th and 1st rally
+    
+    // Check if we are after the side change in the last game
+    // Going forward or backward, the moment one reaches 5 and the other have less
+    // we will at the point of side change. Going on or further back will reset
+    // the flag.
+    if ( cg == data.bestOf - 1 && (
+            data.sideChange == CounterData.SideChange.AFTER || 
+            data.setHistory[cg][0] > 5 ||
+            data.setHistory[cg][1] > 5) ) {
+        data.firstService = -data.firstService;
+    }
+    
+    calculateFirstServiceDouble(data);
+}
+
+
+function calculateFirstServiceDouble(data) {
+    const cg = data.setsLeft + data.setsRight;
+    const cp = data.setHistory[cg][0] + data.setHistory[cg][1];
+    // Running in the cycle where are we starting from the beginning
+    const offset = Math.floor((cp % 8) / 2);
+
+    // Double, repeats every 8th point for 2 points
+    if (data.serviceDouble > 0) {
+        data.firstServiceDouble = data.serviceDouble -offset;
+        if (data.firstServiceDouble <= 0)
+            data.firstServiceDouble += 4;
+    } else if (data.serviceDouble < 0) {
+        data.firstServiceDouble = data.serviceDouble + offset;
+        if (data.firstServiceDouble >= 0)
+            data.firstServiceDouble -= 4;
+    }  
+    
+    // TODO: Last game
 }
 
 // -----------------------------------------------------------------------

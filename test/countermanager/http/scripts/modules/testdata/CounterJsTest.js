@@ -26,17 +26,25 @@ export const finishedFirstGame = {
 // Mid last game (best-of 5)
 export const midLastGame = {
     bestOf : 5,
-    resA : 2,
-    resX : 2,
+    setsLeft : 2,
+    setsRight : 2,
     setHistory : [[11,3], [3,11], [11,3], [3,11], [4,3], [0,0], [0,0]]    
 };
 
 // End last game (best-of 5)
 export const endLastGame = {
     bestOf : 5,
-    resA : 2,
-    resX : 2,
+    setsLeft : 2,
+    setsRight : 2,
     setHistory : [[11,3], [3,11], [11,3], [3,11], [10,3], [0,0], [0,0]]    
+};
+
+// End last game (best-of 5)
+export const finishedLastGame = {
+    bestOf : 5,
+    setsLeft : 2,
+    setsRight : 2,
+    setHistory : [[11,3], [3,11], [11,3], [3,11], [11,3], [0,0], [0,0]]    
 };
 
 
@@ -45,26 +53,39 @@ export const endLastGame = {
 export const serviceLeft = {
     service : CounterData.Service.LEFT,
     serviceLeft : true,
-    serviceRight : false
-    // TODO: Double
+    serviceRight : false,
+    serviceDouble: CounterData.ServiceDouble.BX
 };
 
 // Service right
 export const serviceRight = {
     service : CounterData.Service.RIGHT,
     serviceLeft : false,
-    serviceRight : true
-    // TODO: Double
+    serviceRight : true,
+    serviceDouble: CounterData.ServiceDouble.XB
+};
+
+// First service left
+export const firstServiceLeft = {
+    firstService : CounterData.Service.LEFT,
+    serviceDouble: CounterData.ServiceDouble.BX
+};
+
+// First service right
+export const firstServiceRight = {
+    firstService : CounterData.Service.RIGHT,
+    serviceDouble: CounterData.ServiceDouble.XB
 };
 
 
 // Data
-export var data = [
+export const data = [
     basedata[0]  // empty
 ];
 
 
 // -----------------------------------------------------------------------
+// Test methods. If we change data make a copy before so we don't change test data
 export function testGameStarted(data, idx) {
     return data.gameStarted(idx);
 }
@@ -74,36 +95,55 @@ export function testGameFinished(data, idx) {
 }
 
 export function testAddPointLeft(data) {
-    Counter.addPointLeft(data);
-    return data;
+    var d = Object.assign({}, data);
+    Counter.addPointLeft(d);
+    return d;
 }
 
 export function testAddPointRight(data) {
-    Counter.addPointRight(data);
-    return data;
+    var d = Object.assign({}, data);
+    Counter.addPointRight(d);
+    return d;
 }
 
 export function testSubPointLeft(data) {
-    Counter.addPointLeft(data);
-    return data;
+    var d = Object.assign({}, data);
+    Counter.subPointLeft(d);
+    return d;
 }
 
 export function testSubPointRight(data) {
-    Counter.addPointLeft(data);
-    return data;
+    var d = Object.assign({}, data);
+    Counter.subPointRight(d);
+    return d;
 }
 
 export function testSwapSides(data) {
-    Counter.swapSides(data);
-    return data;
+    var d = Object.assign({}, data);
+    Counter.swapSides(d);
+    return d;
 }
 
 export function testToggleServiceLeft(data) {
-    Counter.toggleServiceLeft(data);
-    return data;
+    var d = Object.assign({}, data);
+    Counter.toggleServiceLeft(d);
+    return d;
 }
 
 export function testToggleServiceRight(data) {
-    Counter.toggleServiceRight(data);
-    return data;
+    var d = Object.assign({}, data);
+    Counter.toggleServiceRight(d);
+    return d;
+}
+
+export function testToggleServiceDoubleLeft(data) {
+    var d = Object.assign({}, data);
+    Counter.toggleServiceDoubleLeft(d);
+    return d;
+}
+
+export function testToggleServiceDoubleRight(data) {
+    var d = Object.assign({}, data);
+    Counter.toggleServiceDoubleRight(d);
+    return d;
 }
