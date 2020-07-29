@@ -51,7 +51,7 @@ export const finishedLastGame = {
 // Service
 // Service left
 export const serviceLeft = {
-    service : CounterData.Service.LEFT,
+    service : CounterData.Service.A,
     serviceLeft : true,
     serviceRight : false,
     serviceDouble: CounterData.ServiceDouble.BX
@@ -59,7 +59,7 @@ export const serviceLeft = {
 
 // Service right
 export const serviceRight = {
-    service : CounterData.Service.RIGHT,
+    service : CounterData.Service.X,
     serviceLeft : false,
     serviceRight : true,
     serviceDouble: CounterData.ServiceDouble.XB
@@ -67,13 +67,13 @@ export const serviceRight = {
 
 // First service left
 export const firstServiceLeft = {
-    firstService : CounterData.Service.LEFT,
+    firstService : CounterData.Service.A,
     serviceDouble: CounterData.ServiceDouble.BX
 };
 
 // First service right
 export const firstServiceRight = {
-    firstService : CounterData.Service.RIGHT,
+    firstService : CounterData.Service.X,
     serviceDouble: CounterData.ServiceDouble.XB
 };
 
@@ -87,11 +87,11 @@ export const data = [
 // -----------------------------------------------------------------------
 // Test methods. If we change data make a copy before so we don't change test data
 export function testGameStarted(data, idx) {
-    return data.gameStarted(idx);
+    return data.hasGameStarted(idx);
 }
 
 export function testGameFinished(data, idx) {
-    return data.gameFinished(idx);
+    return data.hasGameFinished(idx);
 }
 
 export function testAddPointLeft(data) {

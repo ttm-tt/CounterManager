@@ -61,8 +61,14 @@ export function subPointRight(data) {
  * @param {CounterData} data
  */
 export function swapSides(data) {
+    const cg = data.setsLeft + data.setsRight;
+    
     // Nothing to do when match is finished
     if (data.gameMode == CounterData.GameMode.END)
+        return;
+    
+    // Nothing to do when the match has finished
+    if (data.hasMatchFinished())
         return;
     
     data.swap();
@@ -72,7 +78,13 @@ export function swapSides(data) {
     if (data.sideChange != CounterData.SideChange.NONE) {
         data.sideChange = -data.sideChange;
         
-        if (data.sideChange === CounterData.SideChange.AFTER) {
+        // If in the last game, just reverse service
+        if (cg === data.bestOf - 1 && data.hasGameStarted(cg)) {
+            // This must be the middle of the last game
+            // In this case just reverse the service
+            data.service = -data.service;
+            data.serviceDouble = -data.serviceDouble;
+        } else if (data.sideChange === CounterData.SideChange.AFTER) {
             // Service starts on the same side
             data.service = data.firstService;
             data.serviceDouble = data.firstServiceDouble;
@@ -88,14 +100,13 @@ export function swapSides(data) {
         data.gameMode = CounterData.GameMode.WARMUP;
     
     // A side change after end game increments the result
-    const cg = data.setsLeft + data.setsRight;
-    if (data.gameFinished(cg)) {
+    if (data.hasGameFinished(cg)) {
         // This game has finished, go to next and updates games
         if (data.setHistory[cg][0] > data.setHistory[cg][1])
             ++data.setsLeft;
         else
             ++data.setsRight;
-    } else if (cg > 0 && !data.gameStarted(cg)) {
+    } else if (cg > 0 && !data.hasGameStarted(cg)) {
         // This game has not started, go to previous (if there is one)
         if (data.setHistory[cg-1][0] > data.setHistory[cg-1][1])
             --data.setsLeft;
@@ -215,7 +226,7 @@ export function endMatch(data) {
 
 // -----------------------------------------------------------------------
 // Helpers
-export function changeServiceRequired(data) {
+export function isChangeServiceRequired(data) {
     if (!data)
         return false;
     
@@ -251,7 +262,7 @@ function addPoint(data, side) {
         return false;
         
     // Left or right already won
-    if (data.gameFinished(cg))
+    if (data.hasGameFinished(cg))
         return false;
     
     // We can't add a point just before a side change in the last game
@@ -262,9 +273,9 @@ function addPoint(data, side) {
     data.setHistory[cg][side] += 1;
     
     // Calculate new state:
-    if (data.gameFinished(cg)) {
+    if (data.hasGameFinished(cg)) {
         // Game finished, change side required (or match is finished)
-        // No difference to matchFinished, we can just ignore the changes
+        // No difference to hasMatchFinished, we can just ignore the changes
         data.sideChange = CounterData.SideChange.BEFORE;
         
         // Remember who had the last service
@@ -272,7 +283,7 @@ function addPoint(data, side) {
         data.lastServiceDouble = data.serviceDouble;
     } 
     
-    if (!data.gameFinished(cg) && changeServiceRequired(data)) {
+    if (!data.hasGameFinished(cg) && isChangeServiceRequired(data)) {
         // Not finished, but change service required
         changeServiceNext(data);
     }
@@ -288,10 +299,10 @@ function addPoint(data, side) {
     }
     
     // And update match and time status
-    if (data.matchFinished()) {
+    if (data.hasMatchFinished()) {
         // Not GameMode.END, this is only set when you click 'End Match'
         data.timeMode = CounterData.TimeMode.NONE;
-    } else if (data.gameFinished(cg)) {
+    } else if (data.hasGameFinished(cg)) {
         data.gameMode = CounterData.GameMode.RUNNING;
         data.timeMode = CounterData.TimeMode.BREAK;
     } else {
@@ -309,14 +320,14 @@ function subPoint(data, side) {
     if (data.setHistory.length <= cg)
         return false;
         
-    if (!data.gameStarted(cg))
+    if (!data.hasGameStarted(cg))
         return false;
     
     // We can't sub a point just after a side change in the last game
     if (data.sideChange == CounterData.SideChange.AFTER)
         return false;
     
-    if (changeServiceRequired(data)) {
+    if (isChangeServiceRequired(data)) {
         // Not finished, but change service required
         changeServicePrev(data);
     }
@@ -339,26 +350,26 @@ function subPoint(data, side) {
 // Toggle service
 function toggleService(data, side) {
     if (side === Side.LEFT) {
-        if (data.service === CounterData.Service.LEFT) {
+        if (data.hasServiceLeft()) {
             data.service = CounterData.Service.NONE;
             data.serviceDouble = CounterData.ServiceDouble.NONE;
-        } else if (data.service === CounterData.Service.NONE) {
-            data.service = CounterData.Service.LEFT;
+        } else if (!data.playersSwapped) {
+            data.service = CounterData.Service.A;
             data.serviceDouble = CounterData.ServiceDouble.BX;            
         } else {
-            data.service = -data.service;
-            data.serviceDouble = -data.serviceDouble;
+            data.service = CounterData.Service.X;
+            data.serviceDouble = CounterData.ServiceDouble.XB;
         }
     } else if (side === Side.RIGHT) {
-        if (data.service === CounterData.Service.RIGHT) {
+        if (data.hasServiceRight()) {
             data.service = CounterData.Service.NONE;
             data.serviceDouble = CounterData.ServiceDouble.NONE;
-        } else if (data.service === CounterData.Service.NONE) {
-            data.service = CounterData.Service.RIGHT;
+        } else if (!data.playersSwapped) {
+            data.service = CounterData.Service.X;
             data.serviceDouble = CounterData.ServiceDouble.XB;            
         } else {
-            data.service = -data.service;
-            data.serviceDouble = -data.serviceDouble;
+            data.service = CounterData.Service.A;
+            data.serviceDouble = CounterData.ServiceDouble.AY;
         }
     }
         
@@ -373,8 +384,8 @@ function toggleService(data, side) {
         }
     }
 
-    data.serviceLeft = (data.service === CounterData.Service.LEFT);
-    data.serviceRight = (data.service === CounterData.Service.RIGHT);
+    data.serviceLeft = data.hasServiceLeft();
+    data.serviceRight = data.hasServiceRight();
 
     // And in any case we prepare the match
     if (data.gameMode === CounterData.GameMode.RESET) {
@@ -393,8 +404,8 @@ function toggleServiceDouble(data, side) {
         return false;
     
     // Toggle side with service: change both sides (BX becomes AY)
-    if ( side === Side.LEFT && data.service === CounterData.Service.LEFT ||
-         side === Side.RIGHT && data.service === CounterData.Service.RIGHT ) {
+    if ( side === Side.LEFT && data.service === CounterData.Service.A ||
+         side === Side.RIGHT && data.service === CounterData.Service.X ) {
         
         // BX becomes AY, XB becomes YA, etc.        
         // So we advance by 2, but we have to check for overflows
@@ -440,8 +451,8 @@ function toggleServiceDouble(data, side) {
 // Change service for next point
 function changeServiceNext(data) {
     data.service = -data.service;
-    data.serviceLeft = (data.service === CounterData.Service.LEFT);
-    data.serviceRight = (data.service === CounterData.Service.RIGHT);
+    data.serviceLeft = data.hasServiceLeft();
+    data.serviceRight = data.hasServiceRight();
 
     if (data.serviceDouble !== 0) {
         // 1..4,1 or -4..-1,-4
@@ -460,8 +471,8 @@ function changeServiceNext(data) {
 // Change service for next point
 function changeServicePrev(data) {
     data.service = -data.service;
-    data.serviceLeft = (data.service === CounterData.Service.LEFT);
-    data.serviceRight = (data.service === CounterData.Service.RIGHT);
+    data.serviceLeft = data.hasServiceLeft();
+    data.serviceRight = data.hasServiceRight();
 
     if (data.serviceDouble !== 0) {
         // 1..4,1 or -4..-1,-4
@@ -521,7 +532,16 @@ function calculateFirstServiceDouble(data) {
             data.firstServiceDouble -= 4;
     }  
     
-    // TODO: Last game
+    // Check if we are after the side change in the last game
+    // Going forward or backward, the moment one reaches 5 and the other have less
+    // we will at the point of side change. Going on or further back will reset
+    // the flag.
+    if ( cg == data.bestOf - 1 && (
+            data.sideChange == CounterData.SideChange.AFTER || 
+            data.setHistory[cg][0] > 5 ||
+            data.setHistory[cg][1] > 5) ) {
+        data.firstServiceDouble = -data.firstServiceDouble;
+    }    
 }
 
 // -----------------------------------------------------------------------

@@ -39,11 +39,21 @@ export const SideChange = Object.freeze({
     AFTER  : -1
 });
 
+/*
+   Service 
+   A or X tells which player serves. If A is on the right side, Service.A means
+   right side serves to left side
+
+   AX etc. tells which player serves to whom. If A/B are on the right side,
+   A is staying on the right side of the table And X on the left, both player
+   are the right side players of the pair   
+ */
+
 // Service
 export const Service = Object.freeze({
     NONE : 0,
-    LEFT : -1,
-    RIGHT : +1
+    A    : -1,
+    X    : +1
 });
 
 /*
@@ -196,7 +206,7 @@ export function create() {
             }
         },
         
-        matchStarted : function() {
+        hasMatchStarted : function() {
             if (this.gameMode !== GameMode.RESET)
                 return true;
             
@@ -206,7 +216,7 @@ export function create() {
             return false;
         },
         
-        matchFinished : function() {
+        hasMatchFinished : function() {
             if (this.gameMode === GameMode.END)
                 return true;
 
@@ -220,7 +230,7 @@ export function create() {
                 return false;
 
             // Not finished by games, but what about the current one?
-            if (!this.gameFinished(resA + resX))
+            if (!this.hasGameFinished(resA + resX))
                 return false;
 
             // Current game is finished, so add to resA + resX and check again
@@ -235,7 +245,7 @@ export function create() {
             return false;            
         },
         
-        gameStarted : function(idx) {
+        hasGameStarted : function(idx) {
             if (idx < 0 || idx >= this.setHistory.length)
                 return false;
 
@@ -246,7 +256,7 @@ export function create() {
             
         },
         
-        gameFinished : function(idx) {
+        hasGameFinished : function(idx) {
             if (idx < 0 || idx >= this.setHistory.length)
                 return false;
 
@@ -257,6 +267,24 @@ export function create() {
                 return true;
 
             return false;            
+        },
+        
+        // Is service on the left side
+        hasServiceLeft : function() {
+            // We need parenthesis to avoid automatic insertion of ';' after return
+            return (
+                this.service === Service.A && !this.swappedPlayers ||
+                this.service === Service.X && this.swappedPlayers
+            );
+        },
+        
+        // Is service on the left side
+        hasServiceRight : function() {
+            // We need parenthesis to avoid automatic insertion of ';' after return
+            return (
+                this.service === Service.A && this.swappedPlayers ||
+                this.service === Service.X && !this.swappedPlayers
+            );
         }
     };
 }
