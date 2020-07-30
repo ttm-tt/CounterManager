@@ -73,7 +73,6 @@ export function swapSides(data) {
     
     data.swap();
     
-    // Calculate new state
     // Do we have to change sides?
     if (data.sideChange != CounterData.SideChange.NONE) {
         data.sideChange = -data.sideChange;
@@ -81,7 +80,7 @@ export function swapSides(data) {
         // If in the last game, just reverse service
         if (cg === data.bestOf - 1 && data.hasGameStarted(cg)) {
             // This must be the middle of the last game
-            // In this case just reverse the service
+            // In this case reverse the service
             data.service = -data.service;
             data.serviceDouble = -data.serviceDouble;
         } else if (data.sideChange === CounterData.SideChange.AFTER) {
@@ -95,6 +94,10 @@ export function swapSides(data) {
         }
     }
     
+    // Recalculate which side has the service
+    data.serviceLeft = data.hasServiceLeft();
+    data.serviceRight = data.hasServiceRight();
+
     // If we are in GameMode NONE we switch to WARMUP
     if (data.gamMode == CounterData.GameMode.NONE)
         data.gameMode = CounterData.GameMode.WARMUP;
@@ -350,7 +353,7 @@ function subPoint(data, side) {
 // Toggle service
 function toggleService(data, side) {
     if (side === Side.LEFT) {
-        if (data.hasServiceLeft()) {
+        if (data.serviceLeft) {
             data.service = CounterData.Service.NONE;
             data.serviceDouble = CounterData.ServiceDouble.NONE;
         } else if (!data.playersSwapped) {
@@ -361,7 +364,7 @@ function toggleService(data, side) {
             data.serviceDouble = CounterData.ServiceDouble.XB;
         }
     } else if (side === Side.RIGHT) {
-        if (data.hasServiceRight()) {
+        if (data.serviceRight) {
             data.service = CounterData.Service.NONE;
             data.serviceDouble = CounterData.ServiceDouble.NONE;
         } else if (!data.playersSwapped) {
@@ -404,8 +407,8 @@ function toggleServiceDouble(data, side) {
         return false;
     
     // Toggle side with service: change both sides (BX becomes AY)
-    if ( side === Side.LEFT && data.service === CounterData.Service.A ||
-         side === Side.RIGHT && data.service === CounterData.Service.X ) {
+    if ( side === Side.LEFT && data.serviceLeft ||
+         side === Side.RIGHT && data.serviceRight ) {
         
         // BX becomes AY, XB becomes YA, etc.        
         // So we advance by 2, but we have to check for overflows
@@ -436,15 +439,19 @@ function toggleServiceDouble(data, side) {
          */
         // One step back, the other one will serve to us
         data.serviceDouble -= 1;
-        // Overflow: 1 became 0
+        // Overflow: 1 became 0, -4 becomes -5
         if (data.serviceDouble == 0)
             data.serviceDouble = 4;
+        else if (data.serviceDouble === -5)
+            data.serviceDouble = -1;
         // Reverse service
         data.serviceDouble = -data.serviceDouble;
     }
 
     // Now calculate who would have the first service in this game
     calculateFirstServiceDouble(data);
+    
+    return true;
 }
 
 

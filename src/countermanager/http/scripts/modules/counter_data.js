@@ -187,9 +187,6 @@ export function create() {
             const service = this.serviceLeft;
             this.serviceLeft = this.serviceRight;
             this.serviceRight = service;
-            
-            this.service = -this.service;
-            this.serviceDouble = -this.serviceDouble;
         },
 
         swapSets : function() {

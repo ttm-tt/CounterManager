@@ -27,9 +27,9 @@ var showTimer = false;
 // formatted names of teams and players
 var teamA = null;
 var teamX = null;
-var namePlA = 'Player A';
+var namePlA = null;
 var namePlB = null;
-var namePlX = 'Player X';
+var namePlX = null;
 var namePlY = null;
 
 var CmdEnum = Object.freeze({
@@ -91,9 +91,6 @@ function doInitialize() {
     
     $('#names .name.left, #names .name.right')
         .css('cursor', 'pointer')
-        .click(function() {
-            swapDouble($(this));
-        })
     ;
     
     Counter.addListener(updateScreen);
@@ -150,7 +147,7 @@ function storeData() {
             counterData : counterData, 
             counterMatch : counterMatch,
             gameEnabled : gameEnabled,
-            lastUpdateTime : lastUpdateTime,
+            lastUpdateTime : lastUpdateTime
         }));
     }
 }
@@ -271,9 +268,60 @@ function getData(msg) {
 
 // Command from server: set game data
 function setMatch(match) {
+    // No (trival) changes
+    if (counterMatch === null && match === null)
+        return;
+    
+    if (counterMatch !== null && match !== null && 
+            counterMatch.mtTimestamp === match.mtTimestamp)
+        return;
+    
     // Don't overwrite a running match
     if (counterData != null && counterData.gameMode != 'RESET') {
-        // TODO: Update Players
+        // In this state we don't accept any not-a-match
+        if (match === null)
+            return;
+        
+        // Same if we don't have a match yet, because we can't know if the
+        // new match is the one we are counting
+        if (counterMatch === null)
+            return;
+        
+        // We accept only the match we are counting (for names)
+        if (counterMatch.mtNr !== match.mtNr || counterMatch.mtMS !== match.mtMS)
+            return;
+
+        // Detect missing player
+        const swapped = counterData.swappedPlayers;
+        
+        const missing = 
+                (namePlA === null && counterMatch.plA.plNr != 0) ||
+                (namePlX === null && counterMatch.plX.plNr != 0) ||
+                (namePlB === null && counterMatch.plB.plNr != 0) ||
+                (namePlY === null && counterMatch.plY.plNr != 0)
+        ;
+        if (!missing)
+            return;
+
+        if (counterMatch.plA.plNr !== 0)
+            namePlA = formatPlayer(counterMatch.plA);
+        else
+            namePlA = null;
+        if (counterMatch.plB.plNr !== 0)
+            namePlB = formatPlayer(counterMatch.plB);
+        else
+            namePlB = null;
+        
+        if (counterMatch.plX.plNr !== 0)
+            namePlX = formatPlayer(counterMatch.plX);
+        else
+            namePlX = null;
+        if (counterMatch.plY.plNr !== 0)
+            namePlY = formatPlayer(counterMatch.plY);
+        else
+            namePlY = null;
+        
+        updateScreen();
         
         return;
     }
@@ -304,10 +352,10 @@ function setMatch(match) {
         teamA = 'Team A';
         teamX = 'Team X';
         
-        nameplA = 'Player A';
-        nameplB = null;
-        nameplX = 'Player X';
-        nameplY = null;
+        namePlA = null;
+        namePlB = null;
+        namePlX = null;
+        namePlY = null;
     }
     
     updateScreen();
@@ -399,6 +447,85 @@ function formatPlayer(pl) {
     return str;
 }
 
+
+// Format player left side
+function formatPlayersLeft() {
+    const swap = counterData.swappedPlayers;
+    // Player and partner left side
+    const pl = swap ? namePlX : namePlA;
+    const bd = swap ? namePlY : namePlB;
+    
+    if (pl === null)
+        return swap ? 'Player X' : 'Player A';
+    
+    if (bd === null)
+        return pl;
+    
+    // Both player left side exist
+    if (!swap) {
+        switch (counterData.serviceDouble) {
+            case CounterData.ServiceDouble.NONE :
+            case CounterData.ServiceDouble.BX :
+            case CounterData.ServiceDouble.XB :
+            case CounterData.ServiceDouble.BY :
+            case CounterData.ServiceDouble.YB :
+                return pl + '<br>' + bd;
+            default:
+                return bd + '<br>' + pl;
+        }
+    } else {
+        switch (counterData.serviceDouble) {
+            case CounterData.ServiceDouble.NONE :
+            case CounterData.ServiceDouble.BY :
+            case CounterData.ServiceDouble.YB :
+            case CounterData.ServiceDouble.AY :
+            case CounterData.ServiceDouble.YA :
+                return pl + '<br>' + bd;
+            default:
+                return bd + '<br>' + pl;   
+        }
+    }
+}
+
+// Format player left side
+function formatPlayersRight() {
+    const swap = counterData.swappedPlayers;
+    // Player and partner left side
+    const pl = swap ? namePlA : namePlX;
+    const bd = swap ? namePlB : namePlY;
+    
+    if (pl === null)
+        return swap ? 'Player A' : 'Player X';
+    
+    if (bd === null)
+        return pl;
+    
+    // Both player left side exist
+    if (!swap) {
+        switch (counterData.serviceDouble) {
+            case CounterData.ServiceDouble.NONE :
+            case CounterData.ServiceDouble.AX :
+            case CounterData.ServiceDouble.XA :
+            case CounterData.ServiceDouble.BX :
+            case CounterData.ServiceDouble.XB :
+                return pl + '<br>' + bd;
+            default:
+                return bd + '<br>' + pl;
+        }
+    } else {
+        switch (counterData.serviceDouble) {
+            case CounterData.ServiceDouble.NONE :
+            case CounterData.ServiceDouble.AX :
+            case CounterData.ServiceDouble.XA :
+            case CounterData.ServiceDouble.AY :
+            case CounterData.ServiceDouble.YA :
+                return pl + '<br>' + bd;
+            default:
+                return bd + '<br>' + pl;      
+        }
+    }
+}
+
 // -----------------------------------------------------------------------
 function updateData(input) {
     const what = input.data('counter');
@@ -441,14 +568,9 @@ function updateScreen() {
         $('#caption #teamright').html(teamX);        
     }
 
-    if (counterData.swappedPlayers) {
-        $('#caption #nameleft').html(namePlY === null ? namePlX : namePlX + '<br>' + namePlY);
-        $('#caption #nameright').html(namePlB === null ? namePlA : namePlA + '<br>' + namePlB);            
-    } else {
-        $('#caption #nameleft').html(namePlB === null ? namePlA : namePlA + '<br>' + namePlB);
-        $('#caption #nameright').html(namePlY === null ? namePlX : namePlX + '<br>' + namePlY);
-    }
-    
+    $('#caption #nameleft').html(formatPlayersLeft());
+    $('#caption #nameright').html(formatPlayersRight());
+
     $('#caption #games').html(counterData.setsLeft + '&nbsp;-&nbsp;' + counterData.setsRight);
     
     $('#serviceleft').attr('checked', counterData.serviceLeft);
@@ -515,7 +637,7 @@ function updateScreen() {
     $('#startGame').attr('checked', counterData.timeMode === CounterData.TimeMode.MATCH);
     $('#expedite').attr('checked', counterData.expedite);
     // Nothing for swap names
-    if (counterData.matchFinished())
+    if (counterData.hasMatchFinished())
         $('#endMatch').removeClass('disabled');
     else
         $('#endMatch').addClass('disabled');
