@@ -8,8 +8,6 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import static org.junit.Assert.*;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.JavascriptExecutor;
 import countermanager.http.scripts.BaseJsTest;
 import java.util.List;
 import java.util.Map;
