@@ -9,8 +9,12 @@ import org.junit.runners.MethodSorters;
 import static org.junit.Assert.*;
 
 import countermanager.http.scripts.BaseJsTest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -25,7 +29,17 @@ public class CounterJsTest extends BaseJsTest {
         super.setUp();
 
         // Load some piece of html with the script tag
-        driver.get("http://localhost/scripts/modules/CounterJsTest.html");
+        // We can't use localhost because then chrome will bypass the proxy
+        // (despite the docs for proxy-bypass-list=<-loopback>)
+        // So in order for confusion we use the hostname instead
+        String hn = "localhost";
+        try {
+           hn = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(CounterJsTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        driver.get("http://" + hn + "/scripts/modules/CounterJsTest.html");
     }
     
     @After
@@ -34,9 +48,55 @@ public class CounterJsTest extends BaseJsTest {
         super.tearDown();
     }
     
+    
+    @Test
+    public void test_01_matchStarted() {
+        String script;
+        Boolean ret;
+        
+        script = "return Testdata.testMatchStarted(Testdata.data[0]);";
+        ret = (Boolean) executeScript(script);
+        assertFalse(ret);                
+        
+        script = "return Testdata.testMatchStarted(Object.assign({}, Testdata.data[0], {gameMode: 'WARMUP'}));";
+        ret = (Boolean) executeScript(script);
+        assertTrue(ret);                
+        
+        script = "return Testdata.testMatchStarted(Object.assign({}, Testdata.data[0], Testdata.midFirstGame));";
+        ret = (Boolean) executeScript(script);
+        assertTrue(ret);                
+        
+        script = "return Testdata.testMatchStarted(Object.assign({}, Testdata.data[0], Testdata.finishedLastGame));";
+        ret = (Boolean) executeScript(script);
+        assertTrue(ret);                
+    }    
+    
+    
+    @Test
+    public void test_02_matchFinished() {
+        String script;
+        Boolean ret;
+        
+        script = "return Testdata.testMatchFinished(Testdata.data[0]);";
+        ret = (Boolean) executeScript(script);
+        assertFalse(ret);                
+        
+        script = "return Testdata.testMatchFinished(Object.assign({}, Testdata.data[0], {gameMode: 'WARMUP'}));";
+        ret = (Boolean) executeScript(script);
+        assertFalse(ret);                
+        
+        script = "return Testdata.testMatchFinished(Object.assign({}, Testdata.data[0], Testdata.finishedFirstGame));";
+        ret = (Boolean) executeScript(script);
+        assertFalse(ret);                
+        
+        script = "return Testdata.testMatchFinished(Object.assign({}, Testdata.data[0], Testdata.finishedLastGame));";
+        ret = (Boolean) executeScript(script);
+        assertTrue(ret);                
+    }    
+
 
     @Test
-    public void test_01_gameStarted() {
+    public void test_03_gameStarted() {
         String script;
         Boolean ret;
         
@@ -52,9 +112,10 @@ public class CounterJsTest extends BaseJsTest {
         ret = (Boolean) executeScript(script);
         assertTrue(ret);                
     }
+    
 
     @Test
-    public void test_02_gameFinished() {
+    public void test_04_gameFinished() {
         String script;
         Boolean ret;
         
@@ -73,7 +134,7 @@ public class CounterJsTest extends BaseJsTest {
     
     
     @Test
-    public void test_03_toggleService() {
+    public void test_05_toggleService() {
         String script;
         Map ret;
         
@@ -139,7 +200,7 @@ public class CounterJsTest extends BaseJsTest {
     
     
     @Test
-    public void test_04_toggleServiceDouble() {
+    public void test_06_toggleServiceDouble() {
         String script;
         Map    ret;
         
@@ -153,8 +214,9 @@ public class CounterJsTest extends BaseJsTest {
         assertEquals(0L, ret.get("firstServiceDouble"));
     }
     
+    
     @Test
-    public void test_05_swapSides() {
+    public void test_07_swapSides() {
         String script;
         Map ret;
         
@@ -171,7 +233,7 @@ public class CounterJsTest extends BaseJsTest {
     
     
     @Test
-    public void test_06_addPointLeft() {
+    public void test_08_addPointLeft() {
         String script;
         Object ret;
 

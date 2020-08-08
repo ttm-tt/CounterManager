@@ -86,6 +86,14 @@ export const data = [
 
 // -----------------------------------------------------------------------
 // Test methods. If we change data make a copy before so we don't change test data
+export function testMatchStarted(data) {
+    return data.hasMatchStarted();
+}
+
+export function testMatchFinished(data) {
+    return data.hasMatchFinished();
+}
+
 export function testGameStarted(data, idx) {
     return data.hasGameStarted(idx);
 }

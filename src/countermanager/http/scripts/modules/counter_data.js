@@ -207,7 +207,10 @@ export function create() {
             if (this.gameMode !== GameMode.RESET)
                 return true;
             
-            if (this.setHistory[0] > 0 || this.setHistory[1] > 0)
+            if (this.setHistory.length === 0)
+                return false;
+            
+            if (this.setHistory[0][0] > 0 || this.setHistory[0][1] > 0)
                 return true;
             
             return false;
