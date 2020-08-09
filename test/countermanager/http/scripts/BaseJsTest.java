@@ -110,16 +110,6 @@ public class BaseJsTest {
     @After
     public void tearDown() {
         if (driver != null) {
-            executeScript("window.jscoverFinished = false;");
-            executeScript("jscoverage_report('', function(){window.jscoverFinished=true;});");
-            (new WebDriverWait(driver, 10000))
-                .until((ExpectedCondition<Boolean>) new ExpectedCondition<Boolean>() {
-                    @Override
-                    public Boolean apply(WebDriver d) {
-                        return (Boolean)((JavascriptExecutor) driver).executeScript("return window.jscoverFinished;");
-                    }
-            });
-            
             LogEntries logs = driver.manage().logs().get(LogType.BROWSER);
             for (LogEntry log : logs) {
                 Date date = new Date(log.getTimestamp());
@@ -129,6 +119,16 @@ public class BaseJsTest {
             for (WebElement we : driver.findElements(By.cssSelector("#log span"))) {
                 Logger.getLogger(getClass().getName()).log(Level.INFO, we.getText());
             }
+            
+            executeScript("window.jscoverFinished = false;");
+            executeScript("jscoverage_report('', function(){window.jscoverFinished=true;});");
+            (new WebDriverWait(driver, 10000))
+                .until((ExpectedCondition<Boolean>) new ExpectedCondition<Boolean>() {
+                    @Override
+                    public Boolean apply(WebDriver d) {
+                        return (Boolean)((JavascriptExecutor) driver).executeScript("return window.jscoverFinished;");
+                    }
+            });
             
             driver.quit();
         }        

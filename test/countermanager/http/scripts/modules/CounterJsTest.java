@@ -220,6 +220,7 @@ public class CounterJsTest extends BaseJsTest {
         String script;
         Map ret;
         
+        // Change sides before the match starts
         script = "return Testdata.testSwapSides(Testdata.data[0]);";
         ret = (Map) executeScript(script);
         
@@ -229,6 +230,24 @@ public class CounterJsTest extends BaseJsTest {
         // It is easier to get these numbers as short than to cast around
         assertEquals(-2, ((Number) ret.get("playerNrLeft")).shortValue());
         assertEquals(-1, ((Number) ret.get("playerNrRight")).shortValue());
+        
+        // Change sides at 5 in the last game
+        script = "return Testdata.testSwapSides(Object.assign({}, Testdata.data[0], Testdata.midLastGameBefore));";
+        ret = (Map) executeScript(script);
+        
+        // It is easier to get these numbers as short than to cast around
+        assertEquals(-2, ((Number) ret.get("playerNrLeft")).shortValue());
+        assertEquals(-1, ((Number) ret.get("playerNrRight")).shortValue());
+        assertEquals(-1L, ret.get("sideChange"));
+        
+        // Change sides back at 5 in the last game
+        script = "return Testdata.testSwapSides(Object.assign({}, Testdata.data[0], Testdata.midLastGameAfter));";
+        ret = (Map) executeScript(script);
+        
+        // It is easier to get these numbers as short than to cast around
+        assertEquals(-2, ((Number) ret.get("playerNrLeft")).shortValue());
+        assertEquals(-1, ((Number) ret.get("playerNrRight")).shortValue());
+        assertEquals(+1L, ret.get("sideChange"));
     }
     
     
@@ -273,6 +292,26 @@ public class CounterJsTest extends BaseJsTest {
         assertEquals(5L, ((Map<String, List<List>>) ret).get("setHistory").get(4).get(0));
         // SideChange.BEFORE
         assertEquals(1L, ((Map) ret).get("sideChange"));
+
+        // Mid last game before side change
+        script = "return Testdata.testAddPointLeft(" +
+                    "Object.assign({}, Testdata.data[0], Testdata.midLastGameBefore)" + 
+                 ");";
+        ret = executeScript(script);        
+        assertNotNull(ret);
+        assertEquals(5L, ((Map<String, List<List>>) ret).get("setHistory").get(4).get(0));
+        // SideChange.BEFORE
+        assertEquals(1L, ((Map) ret).get("sideChange"));
+
+        // Mid last game after side change
+        script = "return Testdata.testAddPointLeft(" +
+                    "Object.assign({}, Testdata.data[0], Testdata.midLastGameAfter)" + 
+                 ");";
+        ret = executeScript(script);        
+        assertNotNull(ret);
+        assertEquals(6L, ((Map<String, List<List>>) ret).get("setHistory").get(4).get(0));
+        // SideChange.NONE
+        assertEquals(0L, ((Map) ret).get("sideChange"));
         
         // End last game
         script = "return Testdata.testAddPointLeft(" +
@@ -289,5 +328,54 @@ public class CounterJsTest extends BaseJsTest {
         ret = executeScript(script);        
         assertNotNull(ret);
         assertEquals(11L, ((Map<String, List<List>>) ret).get("setHistory").get(4).get(0));
+    }
+    
+    
+    @Test
+    public void toggleTimeoutLeft() {
+        String script;
+        Map ret;
+        
+        // Set timeout left (not really legal before tha match has started)
+        script = "return Testdata.testToggleTimeoutLeft(Testdata.data[0]);";
+        ret = (Map) executeScript(script);
+        assertNotNull(ret);
+        assertTrue((Boolean) ret.get("timeoutLeft"));
+        assertTrue((Boolean) ret.get("timeoutLeftRunning"));
+        
+        // Toggle timeout left from true to false
+        script = "return Testdata.testToggleTimeoutLeft(Object.assign({}, Testdata.data[0], Testdata.timeoutLeftRunning));";
+        ret = (Map) executeScript(script);
+        assertNotNull(ret);
+        assertFalse((Boolean) ret.get("timeoutLeft"));
+        assertFalse((Boolean) ret.get("timeoutLeftRunning"));        
+    }
+    
+    
+    @Test
+    public void toggleCardLeft() {
+        String script;
+        Map ret;
+        
+        // Set Yellow from None
+        script = "return Testdata.testToggleYLeft(Testdata.data[0]);";
+        ret = (Map) executeScript(script);
+        assertNotNull(ret);
+        assertEquals("YELLOW", ret.get("cardLeft"));
+        
+        // Reset Yellow from Yellos
+        script = "return Testdata.testToggleYLeft(Object.assign({}, Testdata.data[0], Testdata.yellowCardLeft));";
+        ret = (Map) executeScript(script);
+        assertEquals("NONE", ret.get("cardLeft"));
+        
+        // Set YR1P from None
+        script = "return Testdata.testToggleYR1PLeft(Testdata.data[0]);";
+        ret = (Map) executeScript(script);
+        assertEquals("YR1P", ret.get("cardLeft"));
+        
+        // Reset YR1P from YR2P
+        script = "return Testdata.testToggleYR1PLeft(Object.assign({}, Testdata.data[0], Testdata.yr2pCardLeft));";
+        ret = (Map) executeScript(script);
+        assertEquals("YELLOW", ret.get("cardLeft"));                
     }
 }

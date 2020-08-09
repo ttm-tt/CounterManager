@@ -157,12 +157,12 @@ export function toggleServiceDoubleRight(data) {
 
 
 export function toggleTimeoutLeft(data) {
-    
+    toggleTimeout(data, Side.LEFT);
 }
 
 
 export function toggleTimeoutRight(data) {
-    
+    toggleTimeout(data, Side.RIGHT);
 }
 
 
@@ -176,33 +176,33 @@ export function setWORight(data) {
 }
 
 
-export function setYLeft(data) {
-    
+export function toggleYLeft(data) {
+    toggleCard(data, CounterData.Cards.YELLOW, Side.LEFT);
 }
 
 
-export function setYR1Left(data) {
-    
+export function toggleYR1PLeft(data) {
+    toggleCard(data, CounterData.Cards.YR1P, Side.LEFT);    
 }
 
 
-export function setYR2Left(data) {
-    
+export function toggleYR2PLeft(data) {
+    toggleCard(data, CounterData.Cards.YR2P, Side.LEFT);    
 }
 
 
-export function setYRight(data) {
-    
+export function toggleYRight(data) {
+    toggleCard(data, CounterData.Cards.YELLOW, Side.RIGHT);    
 }
 
 
-export function setYR1Right(data) {
-    
+export function toggleYR1PRight(data) {    
+    toggleCard(data, CounterData.Cards.YR1P, Side.RIGHT);
 }
 
 
-export function setYR2Right(data) {
-    
+export function toggleYR2PRight(data) {    
+    toggleCard(data, CounterData.Cards.YR2P, Side.RIGHT);
 }
 
 
@@ -549,6 +549,42 @@ function calculateFirstServiceDouble(data) {
             data.setHistory[cg][1] > 5) ) {
         data.firstServiceDouble = -data.firstServiceDouble;
     }    
+}
+
+
+function toggleTimeout(data, side) {
+    let to = (side === Side.LEFT ? 'timeoutLeft' : 'timeoutRight');
+    let rg = to + 'Running';
+    
+    data[to] = !data[to];
+
+    data[rg] = data[to];
+}
+
+
+function toggleCard(data, which, side) {
+    let card = (side === Side.LEFT ? 'cardLeft' : 'cardRight');
+    
+    // Map cards to 0..n
+    let map = {
+        'NONE' : 0,
+        'YELLOW' : 1,
+        'YR1P' : 2,
+        'YR2P' : 3
+    };
+    
+    // And reverse
+    let rev = {
+        0 : CounterData.Cards.NONE,
+        1 : CounterData.Cards.YELLOW,
+        2 : CounterData.Cards.YR1P,
+        3 : CounterData.Cards.YR2P
+    };
+    
+    if (map[data[card]] >= map[which])
+        data[card] = rev[map[which] - 1];
+    else
+        data[card] = rev[map[which]];
 }
 
 // -----------------------------------------------------------------------

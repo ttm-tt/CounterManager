@@ -31,6 +31,24 @@ export const midLastGame = {
     setHistory : [[11,3], [3,11], [11,3], [3,11], [4,3], [0,0], [0,0]]    
 };
 
+// Mid last game (best-of 5) before side change
+export const midLastGameBefore = {
+    bestOf : 5,
+    setsLeft : 2,
+    setsRight : 2,
+    setHistory : [[11,3], [3,11], [11,3], [3,11], [5,3], [0,0], [0,0]],
+    sideChange : CounterData.SideChange.BEFORE
+};
+
+// Mid last game (best-of 5)
+export const midLastGameAfter = {
+    bestOf : 5,
+    setsLeft : 2,
+    setsRight : 2,
+    setHistory : [[11,3], [3,11], [11,3], [3,11], [5,3], [0,0], [0,0]],
+    sideChange : CounterData.SideChange.AFTER
+};
+
 // End last game (best-of 5)
 export const endLastGame = {
     bestOf : 5,
@@ -75,6 +93,33 @@ export const firstServiceLeft = {
 export const firstServiceRight = {
     firstService : CounterData.Service.X,
     serviceDouble: CounterData.ServiceDouble.XB
+};
+
+// Timeout left running
+export const timeoutLeftRunning = {
+    timeoutLeft : true,
+    timeoutLeftRunning : true
+};
+
+// Timeout right running
+export const timeoutRightRunning = {
+    timeoutRight : true,
+    timeoutRightRunning : true
+};
+
+// Yellow card left
+export const yellowCardLeft = {
+    cardLeft : CounterData.Cards.YELLOW
+};
+
+// YR1P card left
+export const yr1pCardLeft = {
+    cardLeft : CounterData.Cards.YR1P
+};
+
+// YR2P card left
+export const yr2pCardLeft = {
+    cardLeft : CounterData.Cards.YR2P
 };
 
 
@@ -153,5 +198,32 @@ export function testToggleServiceDoubleLeft(data) {
 export function testToggleServiceDoubleRight(data) {
     var d = Object.assign({}, data);
     Counter.toggleServiceDoubleRight(d);
+    return d;
+}
+
+export function testToggleTimeoutLeft(data) {
+    var d = Object.assign({}, data);
+    Counter.toggleTimeoutLeft(d);
+    return d;
+}
+
+
+export function testToggleYLeft(data) {    
+    var d = Object.assign({}, data);
+    Counter.toggleYLeft(d);
+    return d;
+}
+
+
+export function testToggleYR1PLeft(data) {    
+    var d = Object.assign({}, data);
+    Counter.toggleYR1PLeft(d);
+    return d;
+}
+
+
+export function testToggleYR2PLeft(data) {    
+    var d = Object.assign({}, data);
+    Counter.toggleYR2PLeft(d);
     return d;
 }
