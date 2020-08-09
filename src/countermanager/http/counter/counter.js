@@ -585,9 +585,9 @@ function updateScreen() {
     $('#yr1pleft').attr('checked', counterData.cardLeft > CounterData.Cards.YELLOW);
     $('#yr2pleft').attr('checked', counterData.cardLeft > CounterData.Cards.YR1P);
     
-    $('#yellowleft').attr('checked', counterData.cardRight > CounterData.Cards.NONE);
-    $('#yr1pleft').attr('checked', counterData.cardRight > CounterData.Cards.YELLOW);
-    $('#yr2pleft').attr('checked', counterData.cardRight > CounterData.Cards.YR1P);
+    $('#yellowright').attr('checked', counterData.cardRight > CounterData.Cards.NONE);
+    $('#yr1pright').attr('checked', counterData.cardRight > CounterData.Cards.YELLOW);
+    $('#yr2pright').attr('checked', counterData.cardRight > CounterData.Cards.YR1P);
         
     // Games beyond bestOf are hidden
     for (let i = 0; i < 7; ++i) {

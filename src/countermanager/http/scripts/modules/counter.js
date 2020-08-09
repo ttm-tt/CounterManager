@@ -178,31 +178,37 @@ export function setWORight(data) {
 
 export function toggleYLeft(data) {
     toggleCard(data, CounterData.Cards.YELLOW, Side.LEFT);
+    fireListeners();
 }
 
 
 export function toggleYR1PLeft(data) {
     toggleCard(data, CounterData.Cards.YR1P, Side.LEFT);    
+    fireListeners();
 }
 
 
 export function toggleYR2PLeft(data) {
     toggleCard(data, CounterData.Cards.YR2P, Side.LEFT);    
+    fireListeners();
 }
 
 
 export function toggleYRight(data) {
     toggleCard(data, CounterData.Cards.YELLOW, Side.RIGHT);    
+    fireListeners();
 }
 
 
 export function toggleYR1PRight(data) {    
     toggleCard(data, CounterData.Cards.YR1P, Side.RIGHT);
+    fireListeners();
 }
 
 
 export function toggleYR2PRight(data) {    
     toggleCard(data, CounterData.Cards.YR2P, Side.RIGHT);
+    fireListeners();
 }
 
 
