@@ -248,38 +248,78 @@ public class CounterJsTest extends BaseJsTest {
         assertEquals(-2, ((Number) ret.get("playerNrLeft")).shortValue());
         assertEquals(-1, ((Number) ret.get("playerNrRight")).shortValue());
         assertEquals(+1L, ret.get("sideChange"));
+        
+        // Swap sides after one game has finished
+        // With firstService B -> X current service would be X - A
+        script = "return Testdata.testSwapSides(Object.assign(" +
+                        "{}, Testdata.data[0], Testdata.finishedFirstGame, " +
+                        "Testdata.firstServiceLeft, Testdata.serviceRightYB" +
+                "));";
+        ret = (Map) executeScript(script);
+        // Service on the left side
+        assertTrue((Boolean) ret.get("serviceLeft"));
+        assertFalse((Boolean) ret.get("serviceRight"));
+        // X-side has service
+        assertEquals(1, ((Number) ret.get("service")).intValue());
+        // Per default it will be X->B
+        assertEquals(-1, ((Number) ret.get("serviceDouble")).intValue());
+        // First service stay the same until a new double service is choosen
+        assertEquals(-1, ((Number) ret.get("firstService")).intValue());
+        assertEquals(+1, ((Number) ret.get("firstServiceDouble")).intValue());
+        
+        // Change after 1st game and baack again
+        script = "return Testdata.testSwapSides(Testdata.testSwapSides(Object.assign(" +
+                        "{}, Testdata.data[0], Testdata.finishedFirstGame, " +
+                        "Testdata.firstServiceLeft, Testdata.serviceRightYB" +
+                ")));";
+        ret = (Map) executeScript(script);
+        // Service on the left side
+        assertFalse((Boolean) ret.get("serviceLeft"));
+        assertTrue((Boolean) ret.get("serviceRight"));
+        // X-side has service
+        assertEquals(1, ((Number) ret.get("service")).intValue());
+        // Per default it will be X->B
+        assertEquals(4, ((Number) ret.get("serviceDouble")).intValue());
+        // First service stay the same until a new double service is choosen
+        assertEquals(-1, ((Number) ret.get("firstService")).intValue());
+        assertEquals(+1, ((Number) ret.get("firstServiceDouble")).intValue());
     }
     
     
     @Test
     public void test_08_addPointLeft() {
         String script;
-        Object ret;
+        Map ret;
 
         // Start 1st game
         script = "return Testdata.testAddPointLeft(Testdata.data[0]);";
-        ret = executeScript(script);        
+        ret = (Map) executeScript(script);        
         assertNotNull(ret);
                 
-        assertEquals("RUNNING", ((Map) ret).get("gameMode"));
-        assertEquals("MATCH", ((Map) ret).get("timeMode"));
+        assertEquals("RUNNING", ret.get("gameMode"));
+        assertEquals("MATCH", ret.get("timeMode"));
         assertEquals(1L, ((Map<String, List<List>>) ret).get("setHistory").get(0).get(0));
         
-        // End 1st game
-        script = "return Testdata.testAddPointLeft(" +
-                    "Object.assign({}, Testdata.data[0], Testdata.endFirstGame)" + 
-                 ");";
-        ret = executeScript(script);        
+        // End 1st game with service
+        script = "return Testdata.testAddPointLeft(Object.assign(" +
+                    "{}, Testdata.data[0], Testdata.endFirstGame, " +
+                    "Testdata.firstServiceLeft, Testdata.serviceLeftAY" +
+                 "));";
+        ret = (Map) executeScript(script);        
         assertNotNull(ret);
         assertEquals(11L, ((Map<String, List<List>>) ret).get("setHistory").get(0).get(0));
         // SideChange.BEFORE
-        assertEquals(1L, ((Map) ret).get("sideChange"));
+        assertEquals(1L, ret.get("sideChange"));
+        // Service should be Y->B
+        assertTrue((Boolean) ret.get("serviceRight"));
+        assertEquals(1L, ret.get("service"));
+        assertEquals(4L, ret.get("serviceDouble"));
         
         // After end 1st game
         script = "return Testdata.testAddPointLeft(" +
                     "Object.assign({}, Testdata.data[0], Testdata.finishedFirstGame)" + 
                  ");";
-        ret = executeScript(script);        
+        ret = (Map) executeScript(script);        
         assertNotNull(ret);
         assertEquals(11L, ((Map<String, List<List>>) ret).get("setHistory").get(0).get(0));
 
@@ -287,7 +327,7 @@ public class CounterJsTest extends BaseJsTest {
         script = "return Testdata.testAddPointLeft(" +
                     "Object.assign({}, Testdata.data[0], Testdata.midLastGame)" + 
                  ");";
-        ret = executeScript(script);        
+        ret = (Map) executeScript(script);        
         assertNotNull(ret);
         assertEquals(5L, ((Map<String, List<List>>) ret).get("setHistory").get(4).get(0));
         // SideChange.BEFORE
@@ -297,7 +337,7 @@ public class CounterJsTest extends BaseJsTest {
         script = "return Testdata.testAddPointLeft(" +
                     "Object.assign({}, Testdata.data[0], Testdata.midLastGameBefore)" + 
                  ");";
-        ret = executeScript(script);        
+        ret = (Map) executeScript(script);        
         assertNotNull(ret);
         assertEquals(5L, ((Map<String, List<List>>) ret).get("setHistory").get(4).get(0));
         // SideChange.BEFORE
@@ -307,7 +347,7 @@ public class CounterJsTest extends BaseJsTest {
         script = "return Testdata.testAddPointLeft(" +
                     "Object.assign({}, Testdata.data[0], Testdata.midLastGameAfter)" + 
                  ");";
-        ret = executeScript(script);        
+        ret = (Map) executeScript(script);        
         assertNotNull(ret);
         assertEquals(6L, ((Map<String, List<List>>) ret).get("setHistory").get(4).get(0));
         // SideChange.NONE
@@ -317,7 +357,7 @@ public class CounterJsTest extends BaseJsTest {
         script = "return Testdata.testAddPointLeft(" +
                     "Object.assign({}, Testdata.data[0], Testdata.endLastGame)" + 
                  ");";
-        ret = executeScript(script);        
+        ret = (Map) executeScript(script);        
         assertNotNull(ret);
         assertEquals(11L, ((Map<String, List<List>>) ret).get("setHistory").get(4).get(0));
         
@@ -325,14 +365,14 @@ public class CounterJsTest extends BaseJsTest {
         script = "return Testdata.testAddPointLeft(" +
                     "Object.assign({}, Testdata.data[0], Testdata.finishedLastGame)" + 
                  ");";
-        ret = executeScript(script);        
+        ret = (Map) executeScript(script);        
         assertNotNull(ret);
         assertEquals(11L, ((Map<String, List<List>>) ret).get("setHistory").get(4).get(0));
     }
     
     
     @Test
-    public void toggleTimeoutLeft() {
+    public void test_09_toggleTimeoutLeft() {
         String script;
         Map ret;
         
@@ -353,7 +393,7 @@ public class CounterJsTest extends BaseJsTest {
     
     
     @Test
-    public void toggleCardLeft() {
+    public void test_10_toggleCardLeft() {
         String script;
         Map ret;
         
@@ -377,5 +417,33 @@ public class CounterJsTest extends BaseJsTest {
         script = "return Testdata.testToggleYR1PLeft(Object.assign({}, Testdata.data[0], Testdata.yr2pCardLeft));";
         ret = (Map) executeScript(script);
         assertEquals("YELLOW", ret.get("cardLeft"));                
+    }
+    
+    
+    @Test
+    public void test_11_toggleStartGame() {
+        String script;
+        Map ret;
+        
+        // Verify initial state
+        script = "return Testdata.data[0];";
+        ret = (Map) executeScript(script);
+        assertNotNull(ret);
+        assertEquals("RESET", ret.get("gameMode"));
+        assertEquals("NONE", ret.get("timeMode"));
+        
+        // Toggle startGame to true
+        script = "return Testdata.testToggleStartGame(Testdata.data[0]);";
+        ret = (Map) executeScript(script);
+        assertEquals("RUNNING", ret.get("gameMode"));
+        assertEquals("MATCH", ret.get("timeMode"));
+        
+        // Stop running timeout
+        script = "return Testdata.testToggleStartGame(Object.assign({}, Testdata.data[0], Testdata.timeoutLeftRunning));";
+        ret = (Map) executeScript(script);
+        assertEquals("RUNNING", ret.get("gameMode"));
+        assertEquals("MATCH", ret.get("timeMode"));
+        assertTrue((Boolean) ret.get("timeoutLeft"));
+        assertFalse((Boolean) ret.get("timeoutLeftRunning"));
     }
 }

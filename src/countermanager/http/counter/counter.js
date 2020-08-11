@@ -94,6 +94,10 @@ function doInitialize() {
     ;
     
     Counter.addListener(updateScreen);
+    // Store local storage
+    Counter.addListener(function() {
+        storeData();
+    });
     
     $('[data-counter]').each(function() {
         $(this).on('click', function() {updateData($(this));});
@@ -635,7 +639,7 @@ function updateScreen() {
     
     // Command buttons
     $('#startGame').attr('checked', counterData.timeMode === CounterData.TimeMode.MATCH);
-    $('#expedite').attr('checked', counterData.expedite);
+    $('#setExpedite').attr('checked', counterData.expedite);
     // Nothing for swap names
     if (counterData.hasMatchFinished())
         $('#endMatch').removeClass('disabled');

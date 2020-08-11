@@ -71,6 +71,12 @@ export function swapSides(data) {
     if (data.hasMatchFinished())
         return;
     
+    // Remember who had the last service before changing
+    if (data.sideChange === CounterData.SideChange.BEFORE) {
+        data.lastService = data.service;
+        data.lastServiceDouble = data.serviceDouble;        
+    }
+    
     data.swap();
     
     // Do we have to change sides?
@@ -85,8 +91,8 @@ export function swapSides(data) {
             data.serviceDouble = -data.serviceDouble;
         } else if (data.sideChange === CounterData.SideChange.AFTER) {
             // Service starts on the same side
-            data.service = data.firstService;
-            data.serviceDouble = data.firstServiceDouble;
+            data.service = -data.firstService;
+            data.serviceDouble = -data.firstServiceDouble;
         } else {
             // Restore last service
             data.service = data.lastService;
@@ -213,18 +219,29 @@ export function toggleYR2PRight(data) {
 
 
 export function toggleStartGame(data) {
+    // When we start a game it must be running
+    // If we stop a game we don't know where we land
+    if (data.timeMode !== CounterData.TimeMode.MATCH) {
+        data.timeMode = CounterData.TimeMode.MATCH;
+        data.gameMode = CounterData.GameMode.RUNNING;
+        
+        // And no timeout running
+        data.timeoutLeftRunning = false;
+        data.timeoutRightRunning = false;
+    }
     
+    fireListeners();
 }
 
 
 export function toggleExpedite(data) {
-    
+    data.expedite = !data.expedite;
+    fireListeners();
 }
 
 
 export function swapPlayers(data) {
-    data.swapPlayers();
-    
+    data.swapPlayers();    
     fireListeners();
 }
 
@@ -286,13 +303,9 @@ function addPoint(data, side) {
         // Game finished, change side required (or match is finished)
         // No difference to hasMatchFinished, we can just ignore the changes
         data.sideChange = CounterData.SideChange.BEFORE;
-        
-        // Remember who had the last service
-        data.lastService = data.service;
-        data.lastServiceDouble = data.serviceDouble;
     } 
     
-    if (!data.hasGameFinished(cg) && isChangeServiceRequired(data)) {
+    if (isChangeServiceRequired(data)) {
         // Not finished, but change service required
         changeServiceNext(data);
     }
@@ -563,8 +576,16 @@ function toggleTimeout(data, side) {
     let rg = to + 'Running';
     
     data[to] = !data[to];
-
     data[rg] = data[to];
+    
+    // Set time mode accordingly:
+    // If we enter timeout set it to TIMEOUT
+    // If we leave timeout and no side has timeout running, initialize it, 
+    // the next point will start match time again.
+    if (data[to])
+        data.timeMode = CounterData.TimeMode.TIMEOUT;
+    else if (!data.timeoutLeftRunning && !data.timeoutRightRunning)
+        data.timeMode = CounterData.TimeMode.NONE;
 }
 
 

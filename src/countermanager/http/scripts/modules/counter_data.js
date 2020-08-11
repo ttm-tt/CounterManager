@@ -5,27 +5,27 @@
  */
 
 export const GameMode = Object.freeze({
-    RESET : 'RESET', 
-    RUNNING : 'RUNNING', 
-    WARMUP : 'WARMUP', 
-    END : 'END', 
+    RESET    : 'RESET', 
+    RUNNING  : 'RUNNING', 
+    WARMUP   : 'WARMUP', 
+    END      : 'END', 
     INACTIVE : 'INACTIVE'
 });
 
 export const TimeMode = Object.freeze({
-    NONE : 'NONE', 
+    NONE    : 'NONE', 
     PREPARE : 'PREPARE', 
-    MATCH : 'MATCH', 
-    BREAK : 'BREAK', 
+    MATCH   : 'MATCH', 
+    BREAK   : 'BREAK', 
     TIMEOUT : 'TIMEOUT', 
-    INJURY : 'INJURY'
+    INJURY  : 'INJURY'
 });
 
 export const Cards = Object.freeze({
-    NONE : 'NONE',
+    NONE   : 'NONE',
     YELLOW : 'YELLOW',
-    YR1P : 'YR1P',
-    YR2P : 'YR2P'
+    YR1P   : 'YR1P',
+    YR2P   : 'YR2P'
 });
 
 // Internal: Are we before a mandatory change sides, e.g. end of game, last game is 5:x?
@@ -65,20 +65,20 @@ export const Service = Object.freeze({
  */
 // Service Double
 export const ServiceDouble = Object.freeze({
-    NONE : 0,
-    BX :   1,    // B -> X
-    XA :   2,    // X -> A
-    AY :   3,    // A -> Y
-    YB :   4,    // Y -> B
-    XB :  -1,   // X -> B
-    AX :  -2,   // A -> X
-    YA :  -3,   // Y -> A
-    BY :  -4    // B -> Y
+    NONE :  0,
+    BX   :  1,    // B -> X
+    XA   :  2,    // X -> A
+    AY   :  3,    // A -> Y
+    YB   :  4,    // Y -> B
+    XB   : -1,   // X -> B
+    AX   : -2,   // A -> X
+    YA   : -3,   // Y -> A
+    BY   : -4    // B -> Y
 });
 
 // Default player left / right
 export const PlayerDefault = Object.freeze({
-    LEFT : 0xFFFF,
+    LEFT  : 0xFFFF,
     RIGHT : 0xFFFE
 });
 

@@ -20,7 +20,8 @@ export const endFirstGame = {
 
 // Finished first game
 export const finishedFirstGame = {
-    setHistory : [[11,3], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]]    
+    setHistory : [[11,3], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]],  
+    sideChange : CounterData.SideChange.BEFORE
 };
 
 // Mid last game (best-of 5)
@@ -65,6 +66,15 @@ export const finishedLastGame = {
     setHistory : [[11,3], [3,11], [11,3], [3,11], [11,3], [0,0], [0,0]]    
 };
 
+export const finishedLastGameBefore = {
+    bestOf : 5,
+    setsLeft : 2,
+    setsRight : 2,
+    setHistory : [[11,3], [3,11], [11,3], [3,11], [11,3], [0,0], [0,0]],
+    sideChange: CounterData.SideChange.BEFORE
+};
+
+
 
 // Service
 // Service left
@@ -75,7 +85,14 @@ export const serviceLeft = {
     serviceDouble: CounterData.ServiceDouble.BX
 };
 
-// Service right
+export const serviceLeftAY = {
+    service : CounterData.Service.A,
+    serviceLeft : true,
+    serviceRight : false,
+    serviceDouble: CounterData.ServiceDouble.AY    
+};
+
+// Service right X -> B
 export const serviceRight = {
     service : CounterData.Service.X,
     serviceLeft : false,
@@ -83,10 +100,26 @@ export const serviceRight = {
     serviceDouble: CounterData.ServiceDouble.XB
 };
 
+// Service double X -> A
+export const serviceRightXA = {
+    service : CounterData.Service.X,
+    serviceLeft : false,
+    serviceRight : true,
+    serviceDouble: CounterData.ServiceDouble.XA
+};
+
+// Service double Y -> B
+export const serviceRightYB = {
+    service : CounterData.Service.X,
+    serviceLeft : false,
+    serviceRight : true,
+    serviceDouble: CounterData.ServiceDouble.YB
+};
+
 // First service left
 export const firstServiceLeft = {
     firstService : CounterData.Service.A,
-    serviceDouble: CounterData.ServiceDouble.BX
+    firstServiceDouble: CounterData.ServiceDouble.BX
 };
 
 // First service right
@@ -98,13 +131,17 @@ export const firstServiceRight = {
 // Timeout left running
 export const timeoutLeftRunning = {
     timeoutLeft : true,
-    timeoutLeftRunning : true
+    timeoutLeftRunning : true,
+    gameMode : CounterData.GameMode.RUNNING,
+    timeMode : CounterData.TimeMode.TIMEOUT
 };
 
 // Timeout right running
 export const timeoutRightRunning = {
     timeoutRight : true,
-    timeoutRightRunning : true
+    timeoutRightRunning : true,
+    gameMode : CounterData.GameMode.RUNNING,
+    timeMode : CounterData.TimeMode.TIMEOUT
 };
 
 // Yellow card left
@@ -225,5 +262,12 @@ export function testToggleYR1PLeft(data) {
 export function testToggleYR2PLeft(data) {    
     var d = Object.assign({}, data);
     Counter.toggleYR2PLeft(d);
+    return d;
+}
+
+
+export function testToggleStartGame(data) {
+    var d = Object.assign({}, data);
+    Counter.toggleStartGame(d);
     return d;
 }
