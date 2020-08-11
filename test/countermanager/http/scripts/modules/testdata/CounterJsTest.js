@@ -92,6 +92,20 @@ export const serviceLeftAY = {
     serviceDouble: CounterData.ServiceDouble.AY    
 };
 
+export const serviceLeftBX = {
+    service : CounterData.Service.A,
+    serviceLeft : true,
+    serviceRight : false,
+    serviceDouble: CounterData.ServiceDouble.BX  
+};
+
+export const serviceLeftBY = {
+    service : CounterData.Service.A,
+    serviceLeft : true,
+    serviceRight : false,
+    serviceDouble: CounterData.ServiceDouble.BY  
+};
+
 // Service right X -> B
 export const serviceRight = {
     service : CounterData.Service.X,
