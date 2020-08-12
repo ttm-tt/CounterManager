@@ -143,8 +143,9 @@ public class CounterJsTest extends BaseJsTest {
                     "{}, Testdata.data[0]" +
                  "));";
         ret = (Map) executeScript(script);
-        assertNotNull(ret);
-        
+        assertNotNull(ret);        
+        assertTrue((Boolean) ret.get("serviceLeft"));
+        assertFalse((Boolean) ret.get("serviceRight"));
         assertNotNull(ret.get("service"));
         assertEquals(-1L, ret.get("service"));
         assertNotNull(ret.get("firstService"));
@@ -159,6 +160,8 @@ public class CounterJsTest extends BaseJsTest {
         ret = (Map) executeScript(script);
         assertNotNull(ret);
         
+        assertFalse((Boolean) ret.get("serviceLeft"));
+        assertFalse((Boolean) ret.get("serviceRight"));
         assertEquals(0L, ret.get("service"));
         assertEquals(0L, ret.get("firstService"));
         assertEquals(0L, ret.get("firstServiceDouble"));
@@ -174,6 +177,18 @@ public class CounterJsTest extends BaseJsTest {
         assertEquals(-1L, ret.get("firstService"));
         assertEquals(+1L, ret.get("firstServiceDouble"));
 
+        // Set service left with swapped sides
+        script = "return Testdata.testToggleServiceLeft(Object.assign(" +
+                    "{}, Testdata.data[1]" +
+                 "));";
+        ret = (Map) executeScript(script);
+
+        // X (now on the right side) has service
+        assertTrue((Boolean) ret.get("serviceLeft"));
+        assertEquals(+1L, ret.get("service"));
+        assertEquals(+1L, ret.get("firstService"));
+        assertEquals(-1L, ret.get("firstServiceDouble"));
+        
         // Set service left at the end of the first game (10:3)
         script = "return Testdata.testToggleServiceLeft(Object.assign(" +
                     "{}, Testdata.data[0], Testdata.endFirstGame" +
@@ -267,7 +282,7 @@ public class CounterJsTest extends BaseJsTest {
         assertEquals(-1, ((Number) ret.get("firstService")).intValue());
         assertEquals(+1, ((Number) ret.get("firstServiceDouble")).intValue());
         
-        // Change after 1st game and baack again
+        // Change after 1st game and back again
         script = "return Testdata.testSwapSides(Testdata.testSwapSides(Object.assign(" +
                         "{}, Testdata.data[0], Testdata.finishedFirstGame, " +
                         "Testdata.firstServiceLeft, Testdata.serviceRightYB" +

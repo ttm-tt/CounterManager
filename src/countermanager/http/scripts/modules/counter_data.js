@@ -143,6 +143,8 @@ export function create() {
             this.swapSetHistory();
             
             this.swapped = !this.swapped;
+            
+            return this;
         },
 
         swapPlayers : function() {
@@ -151,48 +153,64 @@ export function create() {
             this.playerNrRight = player;
             
             this.swappedPlayers = !this.swappedPlayers;
+            
+            return this;
         },
 
         swapCard : function () {
             const card = this.cardLeft;
             this.cardLeft = this.cardRight;
             this.cardRight = card;
+            
+            return this;
         },
 
         swapTimeout : function() {
             const timeout = this.timeoutLeft;
             this.timeoutLeft = this.timeoutRight;
             this.timeoutRight = timeout;
+            
+            return this;
         },
 
         swapTimeoutRunning : function() {
             const running = this.timeoutLeftRunning;
             this.timeoutLeftRunning = this.timeoutRightRunning;
             this.timeoutRightRunning = running;
+            
+            return this;
         },
 
         swapInjured : function() {
             const injured = this.injuredLeft;
             this.injuredLeft = this.injuredRight;
             this.injuredRight = injured;
+            
+            return this;
         },
 
         swapInjuredRunning : function() {
             const running = this.injuredLeftRunning;
             this.injuredLeftRunning = this.injuredRightRunning;
             this.injuredRightRunning = running;
+            
+            return this;
         },
 
         swapService : function() {
             const service = this.serviceLeft;
             this.serviceLeft = this.serviceRight;
             this.serviceRight = service;
+            
+            return this;
         },
 
         swapSets : function() {
             const sets = this.setsLeft;
             this.setsLeft = this.setsRight;
             this.setsRight = sets;
+            
+            return this;
         },
 
         swapSetHistory : function() {
@@ -201,6 +219,8 @@ export function create() {
                 this.setHistory[i][0] = this.setHistory[i][1];
                 this.setHistory[i][1] = set;
             }
+            
+            return this;
         },
         
         hasMatchStarted : function() {

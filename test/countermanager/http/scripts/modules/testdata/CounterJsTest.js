@@ -3,9 +3,7 @@
 import * as Counter from '../counter.js';
 import * as CounterData from '../counter_data.js';
 
-var basedata = [
-    CounterData.create()
-];
+var basedata = CounterData.create();
 
 // States
 // In first game, service change required
@@ -176,7 +174,9 @@ export const yr2pCardLeft = {
 
 // Data
 export const data = [
-    basedata[0]  // empty
+    // We need to store a copy
+    Object.assign({}, basedata),       // normal
+    Object.assign({}, basedata).swap() // Sides reverted
 ];
 
 

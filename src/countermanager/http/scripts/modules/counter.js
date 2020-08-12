@@ -373,23 +373,29 @@ function subPoint(data, side) {
 function toggleService(data, side) {
     if (side === Side.LEFT) {
         if (data.serviceLeft) {
+            // Clear service
             data.service = CounterData.Service.NONE;
             data.serviceDouble = CounterData.ServiceDouble.NONE;
-        } else if (!data.playersSwapped) {
+        } else if (!data.swappedPlayers) {
+            // Service is now A
             data.service = CounterData.Service.A;
             data.serviceDouble = CounterData.ServiceDouble.BX;            
         } else {
+            // Service is now X
             data.service = CounterData.Service.X;
             data.serviceDouble = CounterData.ServiceDouble.XB;
         }
     } else if (side === Side.RIGHT) {
         if (data.serviceRight) {
+            // Clear service
             data.service = CounterData.Service.NONE;
             data.serviceDouble = CounterData.ServiceDouble.NONE;
-        } else if (!data.playersSwapped) {
+        } else if (!data.swappedPlayers) {
+            // Service is now X
             data.service = CounterData.Service.X;
             data.serviceDouble = CounterData.ServiceDouble.XB;            
         } else {
+            // Service is now A
             data.service = CounterData.Service.A;
             data.serviceDouble = CounterData.ServiceDouble.AY;
         }
