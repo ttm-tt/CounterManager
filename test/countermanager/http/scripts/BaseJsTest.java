@@ -51,7 +51,7 @@ public class BaseJsTest {
                     "--proxy",
                     "--local-storage",
                     "--no-instrument-reg=.*Test\\.js",
-                    "--report-dir=coverage/",
+                    "--report-dir=../coverage/",
                     "--log=INFO"
                 }); }
         }).start();
@@ -70,8 +70,8 @@ public class BaseJsTest {
                 try {
                     jscover.report.Main.main(new String[] {
                         "--format=COBERTURAXML",
-                        "coverage/",
-                        "coverage/original-src"
+                        "../coverage/",
+                        "../coverage/original-src"
                     });
                 } catch (IOException ex) {
                     Logger.getLogger(BaseJsTest.class.getName()).log(Level.SEVERE, null, ex);
