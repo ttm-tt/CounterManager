@@ -38,6 +38,7 @@ import java.io.IOException;
     private boolean checked = false;
     private boolean forced = false;
     
+    private static final int UNKNOWN_MTNR = 0xFFFF;
     private static final int UNKNOWN_PLNR_LEFT = 0xFFFF;
     private static final int UNKNOWN_PLNR_RIGHT = 0xFFFE;
     
@@ -214,7 +215,7 @@ import java.io.IOException;
                 else if (plRightPlNr == UNKNOWN_PLNR_RIGHT)
                     plRightPlNr = match.plX.plNr;
 
-                if (mtNr == UNKNOWN_PLNR_LEFT)
+                if (mtNr == UNKNOWN_MTNR)
                     mtNr = match.mtMS > 1 ? match.mtMS : match.mtNr;
             }
 
@@ -310,7 +311,7 @@ import java.io.IOException;
         // XXX CounterData.playerNrXXX ebenfalls ein int machen? Oder muss CounterData.gameNr ein short sein
         int plAplNr = match != null && match.plA.plNr > 0 ? match.plA.plNr : UNKNOWN_PLNR_LEFT;
         int plXplNr = match != null && match.plX.plNr > 0 ? match.plX.plNr : UNKNOWN_PLNR_RIGHT;
-        int matchNr =  match == null ? UNKNOWN_PLNR_LEFT : (match.mtMS > 1 ? match.mtMS : match.mtNr);
+        int matchNr =  match == null ? UNKNOWN_MTNR : (match.mtMS > 1 ? match.mtMS : match.mtNr);
         
         // Don't do anything if this is the wrong match
         if (counterData.getGameMode() != CounterData.GameMode.RESET) {
