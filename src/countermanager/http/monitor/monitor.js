@@ -164,7 +164,6 @@ function doUpdateData() {
             },
             success: function(data) {
                 try {
-                    return;
                     setCurrentData(data);
                     
                     onSuccess();                    
