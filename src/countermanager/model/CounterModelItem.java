@@ -38,8 +38,8 @@ import java.io.IOException;
     private boolean checked = false;
     private boolean forced = false;
     
-    private static final int UNKNOWN_LEFT_PLNR = 0xFFFF;
-    private static final int UNKNOWN_RIGHT_PLNR = 0xFFFE;
+    private static final int UNKNOWN_PLNR_LEFT = 0xFFFF;
+    private static final int UNKNOWN_PLNR_RIGHT = 0xFFFE;
     
     private CounterModel counterModel = CounterModel.getDefaultInstance();
 
@@ -167,7 +167,7 @@ import java.io.IOException;
     synchronized public void setCounterData(CounterData counterData) { 
         // Zuerst das swapped flag setzen
         if (counterData != null && match != null) {            
-            if ( counterData.getPlayerNrLeft() == UNKNOWN_RIGHT_PLNR ||
+            if ( counterData.getPlayerNrLeft() == UNKNOWN_PLNR_RIGHT ||
                  counterData.getPlayerNrLeft() == match.plX.plNr )
                 counterData.swap();
         }
@@ -204,17 +204,17 @@ import java.io.IOException;
             int mtNr = counterData.getGameNr();
 
             if (true) {
-                if (plLeftPlNr == UNKNOWN_LEFT_PLNR)
+                if (plLeftPlNr == UNKNOWN_PLNR_LEFT)
                     plLeftPlNr = match.plA.plNr;
-                else if (plLeftPlNr == UNKNOWN_RIGHT_PLNR)
+                else if (plLeftPlNr == UNKNOWN_PLNR_RIGHT)
                     plLeftPlNr = match.plX.plNr;
 
-                if (plRightPlNr == UNKNOWN_LEFT_PLNR)
+                if (plRightPlNr == UNKNOWN_PLNR_LEFT)
                     plRightPlNr = match.plA.plNr;
-                else if (plRightPlNr == UNKNOWN_RIGHT_PLNR)
+                else if (plRightPlNr == UNKNOWN_PLNR_RIGHT)
                     plRightPlNr = match.plX.plNr;
 
-                if (mtNr == UNKNOWN_LEFT_PLNR)
+                if (mtNr == UNKNOWN_PLNR_LEFT)
                     mtNr = match.mtMS > 1 ? match.mtMS : match.mtNr;
             }
 
@@ -308,9 +308,9 @@ import java.io.IOException;
         // - match does not change compared to the counter (we cannot touch a counting system)
         
         // XXX CounterData.playerNrXXX ebenfalls ein int machen? Oder muss CounterData.gameNr ein short sein
-        int plAplNr = match != null && match.plA.plNr > 0 ? match.plA.plNr : UNKNOWN_LEFT_PLNR;
-        int plXplNr = match != null && match.plX.plNr > 0 ? match.plX.plNr : UNKNOWN_RIGHT_PLNR;
-        int matchNr =  match == null ? UNKNOWN_LEFT_PLNR : (match.mtMS > 1 ? match.mtMS : match.mtNr);
+        int plAplNr = match != null && match.plA.plNr > 0 ? match.plA.plNr : UNKNOWN_PLNR_LEFT;
+        int plXplNr = match != null && match.plX.plNr > 0 ? match.plX.plNr : UNKNOWN_PLNR_RIGHT;
+        int matchNr =  match == null ? UNKNOWN_PLNR_LEFT : (match.mtMS > 1 ? match.mtMS : match.mtNr);
         
         // Don't do anything if this is the wrong match
         if (counterData.getGameMode() != CounterData.GameMode.RESET) {
@@ -418,9 +418,9 @@ import java.io.IOException;
         else if (counterData.getServiceRight())
             ax = +1;
         
-        if (counterData.getPlayerNrLeft() == UNKNOWN_RIGHT_PLNR)
+        if (counterData.getPlayerNrLeft() == UNKNOWN_PLNR_RIGHT)
             ax = -ax;
-        else if (counterData.getPlayerNrRight() == UNKNOWN_LEFT_PLNR)
+        else if (counterData.getPlayerNrRight() == UNKNOWN_PLNR_LEFT)
             ax = -ax;
         else if (match.plA != null && counterData.getPlayerNrRight()== (match.plA.plNr % 10000))
             ax = -ax;
