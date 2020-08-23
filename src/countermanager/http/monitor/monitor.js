@@ -163,7 +163,8 @@ function doUpdateData() {
                 onError();
             },
             success: function(data) {
-                try {   
+                try {
+                    return;
                     setCurrentData(data);
                     
                     onSuccess();                    
@@ -309,9 +310,6 @@ function setCurrentData(data) {
     
     checkPrestart();
     
-    if (currentData !== null && currentData.swapped)
-        swapCurrentData();
-    
     var swapNames = 
             (currentData !== null) && (
                 currentData.playerNrLeft == 0xFFFE || 
@@ -319,12 +317,12 @@ function setCurrentData(data) {
             )
     ;
     var swap = parseInt(getParameterByName("swap", 0)) > 0;
-    if (swap)
-        swapNames = !swapNames;
+
+    swap = swap ^ swapNames;
     
-    setCaption(swapNames);
+    setCaption(swap);
     
-    setNames(swapNames);
+    setNames(swap);
         
     if ( (currentData === null || currentData.gameMode == 'RESET') && 
          (currentMatch === null || currentMatch.cpType != 4 || currentMatch.mtMS == 1) ) {
@@ -735,48 +733,6 @@ function formatFlag(name) {
     return '<img src="' + '/flags/' + name + '.png" onerror="$(this).addClass(\'invisible\'); return false;" class="">';
 }
 
-
-function swapCurrentData() {
-    var tmpNr = currentData.playerNrLeft;
-    currentData.playerNrLeft = currentData.playerNrRight;
-    currentData.playerNrRight = tmpNr;
-    
-    var tmpService = currentData.serviceLeft;
-    currentData.serviceLeft = currentData.serviceRight;
-    currentData.serviceRight = tmpService;
-    
-    var tmpTimeout = currentData.timeoutLeft;
-    currentData.timeoutLeft = currentData.timeoutRight;
-    currentData.timeoutRight = tmpTimeout;
-    
-    var tmpTimeoutRunning = currentData.timeoutLeftRunning;
-    currentData.timeoutLeftRunning = currentData.timeoutRightRunning;
-    currentData.timeoutRightRunning = tmpTimeoutRunning;
-    
-    var tmpInjured = currentData.injuredLeft;
-    currentData.injuredLeft = currentData.injuredRight;
-    currentData.injuredRight = tmpInjured;
-    
-    var tmpInjuredRunning = currentData.injuredLeftRunning;
-    currentData.injuredLeftRunning = currentData.injuredRightRunning;
-    currentData.injuredRightRunning = tmpInjuredRunning;
-    
-    var tmpSets = currentData.setsLeft;
-    currentData.setsLeft = currentData.setsRight;
-    currentData.setsRight = tmpSets;
-    
-    var tmpCard = currentData.cardLeft;
-    currentData.cardLeft = currentData.cardRight;
-    currentData.cardRight = tmpCard;
-    
-    for (var i = 0; i < currentData.setHistory.length; i++) {
-        var tmpGame = currentData.setHistory[i][0];
-        currentData.setHistory[i][0] = currentData.setHistory[i][1];
-        currentData.setHistory[i][1] = tmpGame;
-    }
-    
-    currentData.swapped = !currentData.swapped;
-}
 
 function checkPrestart() {
     var ct = new Date();

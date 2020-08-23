@@ -171,6 +171,18 @@ export const yr2pCardLeft = {
     cardLeft : CounterData.Cards.YR2P
 };
 
+// Game status WARMUP + PREPARE
+export const warmupPrepare = {
+    gameMode : CounterData.GameMode.WARMUP,
+    timeMode : CounterData.TimeMode.PREPARE
+};
+
+// Game status MATCH + RUNNING
+export const runningMatch = {
+    gameMode : CounterData.GameMode.RUNNING,
+    timeMode : CounterData.TimeMode.MATCH
+};
+
 
 // Data
 export const data = [

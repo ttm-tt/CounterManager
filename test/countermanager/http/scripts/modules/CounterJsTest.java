@@ -508,6 +508,22 @@ public class CounterJsTest extends BaseJsTest {
         assertEquals("RUNNING", ret.get("gameMode"));
         assertEquals("MATCH", ret.get("timeMode"));
         
+        // Toggle startGame from warmup
+        script = "return Testdata.testToggleStartGame(Object.assign(" +
+                 "{}, Testdata.data[0], Testdata.warmupPrepare" +
+                 "));";
+        ret = (Map) executeScript(script);
+        assertEquals("RUNNING", ret.get("gameMode"));
+        assertEquals("MATCH", ret.get("timeMode"));
+        
+        // Toggle startGame from match
+        script = "return Testdata.testToggleStartGame(Object.assign(" +
+                 "{}, Testdata.data[0], Testdata.runningMatch" +
+                 "));";
+        ret = (Map) executeScript(script);
+        assertEquals("RUNNING", ret.get("gameMode"));
+        assertEquals("NONE", ret.get("timeMode"));
+        
         // Stop running timeout
         script = "return Testdata.testToggleStartGame(Object.assign({}, Testdata.data[0], Testdata.timeoutLeftRunning));";
         ret = (Map) executeScript(script);

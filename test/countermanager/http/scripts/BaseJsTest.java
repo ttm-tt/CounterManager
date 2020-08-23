@@ -34,6 +34,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 
 
 public class BaseJsTest {
+    private static String REPORT_DIR = "../coverage/";
     protected static jscover.Main main = new Main();
     protected WebDriver driver;   
     
@@ -51,7 +52,7 @@ public class BaseJsTest {
                     "--proxy",
                     "--local-storage",
                     "--no-instrument-reg=.*Test\\.js",
-                    "--report-dir=../coverage/",
+                    "--report-dir=" + REPORT_DIR,
                     "--log=INFO"
                 }); }
         }).start();
@@ -70,8 +71,8 @@ public class BaseJsTest {
                 try {
                     jscover.report.Main.main(new String[] {
                         "--format=COBERTURAXML",
-                        "../coverage/",
-                        "../coverage/original-src"
+                        REPORT_DIR,
+                        REPORT_DIR + "original-src"
                     });
                 } catch (IOException ex) {
                     Logger.getLogger(BaseJsTest.class.getName()).log(Level.SEVERE, null, ex);

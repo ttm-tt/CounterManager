@@ -228,6 +228,8 @@ export function toggleStartGame(data) {
         // And no timeout running
         data.timeoutLeftRunning = false;
         data.timeoutRightRunning = false;
+    } else if (data.timeMode === CounterData.TimeMode.MATCH) {
+        data.timeMode = CounterData.TimeMode.NONE;
     }
     
     fireListeners();
