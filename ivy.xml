@@ -19,7 +19,7 @@
         <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
         <dependency org="com.microsoft.sqlserver" name="mssql-jdbc" rev="8.4.1.jre11"/>
         <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc_auth -->
-        <dependency org="com.microsoft.sqlserver" name="mssql-jdbc_auth" rev="8.4.0.x64" conf="runtime->default"/>
+        <dependency org="com.microsoft.sqlserver" name="mssql-jdbc_auth" rev="8.4.1.x64" conf="runtime->default"/>
         <!-- https://mvnrepository.com/artifact/com.shinyhut/vernacular -->
         <dependency org="com.shinyhut" name="vernacular" rev="1.10" conf="compile->default"/>
         <!-- https://mvnrepository.com/artifact/org.ini4j/ini4j -->

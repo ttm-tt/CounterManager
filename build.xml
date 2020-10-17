@@ -111,7 +111,7 @@
         <!-- Native authentication only with 64 bit, 32 bit have to use SQL authentication
             <copy file="lib/x86/sqljdbc_auth.dll" todir="${dist.dir}/x86"/> 
         -->
-        <copy file="lib/mssql-jdbc_auth-8.4.0.x64.dll" todir="${dist.dir}"/>
+        <copy file="lib/mssql-jdbc_auth-8.4.1.x64.dll" todir="${dist.dir}"/>
         <copy file="lib/rxtxSerial.dll" todir="${dist.dir}"/>
         <copy todir="${dist.dir}/http">
             <fileset dir="${src.dir}/countermanager/http" includes="**/*.js **/*.css **/*.html **/*.gif **/*.png **/*.svg"/>
