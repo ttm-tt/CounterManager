@@ -105,7 +105,7 @@ function doInitialize() {
 
     restoreData();
     
-    connectHttp();    
+    connectHttp(); 
 }
 
 
@@ -331,14 +331,9 @@ function setMatch(match) {
     }
     
     counterMatch = match;   
-    counterData = CounterData.create();
+    counterData = CounterData.create(match);
 
     if (match !== null) {
-        counterData.bestOf = counterMatch.mtBestOf;
-
-        counterData.playerNrLeft = match.plA.plNr;
-        counterData.playerNrRight = match.plX.plNr;
-        
         if (match.cpType == 4) {
             teamA = formatTeam(match.tmA);
             teamX = formatTeam(match.tmX);
@@ -533,6 +528,23 @@ function formatPlayersRight() {
 // -----------------------------------------------------------------------
 function updateData(input) {
     const what = input.data('counter');
+    // Confirm some actions
+    switch (what) {
+        case 'setWOLeft' :
+        case 'setWORight' :
+        {
+            let name = (what === 'setWOLeft' ? $('.name.left').html() : $('.name.right').html())
+                    .replace(/&nbsp;/g, ' ' )
+                    .replace(/<br>/g, ' / ')
+            ;
+            
+            if (!confirm("Are you sure that \n    " + name + "\n*LOST* by w/o?"))
+                return;
+            
+            break;
+        }
+    }
+    
     Counter[what](counterData);
 }
 
@@ -592,7 +604,7 @@ function updateScreen() {
     $('#yellowright').attr('checked', counterData.cardRight > CounterData.Cards.NONE);
     $('#yr1pright').attr('checked', counterData.cardRight > CounterData.Cards.YELLOW);
     $('#yr2pright').attr('checked', counterData.cardRight > CounterData.Cards.YR1P);
-        
+    
     // Games beyond bestOf are hidden
     for (let i = 0; i < 7; ++i) {
         if (i < counterData.bestOf)
@@ -606,8 +618,10 @@ function updateScreen() {
         $('tr#game' + (i+1) + ' td.points.left').html(counterData.setHistory[i][0]);
         $('tr#game' + (i+1) + ' td.points.right').html(counterData.setHistory[i][1]);
         
-        // Current game is active, all others are inactive
-        if (i === cg)
+        // Current game is active, all others are inactive, unless End Of Game
+        if (counterData.gameMode === CounterData.GameMode.END)
+            $('tr#game' + (i+1)).addClass('inactive');
+        else if (i === cg)
             $('tr#game' + (i+1)).removeClass('inactive');
         else
             $('tr#game' + (i+1)).addClass('inactive');
@@ -645,5 +659,6 @@ function updateScreen() {
         $('#endMatch').removeClass('disabled');
     else
         $('#endMatch').addClass('disabled');
-    $('#endMatch').attr('checked', counterData.GameMode === CounterData.GameMode.END);
+    
+    $('#endMatch').attr('checked', counterData.gameMode === CounterData.GameMode.END);
 }

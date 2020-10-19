@@ -73,7 +73,6 @@ export const finishedLastGameBefore = {
 };
 
 
-
 // Service
 // Service left
 export const serviceLeft = {
@@ -181,6 +180,12 @@ export const warmupPrepare = {
 export const runningMatch = {
     gameMode : CounterData.GameMode.RUNNING,
     timeMode : CounterData.TimeMode.MATCH
+};
+
+
+// Expedite left
+export const expedite = {
+    expedite : true
 };
 
 
@@ -295,5 +300,25 @@ export function testToggleYR2PLeft(data) {
 export function testToggleStartGame(data) {
     var d = Object.assign({}, data);
     Counter.toggleStartGame(d);
+    return d;
+}
+
+
+export function testEndMatch(data) {
+    var d = Object.assign({}, data);
+    Counter.endMatch(d);
+    return d;
+}
+
+
+export function testToggleExpedite(data) {
+    var d = Object.assign({}, data);
+    Counter.toggleExpedite(d);
+    return d;
+}
+
+export function testWOLeft(data) {
+    var d = Object.assign({}, data);
+    Counter.setWOLeft(d);
     return d;
 }

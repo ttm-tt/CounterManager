@@ -24,6 +24,7 @@
  *   
  */
 
+import * as CounterData from '../scripts/modules/counter_data.js';
 
 var table = 1;
 var compareTimeout = 2;
@@ -39,6 +40,8 @@ var prestart = 3600;
 var nameLength = 0;
 var lastNameLength = 0;
 var firstNameLength = 0;
+var teamNameLength = 0;
+var showService = true;
 
 
 $(document).ready(function() {
@@ -309,19 +312,20 @@ function setCurrentData(data) {
     
     checkPrestart();
     
+    // If names are swapped with respect to A/X in the match
     var swapNames = 
-            (currentData !== null) && (
-                currentData.playerNrLeft == 0xFFFE || 
-                currentMatch !== null && currentData.playerNrLeft == currentMatch.plX.plNr
-            )
+        (currentData !== null) && (
+            currentData.playerNrLeft == CounterData.PlayerDefault.RIGHT || 
+            currentMatch !== null && currentData.playerNrLeft == currentMatch.plX.plNr
+        )
     ;
+    // If left/right as seen from the umpire shall be swapped on the display
     var swap = parseInt(getParameterByName("swap", 0)) > 0;
 
-    swap = swap ^ swapNames;
-    
-    setCaption(swap);
-    
-    setNames(swap);
+    // Only if either swapNames or swap is true, then names should be displayed swapped
+    setCaption(swap ^ swapNames);
+
+    setNames(swap ^ swapNames);
         
     if ( (currentData === null || currentData.gameMode == 'RESET') && 
          (currentMatch === null || currentMatch.cpType != 4 || currentMatch.mtMS == 1) ) {
@@ -620,93 +624,95 @@ function setNames(swap) {
     if (currentMatch === null)
         return;
     
-    var nameleft = '', nameright = '';
-    
-    var serviceDouble = (currentData === null ? 0 : currentData.serviceDouble);
-    
-    switch (currentMatch.cpType) {
-        case 1 :
-            nameleft = formatName(swap ? currentMatch.plX : currentMatch.plA);
-            nameright = formatName(swap ? currentMatch.plA : currentMatch.plX);
-            
-            break;
-            
-        case 2 :
-        case 3 :
-            /*            
-                Left serves first   Right serves first
-                B -> X  1           B <- X  1
-                A <- X  2           B -> Y  4
-                A -> Y  3           A <- Y  3
-                B <- Y  4           A -> X  2
-            */
-            switch (serviceDouble) {
-                case 1 :
-                    // A/B - X/Y
-                    nameleft = formatName(swap ? currentMatch.plY : currentMatch.plA);
-                    nameright = formatName(swap ? currentMatch.plB : currentMatch.plX);
-
-                    nameleft += '<br>' + formatName(swap ? currentMatch.plX : currentMatch.plB);
-                    nameright += '<br>' + formatName(swap ? currentMatch.plA : currentMatch.plY);
-
-                    break;
-                    
-                case 2 :
-                    // B/A - X/Y
-                    nameleft = formatName(swap ? currentMatch.plY : currentMatch.plB);
-                    nameright = formatName(swap ? currentMatch.plA : currentMatch.plX);
-
-                    nameleft += '<br>' + formatName(swap ? currentMatch.plX : currentMatch.plA);
-                    nameright += '<br>' + formatName(swap ? currentMatch.plB : currentMatch.plY);
-
-                    break;
-                    
-                case 3 :
-                    // B/A - Y/X
-                    nameleft = formatName(swap ? currentMatch.plX : currentMatch.plB);
-                    nameright = formatName(swap ? currentMatch.plA : currentMatch.plY);
-
-                    nameleft += '<br>' + formatName(swap ? currentMatch.plY : currentMatch.plA);
-                    nameright += '<br>' + formatName(swap ? currentMatch.plB : currentMatch.plX);
-
-                    break;
-                    
-                case 4 :
-                    // A/B - Y/X
-                    nameleft = formatName(swap ? currentMatch.plX : currentMatch.plA);
-                    nameright = formatName(swap ? currentMatch.plB : currentMatch.plY);
-
-                    nameleft += '<br>' + formatName(swap ? currentMatch.plY : currentMatch.plB);
-                    nameright += '<br>' + formatName(swap ? currentMatch.plA : currentMatch.plX);
-
-                    break;
-                    
-                default :
-                    nameleft = formatName(swap ? currentMatch.plX : currentMatch.plA);
-                    nameright = formatName(swap ? currentMatch.plA : currentMatch.plX);
-
-                    nameleft += '<br>' + formatName(swap ? currentMatch.plY : currentMatch.plB);
-                    nameright += '<br>' + formatName(swap ? currentMatch.plB : currentMatch.plY);
-
-                    break;
-            }
-
-            break;
-            
-        case 4 :
-            nameleft = formatName(swap ? currentMatch.plX : currentMatch.plA);
-            nameright = formatName(swap ? currentMatch.plA : currentMatch.plX);
-            
-            if (currentMatch.plB.plNr > 0) {
-                nameleft += '<br>' + formatName(swap ? currentMatch.plY : currentMatch.plB);
-                nameright += '<br>' + formatName(swap ? currentMatch.plB : currentMatch.plY);
-            }
-    
-            break;
-    }
+    var nameleft = swap ? formatPlayersRight(swap) : formatPlayersLeft(swap);
+    var nameright = swap ? formatPlayersLeft(swap) : formatPlayersRight(swap);
     
     $('#nameleft span').html(nameleft);
     $('#nameright span').html(nameright);
+}
+
+function formatPlayersLeft(swap) {
+    var namePlA = formatName(currentMatch.plA);
+    var namePlB = formatName(currentMatch.plB);
+    var namePlX = formatName(currentMatch.plX);
+    var namePlY = formatName(currentMatch.plY);
+
+    // Player and partner left side
+    const pl = swap ? namePlX : namePlA;
+    const bd = swap ? namePlY : namePlB;
+    
+    if (pl === null)
+        return swap ? 'Player X' : 'Player A';
+    
+    if (bd === null)
+        return pl;
+    
+    // Both player left side exist
+    if (!swap) {
+        switch (currentData.serviceDouble) {
+            case CounterData.ServiceDouble.NONE :
+            case CounterData.ServiceDouble.BX :
+            case CounterData.ServiceDouble.XB :
+            case CounterData.ServiceDouble.BY :
+            case CounterData.ServiceDouble.YB :
+                return pl + '<br>' + bd;
+            default:
+                return bd + '<br>' + pl;
+        }
+    } else {
+        switch (currentData.serviceDouble) {
+            case CounterData.ServiceDouble.NONE :
+            case CounterData.ServiceDouble.BY :
+            case CounterData.ServiceDouble.YB :
+            case CounterData.ServiceDouble.AY :
+            case CounterData.ServiceDouble.YA :
+                return pl + '<br>' + bd;
+            default:
+                return bd + '<br>' + pl;   
+        }
+    }    
+}
+
+function formatPlayersRight(swap) {
+    var namePlA = formatName(currentMatch.plA);
+    var namePlB = formatName(currentMatch.plB);
+    var namePlX = formatName(currentMatch.plX);
+    var namePlY = formatName(currentMatch.plY);
+
+    // Player and partner left side
+    const pl = swap ? namePlA : namePlX;
+    const bd = swap ? namePlB : namePlY;
+    
+    if (pl === null)
+        return swap ? 'Player A' : 'Player X';
+    
+    if (bd === null)
+        return pl;
+        
+    // Both player left side exist
+    if (!swap) {
+        switch (currentData.serviceDouble) {
+            case CounterData.ServiceDouble.NONE :
+            case CounterData.ServiceDouble.AX :
+            case CounterData.ServiceDouble.XA :
+            case CounterData.ServiceDouble.BX :
+            case CounterData.ServiceDouble.XB :
+                return pl + '<br>' + bd;
+            default:
+                return bd + '<br>' + pl;
+        }
+    } else {
+        switch (currentData.serviceDouble) {
+            case CounterData.ServiceDouble.NONE :
+            case CounterData.ServiceDouble.AX :
+            case CounterData.ServiceDouble.XA :
+            case CounterData.ServiceDouble.AY :
+            case CounterData.ServiceDouble.YA :
+                return pl + '<br>' + bd;
+            default:
+                return bd + '<br>' + pl;      
+        }
+    }
 }
 
 
@@ -737,10 +743,10 @@ function checkPrestart() {
     var ct = new Date();
     
     var show = 
+        prestart === 0 ||
         currentData === null ||
         currentData.gameMode !== 'RESET' ||
         currentMatch === null ||
-        prestart === 0 ||
         currentMatch.mtDateTime < (ct.getTime() + prestart * 1000)
     ;
 

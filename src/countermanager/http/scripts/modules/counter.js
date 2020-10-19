@@ -163,22 +163,30 @@ export function toggleServiceDoubleRight(data) {
 
 
 export function toggleTimeoutLeft(data) {
-    toggleTimeout(data, Side.LEFT);
+    toggleTimeout(data, Side.LEFT);    
+    fireListeners();
 }
 
 
 export function toggleTimeoutRight(data) {
-    toggleTimeout(data, Side.RIGHT);
+    toggleTimeout(data, Side.RIGHT);    
+    fireListeners();
 }
 
 
 export function setWOLeft(data) {
+    if (!wo(data, Side.LEFT))
+        return;
     
+    fireListeners();
 }
 
 
 export function setWORight(data) {
+    if (!wo(dat, Side.RIGHT))
+        return;
     
+    fireListeners();
 }
 
 
@@ -249,7 +257,23 @@ export function swapPlayers(data) {
 
 
 export function endMatch(data) {
+    if (data.gameMode !== CounterData.GameMode.RUNNING)
+        return;
     
+    if (!data.hasMatchFinished())
+        return;
+    
+    // Update last game
+    let cg = data.setsLeft + data.setsRight;
+    if (data.hasGameFinished(cg) && 2 * cg < data.bestOf) {
+        if (data.setHistory[cg][0] > data.setHistory[cg][1])
+            ++data.setsLeft;
+        else
+            ++data.setsRight;
+    }
+    
+    data.gameMode = CounterData.GameMode.END;
+    fireListeners();
 }
 
 // -----------------------------------------------------------------------
@@ -329,6 +353,9 @@ function addPoint(data, side) {
     } else if (data.hasGameFinished(cg)) {
         data.gameMode = CounterData.GameMode.RUNNING;
         data.timeMode = CounterData.TimeMode.BREAK;
+    } else if (data.setHistory[cg][0] + data.setHistory[cg][1] >= 18) {
+        data.gameMode = CounterData.GameMode.RUNNING;
+        data.timeMode = CounterData.TimeMode.NONE;        
     } else {
         data.gameMode = CounterData.GameMode.RUNNING;
         data.timeMode = CounterData.TimeMode.MATCH;
@@ -345,6 +372,10 @@ function subPoint(data, side) {
         return false;
         
     if (!data.hasGameStarted(cg))
+        return false;
+    
+    // We can't sub a point at zero
+    if (data.setHistory[cg][side] === 0)
         return false;
     
     // We can't sub a point just after a side change in the last game
@@ -622,6 +653,36 @@ function toggleCard(data, which, side) {
         data[card] = rev[map[which]];
 }
 
+
+function wo(data, side) {
+    let other = (side === Side.LEFT ? Side.RIGHT : Side.LEFT);
+
+    if (data.hasMatchFinished())
+        return false;
+    
+    for (let i = 0; !data.hasMatchFinished(); i++) {
+        if (!data.hasGameFinished(i)) {
+            data.setHistory[i][other] = Math.max(data.setHistory[i][side] + 2, 11);
+        }
+        
+        if (i <= data.setsLeft + data.setsRight) {
+            if (data.setHistory[i][0] > data.setHistory[i][1])
+                ++data.setsLeft;
+            else
+                ++data.setsRight;
+        }        
+    }
+    
+    if (side === Side.LEFT)
+        data.woLeft = true;
+    else
+        data.woRight = true;
+    
+    data.gameMode = CounterData.GameMode.END;  
+    
+    return true;
+}
+
 // -----------------------------------------------------------------------
 // Update GUI
 export function addListener(callback) {
@@ -629,7 +690,7 @@ export function addListener(callback) {
 }
 
 function fireListeners() {
-    for (var li of listeners) {
+    for (let li of listeners) {
         li();
     }
 }

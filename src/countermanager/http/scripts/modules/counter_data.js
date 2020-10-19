@@ -21,6 +21,14 @@ export const TimeMode = Object.freeze({
     INJURY  : 'INJURY'
 });
 
+export const TimeInterval = Object.freeze({
+    PREPARE : 120,
+    MATCH   : 600,
+    BREAK   : 60,
+    TIMEOUT : 60,
+    INJUREY : 600
+});
+
 export const Cards = Object.freeze({
     NONE   : 'NONE',
     YELLOW : 'YELLOW',
@@ -83,8 +91,8 @@ export const PlayerDefault = Object.freeze({
 });
 
 // Create new instance
-export function create() {
-    return {
+export function create(match = null) {
+    let ret = {
         /* SideChange    */ sideChange : SideChange.NONE,
         /* Sevice        */ service : Service.NONE,
         /* ServiceDouble */ serviceDouble : ServiceDouble.NONE,
@@ -100,7 +108,7 @@ export function create() {
         
         /* String  */  alertText : '',
         /* boolean */  expedite : false,
-        /* int     */  gameTime : 0,
+        /* int     */  gameTime : TimeInterval.MATCH,
         /* Cards   */  cardLeft : Cards.NONE,
         /* Cards   */  cardRight : Cards.NONE,
         /* boolean */  locked : false,
@@ -307,4 +315,14 @@ export function create() {
             );
         }
     };
+    
+    if (match !== null) {
+        ret.gameNr = match.mtMS > 1 ? match.mtMS : match.mtNr;
+        ret.bestOf = match.mtBestOf;
+        
+        ret.playerNrLeft = match.plA.plNr;
+        ret.playerNrRight = match.plX.plNr;
+    }
+    
+    return ret;
 }

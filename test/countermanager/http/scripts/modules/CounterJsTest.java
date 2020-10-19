@@ -302,7 +302,7 @@ public class CounterJsTest extends BaseJsTest {
     
     
     @Test
-    public void test_08_addPointLeft() {
+    public void test_08_addPoint() {
         String script;
         Map ret;
 
@@ -395,12 +395,19 @@ public class CounterJsTest extends BaseJsTest {
     
     
     @Test
-    public void test_09_subPointLeft() {
+    public void test_09_subPoint() {
         String script;
         Map ret;
         
         // No sub at start of game
         script = "return Testdata.testSubPointLeft(Testdata.data[0]);";
+        ret = (Map) executeScript(script);
+        assertNotNull(ret);
+        assertEquals(0L, ((Map<String, List<List>>) ret).get("setHistory").get(0).get(0));
+        
+        // No sub at 0
+        // Add 1 point right then sub one left
+        script = "return Testdata.testSubPointLeft(Testdata.testAddPointRight(Testdata.data[0]));";
         ret = (Map) executeScript(script);
         assertNotNull(ret);
         assertEquals(0L, ((Map<String, List<List>>) ret).get("setHistory").get(0).get(0));
@@ -442,7 +449,7 @@ public class CounterJsTest extends BaseJsTest {
     
     
     @Test
-    public void test_10_toggleTimeoutLeft() {
+    public void test_10_toggleTimeout() {
         String script;
         Map ret;
         
@@ -463,7 +470,7 @@ public class CounterJsTest extends BaseJsTest {
     
     
     @Test
-    public void test_11_toggleCardLeft() {
+    public void test_11_toggleCard() {
         String script;
         Map ret;
         
@@ -525,11 +532,82 @@ public class CounterJsTest extends BaseJsTest {
         assertEquals("NONE", ret.get("timeMode"));
         
         // Stop running timeout
-        script = "return Testdata.testToggleStartGame(Object.assign({}, Testdata.data[0], Testdata.timeoutLeftRunning));";
+        script = "return Testdata.testToggleStartGame(Object.assign(" +
+                "{}, Testdata.data[0], Testdata.timeoutLeftRunning" +
+                "));";
         ret = (Map) executeScript(script);
         assertEquals("RUNNING", ret.get("gameMode"));
         assertEquals("MATCH", ret.get("timeMode"));
         assertTrue((Boolean) ret.get("timeoutLeft"));
         assertFalse((Boolean) ret.get("timeoutLeftRunning"));
     }
+    
+    
+    @Test
+    public void test_13_endMatch() {
+        String script;
+        Map ret;
+        
+        // Invalid: Set before start of match
+        script = "return Testdata.testEndMatch(Object.assign({}, Testdata.data[0]));";
+        ret = (Map) executeScript(script);
+        assertNotNull(ret);
+        assertEquals("RESET", ret.get("gameMode"));
+        
+        // Valid: Set at end of match
+        script = "return Testdata.testEndMatch(Object.assign(" + 
+                "{}, Testdata.data[0], Testdata.finishedLastGame, Testdata.runningMatch" +
+                "));";
+        ret = (Map) executeScript(script);
+        assertNotNull(ret);
+        assertEquals("END", ret.get("gameMode"));
+    }
+    
+    
+    @Test 
+    public void test_14_toggleExpedite() {
+        String script;
+        Map ret;
+        
+        // Switch on expedite
+        script = "return Testdata.testToggleExpedite(Object.assign(" +
+                "{}, Testdata.data[0], Testdata.serviceLeft, Testdata.midLastGameAfter" +
+                "));";
+        ret = (Map) executeScript(script);
+        assertNotNull(ret);
+        assertTrue((Boolean) ret.get("expedite"));
+        assertTrue((Boolean) ret.get("serviceLeft"));
+        
+        // Switch off expedite
+        script = "return Testdata.testToggleExpedite(Object.assign(" +
+                "{}, Testdata.data[0], Testdata.serviceLeft, Testdata.expedite, Testdata.midLastGameAfter" +
+                "));";
+        ret = (Map) executeScript(script);
+        assertFalse((Boolean) ret.get("expedite"));
+        
+        // Add one point
+        script = "return Testdata.testAddPointLeft(Object.assign(" +
+                "{}, Testdata.data[0], Testdata.expedite, " +
+                "Testdata.firstServiceLeft, Testdata.serviceLeftBY, " +
+                "Testdata.midLastGameAfter" +
+                "));";
+        ret = (Map) executeScript(script);
+        assertTrue((Boolean) ret.get("expedite"));
+        assertTrue((Boolean) ret.get("serviceRight"));
+    }
+    
+    
+    @Test
+    public void test_15_walkover() {
+        String script;
+        Map ret;
+        
+        // W/O left before start of match
+        script = "return Testdata.testWOLeft(Object.assign({}, Testdata.data[0]));";
+        ret = (Map) executeScript(script);
+        assertNotNull(ret);
+        assertEquals("END", ret.get("gameMode"));
+        assertEquals(3L, ret.get("setsRight"));
+        assertEquals(11L, ((Map<String, List<List>>) ret).get("setHistory").get(2).get(1));
+   }
 }
