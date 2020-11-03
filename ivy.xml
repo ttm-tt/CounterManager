@@ -37,5 +37,7 @@
         <!-- https://mvnrepository.com/artifact/com.github.tntim96/JSCover -->
         <dependency org="com.github.tntim96" name="JSCover" rev="2.0.10" conf="test->default;sources->sources;javadoc->javadoc" />
         
+        <!-- Avoid evicting modules when resolving dependencies -->
+        <conflict manager="all" />
     </dependencies>
 </ivy-module>
