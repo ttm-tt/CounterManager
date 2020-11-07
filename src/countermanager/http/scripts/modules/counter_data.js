@@ -4,6 +4,9 @@
  * Definition of the data model used in live ticker input
  */
 
+import CounterSettings from './counter_settings.js';
+
+
 export const GameMode = Object.freeze({
     RESET    : 'RESET', 
     RUNNING  : 'RUNNING', 
@@ -287,11 +290,14 @@ export function create(match = null) {
         hasGameFinished : function(idx) {
             if (idx < 0 || idx >= this.setHistory.length)
                 return false;
+            
+            let pts = (idx === this.bestOf - 1 ? CounterSettings.pointsToPlayLastGame : CounterSettings.pointsToPlay);
+            let win = (idx === this.bestOf - 1 ? CounterSettings.leadToWinLastGame : CounterSettings.leadToWin);
 
-            if (this.setHistory[idx][0] >= 11 && this.setHistory[idx][0] >= this.setHistory[idx][1] + 2)
+            if (this.setHistory[idx][0] >= pts && this.setHistory[idx][0] >= this.setHistory[idx][1] + win)
                 return true;
 
-            if (this.setHistory[idx][1] >= 11 && this.setHistory[idx][1] >= this.setHistory[idx][0] + 2)
+            if (this.setHistory[idx][1] >= pts && this.setHistory[idx][1] >= this.setHistory[idx][0] + win)
                 return true;
 
             return false;            
