@@ -5,6 +5,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -33,6 +34,7 @@ import jscover.Main;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 
 
+@Ignore
 public class BaseJsTest {
     private static String REPORT_DIR = "../coverage/";
     protected static jscover.Main main = new Main();
@@ -120,16 +122,18 @@ public class BaseJsTest {
             for (WebElement we : driver.findElements(By.cssSelector("#log span"))) {
                 Logger.getLogger(getClass().getName()).log(Level.INFO, we.getText());
             }
-            
-            executeScript("window.jscoverFinished = false;");
-            executeScript("jscoverage_report('', function(){window.jscoverFinished=true;});");
-            (new WebDriverWait(driver, 10000))
-                .until((ExpectedCondition<Boolean>) new ExpectedCondition<Boolean>() {
-                    @Override
-                    public Boolean apply(WebDriver d) {
-                        return (Boolean)((JavascriptExecutor) driver).executeScript("return window.jscoverFinished;");
-                    }
-            });
+
+            if (false) {
+                executeScript("window.jscoverFinished = false;");
+                executeScript("jscoverage_report('', function(){window.jscoverFinished=true;});");
+                (new WebDriverWait(driver, 10))
+                    .until((ExpectedCondition<Boolean>) new ExpectedCondition<Boolean>() {
+                        @Override
+                        public Boolean apply(WebDriver d) {
+                            return (Boolean)((JavascriptExecutor) driver).executeScript("return window.jscoverFinished;");
+                        }
+                });
+            }
             
             driver.quit();
         }        

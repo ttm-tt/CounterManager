@@ -678,8 +678,8 @@ function wo(data, side) {
         return false;
     
     for (let i = 0; !data.hasMatchFinished(); i++) {
-        let pts = (idx === this.bestOf - 1 ? CounterSettings.pointsToPlayLastGame : CounterSettings.pointsToPlay);
-        let win = (idx === this.bestOf - 1 ? CounterSettings.leadToWinLastGame : CounterSettings.leadToWin);
+        let pts = (i === data.bestOf - 1 ? CounterSettings.pointsToPlayLastGame : CounterSettings.pointsToPlay);
+        let win = (i === data.bestOf - 1 ? CounterSettings.leadToWinLastGame : CounterSettings.leadToWin);
 
         if (!data.hasGameFinished(i)) {
             data.setHistory[i][other] = Math.max(data.setHistory[i][side] + win, pts);

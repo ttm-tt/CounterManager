@@ -6,13 +6,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import static org.junit.Assert.*;
 
 import countermanager.http.scripts.BaseJsTest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

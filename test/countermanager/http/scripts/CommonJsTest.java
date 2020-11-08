@@ -4,14 +4,11 @@ package countermanager.http.scripts;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.JavascriptExecutor;
 
 
 public class CommonJsTest extends BaseJsTest{
 
-    private WebDriver driver;    
-    
     public CommonJsTest() {
     }
     
