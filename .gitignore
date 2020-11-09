@@ -1,0 +1,34 @@
+
+# /
+/Output
+/Turnier-Liveticker-Schnittstelle ALL - 0.9.pdf
+/_SYNCAPP
+/build
+/dist
+/hotspot.log
+
+# /lib/
+/lib/nblibraries-private.properties
+
+# /nbproject/
+/nbproject/private
+
+# /src/countermanager/driver/
+/src/countermanager/driver/gts
+
+# /src/countermanager/http/
+
+# /src/countermanager/http/display/themes/
+/src/countermanager/http/display/themes/tips.css
+
+# /src/countermanager/http/monitor/
+/src/countermanager/http/monitor/flags
+
+# /src/countermanager/http/scripts/
+/src/countermanager/http/scripts/gts.js
+
+# /src/countermanager/liveticker/
+/src/countermanager/liveticker/gts
+
+# /src/countermanager/liveticker/ttm/
+/src/countermanager/liveticker/ttm/TTMPrivate.java
