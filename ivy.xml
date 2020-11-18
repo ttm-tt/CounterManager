@@ -21,7 +21,7 @@
         <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc_auth -->
         <dependency org="com.microsoft.sqlserver" name="mssql-jdbc_auth" rev="8.4.1.x64" conf="runtime->default"/>
         <!-- https://mvnrepository.com/artifact/com.shinyhut/vernacular -->
-        <dependency org="com.shinyhut" name="vernacular" rev="1.10" conf="compile->default"/>
+        <dependency org="com.shinyhut" name="vernacular" rev="1.11" conf="compile->default"/>
         <!-- https://mvnrepository.com/artifact/org.ini4j/ini4j -->
         <dependency org="org.ini4j" name="ini4j" rev="0.5.4" conf="compile->default"/>
         
