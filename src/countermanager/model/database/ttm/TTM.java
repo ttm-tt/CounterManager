@@ -345,7 +345,7 @@ public final class TTM implements IDatabase {
             "       plYplNr, plYplExtId, plYpsLast, plYpsFirst, plYnaName, plYnaRegion, " +
             "       stA.tmName \"tmAtmName\", stA.tmDesc \"tmAtmDesc\", stA.naName \"tmAnaName\", stA.naRegion \"tmAnaRegion\", " +
             "       stX.tmName \"tmXtmName\", stX.tmDesc \"tmXtmDesc\", stX.naName \"tmXnaName\", stX.naRegion \"tmXnaRegion\", " +
-            "       mt.mtResA \"mttmResA\", mt.mtResX \"mttmResX\", " +
+            "       mt.mttmResA \"mttmResA\", mt.mttmResX \"mttmResX\", " +
             "       mtSet1.mtResA, mtSet1.mtResX, " +
             "       mtSet2.mtResA, mtSet2.mtResX, " +
             "       mtSet3.mtResA, mtSet3.mtResX, " +
