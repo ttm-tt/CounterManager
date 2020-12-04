@@ -1005,12 +1005,12 @@ public final class CounterPanelItem extends javax.swing.JPanel {
                 tt +=  "<td></td><td></td><td></td>";
         } else if (isSingle) {
             tt +=      "<td>" + plA.plNr + "</td>" +
-                       "<td>" + plA.psLast + ", " + plA.psFirst + "</td>" +
+                       "<td>" + plA.psLast + ",&nbsp;" + plA.psFirst + "</td>" +
                        "<td>" + plA.naName + "</td>";
         } else {
             tt +=      "<td>" + plA.plNr + "<br>" + plB.plNr + "</td>" +
-                       "<td>" + plA.psLast + ", " + plA.psFirst + "<br>" +
-                                plB.psLast + ", " + plB.psFirst + "</td>" +
+                       "<td>" + plA.psLast + ",&nbsp;" + plA.psFirst + "<br>" +
+                                plB.psLast + ",&nbsp;" + plB.psFirst + "</td>" +
                        "<td>" + plA.naName + "<br>" + plB.naName + "</td>";
         }
         
@@ -1025,12 +1025,12 @@ public final class CounterPanelItem extends javax.swing.JPanel {
                 tt +=  "<td></td><td></td><td></td>";
         } else if (isSingle) {
             tt +=      "<td>" + plX.plNr + "</td>" +
-                       "<td>" + plX.psLast + ", " + plX.psFirst + "</td>" +
+                       "<td>" + plX.psLast + ",&nbsp;" + plX.psFirst + "</td>" +
                        "<td>" + plX.naName + "</td>";
         } else {
             tt +=      "<td>" + plX.plNr + "<br>" + plY.plNr + "</td>" +
-                       "<td>" + plX.psLast + ", " + plX.psFirst + "<br>" +
-                                plY.psLast + ", " + plY.psFirst + "</td>" +
+                       "<td>" + plX.psLast + ",&nbsp;" + plX.psFirst + "<br>" +
+                                plY.psLast + ",&nbsp;" + plY.psFirst + "</td>" +
                        "<td>" + plX.naName + "<br>" + plY.naName + "</td>";
         }
         
