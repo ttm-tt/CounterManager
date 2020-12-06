@@ -39,7 +39,7 @@ public class CounterJsTest extends BaseJsTest {
             Logger.getLogger(CounterJsTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        driver.get("http://" + hn + "/scripts/modules/CounterJsTest.html");
+        driver.get("http://" + hn + ":" + HTTP_PORT + "/scripts/modules/CounterJsTest.html");
     }
     
     @After
@@ -561,6 +561,7 @@ public class CounterJsTest extends BaseJsTest {
         ret = (Map) executeScript(script);
         assertNotNull(ret);
         assertEquals("END", ret.get("gameMode"));
+        assertEquals(3L, ret.get("setsLeft"));
     }
     
     
@@ -609,5 +610,13 @@ public class CounterJsTest extends BaseJsTest {
         assertEquals("END", ret.get("gameMode"));
         assertEquals(3L, ret.get("setsRight"));
         assertEquals(11L, ((Map<String, List<List>>) ret).get("setHistory").get(2).get(1));
+        
+        // W/O right before start of match
+        script = "return Testdata.testWORight(Object.assign({}, Testdata.data[0]));";
+        ret = (Map) executeScript(script);
+        assertNotNull(ret);
+        assertEquals("END", ret.get("gameMode"));
+        assertEquals(3L, ret.get("setsLeft"));
+        assertEquals(11L, ((Map<String, List<List>>) ret).get("setHistory").get(2).get(0));
    }
 }
