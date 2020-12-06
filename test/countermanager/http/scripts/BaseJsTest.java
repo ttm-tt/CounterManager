@@ -39,6 +39,8 @@ public class BaseJsTest {
     private static String REPORT_DIR = "../coverage/";
     protected static jscover.Main main = new Main();
     protected WebDriver driver;   
+    private static String JSCOVER_PORT = "3129";
+    protected static int HTTP_PORT = 8085;
     
     public BaseJsTest() {
     }
@@ -50,7 +52,7 @@ public class BaseJsTest {
             public void run() {
                 main.runMain(new String[] {
                     "-ws",
-                    "--port=3129",
+                    "--port=" + JSCOVER_PORT,
                     "--proxy",
                     "--local-storage",
                     "--no-instrument-reg=.*Test\\.js",
@@ -59,7 +61,7 @@ public class BaseJsTest {
                 }); }
         }).start();
         
-        HTTP.getDefaultInstance().startHttpServer(80);
+        HTTP.getDefaultInstance().startHttpServer(HTTP_PORT);
         WebDriverManager.chromedriver().setup();
     }
     
@@ -85,7 +87,7 @@ public class BaseJsTest {
     
     @Before
     public void setUp() {
-        Proxy proxy = new Proxy().setHttpProxy("localhost:3129");
+        Proxy proxy = new Proxy().setHttpProxy("localhost:" + JSCOVER_PORT);
         
         ChromeOptions options = new ChromeOptions();
         // Tested in Google Chrome 59 on Linux. More info on:
