@@ -47,6 +47,7 @@ class UpdateMatch {
             this.plB.psLast = counterMatch.plB.psLast;
             this.plB.psFirst = counterMatch.plB.psFirst;
             this.plB.naName = counterMatch.plB.naName;
+            this.plB.naRegion = counterMatch.plB.naRegion;
         }
         if (counterMatch.plX.plNr > 0) {
             this.plX = new UpdateMatch.Player();
@@ -54,6 +55,7 @@ class UpdateMatch {
             this.plX.psLast = counterMatch.plX.psLast;
             this.plX.psFirst = counterMatch.plX.psFirst;
             this.plX.naName = counterMatch.plX.naName;
+            this.plX.naRegion = counterMatch.plX.naRegion;
         }
         if (counterMatch.plY.plNr > 0) {
             this.plY = new UpdateMatch.Player();
@@ -61,10 +63,12 @@ class UpdateMatch {
             this.plY.psLast = counterMatch.plY.psLast;
             this.plY.psFirst = counterMatch.plY.psFirst;
             this.plY.naName = counterMatch.plY.naName;
+            this.plY.naRegion = counterMatch.plY.naRegion;
         }
         if (counterMatch.tmA != null && counterMatch.tmA.tmName != null && !counterMatch.tmA.tmName.isEmpty()) {
             this.tmA = new UpdateMatch.Team();
             this.tmA.naName = counterMatch.tmA.naName;
+            this.tmA.naRegion = counterMatch.tmA.naRegion;
             this.tmA.tmName = counterMatch.tmA.tmName;
             this.tmA.tmDesc = counterMatch.tmA.tmDesc;
             this.tmA.mtRes = counterMatch.mttmResA;
@@ -72,6 +76,7 @@ class UpdateMatch {
         if (counterMatch.tmX != null && counterMatch.tmX.tmName != null && !counterMatch.tmX.tmName.isEmpty()) {
             this.tmX = new UpdateMatch.Team();
             this.tmX.naName = counterMatch.tmX.naName;
+            this.tmX.naRegion = counterMatch.tmX.naRegion;
             this.tmX.tmName = counterMatch.tmX.tmName;
             this.tmX.tmDesc = counterMatch.tmX.tmDesc;
             this.tmX.mtRes = counterMatch.mttmResX;
