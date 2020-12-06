@@ -317,8 +317,16 @@ export function testToggleExpedite(data) {
     return d;
 }
 
+
 export function testWOLeft(data) {
     var d = Object.assign({}, data);
     Counter.setWOLeft(d);
+    return d;
+}
+
+
+export function testWORight(data) {
+    var d = Object.assign({}, data);
+    Counter.setWORight(d);
     return d;
 }
