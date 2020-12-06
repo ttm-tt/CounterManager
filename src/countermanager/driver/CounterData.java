@@ -328,7 +328,7 @@ public class CounterData {
             injuredRightRunning = tmp;
         }
         
-        swapped = !swapped;
+        // swapped = !swapped;
     }
 
     public boolean isSwapped() {

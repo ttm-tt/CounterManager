@@ -95,8 +95,8 @@ export function swapSides(data) {
             data.service = -data.service;
             data.serviceDouble = -data.serviceDouble;
         } else if (data.sideChange === CounterData.SideChange.AFTER) {
-            // Service starts on the same side
-            data.service = -data.firstService;
+            // Each game the other players have service
+            data.service = ((cg % 2) == 0) ? -data.firstService : +data.firstService;
             data.serviceDouble = -data.firstServiceDouble;
         } else {
             // Restore last service
@@ -110,7 +110,7 @@ export function swapSides(data) {
     data.serviceRight = data.hasServiceRight();
 
     // If we are in GameMode NONE we switch to WARMUP
-    if (data.gamMode == CounterData.GameMode.NONE)
+    if (data.gameMode == CounterData.GameMode.NONE)
         data.gameMode = CounterData.GameMode.WARMUP;
     
     // A side change after end game increments the result
@@ -188,7 +188,7 @@ export function setWOLeft(data) {
 
 
 export function setWORight(data) {
-    if (!wo(dat, Side.RIGHT))
+    if (!wo(data, Side.RIGHT))
         return;
     
     fireListeners();
@@ -256,7 +256,15 @@ export function toggleExpedite(data) {
 
 
 export function swapPlayers(data) {
-    data.swapPlayers();    
+    if (data.gameMode === CounterData.GameMode.RESET ||
+        data.gameMode === CounterData.GameMode.WARMUP) {
+        // In case we are at the beginning of a match treat it like swapSides,
+        // there is nothing we want to keep. Except, maybe, for service,
+        // but we don't know if it was assigned because of player or of side.
+        swapSides(data);
+    } else {
+        data.swapPlayers();  
+    }
     fireListeners();
 }
 
@@ -268,14 +276,12 @@ export function endMatch(data) {
     if (!data.hasMatchFinished())
         return;
     
-    // Update last game
+    // Update games
     let cg = data.setsLeft + data.setsRight;
-    if (data.hasGameFinished(cg) && 2 * cg < data.bestOf) {
-        if (data.setHistory[cg][0] > data.setHistory[cg][1])
-            ++data.setsLeft;
-        else
-            ++data.setsRight;
-    }
+    if (data.setHistory[cg][0] > data.setHistory[cg][1])
+        ++data.setsLeft;
+    else
+        ++data.setsRight;
     
     data.gameMode = CounterData.GameMode.END;
     fireListeners();
@@ -398,6 +404,11 @@ function subPoint(data, side) {
         changeServicePrev(data);
     }
     
+    if (data.hasGameFinished(cg)) {
+        // If the game is finished it has been running before
+        data.timeMode = CounterData.TimeMode.NONE; 
+    }
+    
     data.setHistory[cg][side] -= 1;
 
     // In the last game at 5:x a side change is required
@@ -405,7 +416,7 @@ function subPoint(data, side) {
     if (data.sideChange == CounterData.SideChange.BEFORE)
         data.sideChange = CounterData.SideChange.NONE;
     else if (cg === data.bestOf - 1 && sl > 0 && 
-            data.setHistory[cg][side] == al &&
+            data.setHistory[cg][side] == sl &&
             data.setHistory[cg][side === Side.LEFT ? Side.RIGHT : Side.LEFT] < sl) {
         data.sideChange = CounterData.SideChange.AFTER;
     }
@@ -688,7 +699,7 @@ function wo(data, side) {
         if (i <= data.setsLeft + data.setsRight) {
             if (data.setHistory[i][0] > data.setHistory[i][1])
                 ++data.setsLeft;
-            else
+            else if (data.setHistory[i][1] > data.setHistory[i][0])
                 ++data.setsRight;
         }        
     }

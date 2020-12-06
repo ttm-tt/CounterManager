@@ -67,7 +67,7 @@ $(document).ready(function() {
         ;
     }
     
-    if (typeof(localStorage) != 'undefined') {
+    if (false && typeof(localStorage) != 'undefined') {
         $(window).bind('storage', function(e) {
             if (e.originalEvent.key !== "table=" + table)
                 return;
@@ -316,16 +316,19 @@ function setCurrentData(data) {
     var swapNames = 
         (currentData !== null) && (
             currentData.playerNrLeft == CounterData.PlayerDefault.RIGHT || 
-            currentMatch !== null && currentData.playerNrLeft == currentMatch.plX.plNr
+            currentMatch !== null && currentData.playerNrLeft == currentMatch.plX.plNr ||
+            currentData.swapped
         )
     ;
     // If left/right as seen from the umpire shall be swapped on the display
     var swap = parseInt(getParameterByName("swap", 0)) > 0;
 
     // Only if either swapNames or swap is true, then names should be displayed swapped
-    setCaption(swap ^ swapNames);
+    swap = (swap ^ swapNames);
 
-    setNames(swap ^ swapNames);
+    setCaption(swap);
+        
+    setNames(swap);
         
     if ( (currentData === null || currentData.gameMode == 'RESET') && 
          (currentMatch === null || currentMatch.cpType != 4 || currentMatch.mtMS == 1) ) {
@@ -382,20 +385,23 @@ function setCurrentData(data) {
         $('#gamesleft').html(swap ? currentData.setsRight : currentData.setsLeft);
         $('#gamesright').html(swap ? currentData.setsLeft : currentData.setsRight);    
     } else if (currentData.timeMode == 'BREAK') {
+        var cg = currentData.setsLeft + currentData.setsRight;
+        
         // For the first 30 seconds show the last game, then go blank
-        if (timeToBlank > 60 - currentData.time) {
-            var resA = currentData.setHistory[currentData.setsLeft + currentData.setsRight - 1][swap ? 1 : 0];
-            var resX = currentData.setHistory[currentData.setsLeft + currentData.setsRight - 1][swap ? 0 : 1];
+        if ((timeToBlank > 60 - currentData.time) || 
+            (cg < currentData.setHistory.length && (currentData.setHistory[cg][0] + currentData.setHistory[cg][1])) > 0) {
+            var resA = currentData.setHistory[cg][swap ? 1 : 0];
+            var resX = currentData.setHistory[cg][swap ? 0 : 1];
             
             $('#pointsleft').html(resA);
             $('#pointsright').html(resX);
             
             if (resA > resX) {
-                $('#gamesleft').html((swap ? currentData.setsRight : currentData.setsLeft) - 1);
+                $('#gamesleft').html(swap ? currentData.setsRight : currentData.setsLeft);
                 $('#gamesright').html(swap ? currentData.setsLeft : currentData.setsRight);
             } else {
                 $('#gamesleft').html(swap ? currentData.setsRight : currentData.setsLeft);
-                $('#gamesright').html((swap ? currentData.setsLeft : currentData.setsRight) - 1);
+                $('#gamesright').html(swap ? currentData.setsLeft : currentData.setsRight);
             }
         } else {
             $('#pointsleft').html('');
@@ -560,11 +566,11 @@ function setCaption(swap) {
     
     switch (currentMatch.cpType) {
         case 1 :
-            nationleft = (swap ? currentMatch.plX.naName : currentMatch.plA.naName);
-            nationright = (swap ? currentMatch.plA.naName : currentMatch.plX.naName);
+            nationleft = (swap ? currentMatch.plX.naRegion : currentMatch.plA.naRegion);
+            nationright = (swap ? currentMatch.plA.naRegion : currentMatch.plX.naRegion);
             
-            flaga = formatFlag(swap ? currentMatch.plX.naName : currentMatch.plA.naName);
-            flagx = formatFlag(swap ? currentMatch.plA.naName : currentMatch.plX.naName);
+            flaga = formatFlag(swap ? currentMatch.plX.naRegion : currentMatch.plA.naRegion);
+            flagx = formatFlag(swap ? currentMatch.plA.naRegion : currentMatch.plX.naRegion);
             
             $('#teamresult span').html('');
             
@@ -572,20 +578,20 @@ function setCaption(swap) {
             
         case 2 :
         case 3 :
-            if (currentMatch.plA.naName == currentMatch.plB.naName && currentMatch.plX.naName == currentMatch.plY.naName) {
+            if (currentMatch.plA.naRegion == currentMatch.plB.naRegion && currentMatch.plX.naRegion == currentMatch.plY.naRegion) {
                 nationleft = (swap ? currentMatch.plX.naName : currentMatch.plA.naName);   
                 nationright = (swap ? currentMatch.plA.naName : currentMatch.plX.naName); 
                 
-                flaga = formatFlag(swap ? currentMatch.plX.naName : currentMatch.plA.naName);
-                flagx = formatFlag(swap ? currentMatch.plA.naName : currentMatch.plX.naName);
+                flaga = formatFlag(swap ? currentMatch.plX.naRegion : currentMatch.plA.naRegion);
+                flagx = formatFlag(swap ? currentMatch.plA.naRegion : currentMatch.plX.naName);
             } else {
                 nationleft = (swap ? currentMatch.plX.naName + '&thinsp;/&thinsp;' + currentMatch.plY.naName : currentMatch.plA.naName + '&thinsp;/&thinsp;' +currentMatch.plB.naName);   
                 nationright = (swap ? currentMatch.plA.naName + '&thinsp;/&thinsp;' +currentMatch.plB.naName : currentMatch.plX.naName + '&thinsp;/&thinsp;' + currentMatch.plY.naName);    
                 
-                flagb = formatFlag(swap ? currentMatch.plX.naName : currentMatch.plA.naName);
-                flaga = formatFlag(swap ? currentMatch.plY.naName : currentMatch.plB.naName);
-                flagx = formatFlag(swap ? currentMatch.plA.naName : currentMatch.plX.naName);
-                flagy = formatFlag(swap ? currentMatch.plB.naName : currentMatch.plY.naName);
+                flagb = formatFlag(swap ? currentMatch.plX.naRegion : currentMatch.plA.naRegion);
+                flaga = formatFlag(swap ? currentMatch.plY.naRegion : currentMatch.plB.naRegion);
+                flagx = formatFlag(swap ? currentMatch.plA.naRegion : currentMatch.plX.naRegion);
+                flagy = formatFlag(swap ? currentMatch.plB.naRegion : currentMatch.plY.naRegion);
             }
             
             $('#teamresult span').html('');
@@ -596,8 +602,8 @@ function setCaption(swap) {
             nationleft = (swap ? currentMatch.tmX.tmName : currentMatch.tmA.tmName);
             nationright = (swap ? currentMatch.tmA.tmName : currentMatch.tmX.tmName);
             
-            flaga = formatFlag(swap ? currentMatch.tmX.naName : currentMatch.tmA.naName);
-            flagx = formatFlag(swap ? currentMatch.tmA.naName : currentMatch.tmX.naName);
+            flaga = formatFlag(swap ? currentMatch.tmX.naRegion : currentMatch.tmA.naRegion);
+            flagx = formatFlag(swap ? currentMatch.tmA.naRegion : currentMatch.tmX.naRegion);
                 
             if (swap)
                 $('#teamresult span').html(currentMatch.mttmResX + '&nbsp;:&nbsp;' + currentMatch.mttmResA);
@@ -624,8 +630,8 @@ function setNames(swap) {
     if (currentMatch === null)
         return;
     
-    var nameleft = swap ? formatPlayersRight(swap) : formatPlayersLeft(swap);
-    var nameright = swap ? formatPlayersLeft(swap) : formatPlayersRight(swap);
+    var nameleft = formatPlayersLeft(swap);
+    var nameright = formatPlayersRight(swap);
     
     $('#nameleft span').html(nameleft);
     $('#nameright span').html(nameright);
@@ -646,6 +652,10 @@ function formatPlayersLeft(swap) {
     
     if (bd === null)
         return pl;
+    
+    if ( (currentMatch.plB === null || currentMatch.plB.plNr === 0) &&
+         (currentMatch.plY === null || currentMatch.plY.plNr === 0) )
+     return pl;
     
     // Both player left side exist
     if (!swap) {
@@ -689,6 +699,10 @@ function formatPlayersRight(swap) {
     if (bd === null)
         return pl;
         
+    if ( (currentMatch.plB === null || currentMatch.plB.plNr === 0) &&
+         (currentMatch.plY === null || currentMatch.plY.plNr === 0) )
+     return pl;
+    
     // Both player left side exist
     if (!swap) {
         switch (currentData.serviceDouble) {

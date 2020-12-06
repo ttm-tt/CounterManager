@@ -102,7 +102,7 @@ function doInitialize() {
     $('[data-counter]').each(function() {
         $(this).on('click', function() {updateData($(this));});
     });
-
+    
     restoreData();
     
     connectHttp(); 
@@ -176,6 +176,7 @@ function restoreData() {
         
         if (!confirm("Do you want to recover from a saved session?")) {
             clearData();
+            updateScreen();
             return;
         }
         
@@ -554,6 +555,7 @@ function updateScreen() {
         counterData = CounterData.create();
     
     const cg = counterData.setsLeft + counterData.setsRight;
+    const swap = counterData.swappedPlayers;
 
     // Header
     $('#schedule .table').html('Table: ' + table);
@@ -561,7 +563,10 @@ function updateScreen() {
         $('#schedule .start').html('Start: ' + formatTime(counterMatch.mtDateTime));
         $('#schedule .event').html('Event: ' + counterMatch.cpDesc);
         $('#schedule .nr').html('Match: ' + counterMatch.mtNr + (counterMatch.mtMS > 0 ? ' - Individual Match: ' + counterMatch.mtMS : ''));
-        $('#teamresult').html(counterMatch.mttmResA + '&nbsp;-&nbsp;' + counterMatch.mttmResX);        
+        if (swap)
+            $('#teamresult').html(counterMatch.mttmResX + '&nbsp;-&nbsp;' + counterMatch.mttmResA);        
+        else
+            $('#teamresult').html(counterMatch.mttmResA + '&nbsp;-&nbsp;' + counterMatch.mttmResX);        
     } else {
         $('#schedule .start').html('');
         $('#schedule .event').html('');
@@ -652,7 +657,13 @@ function updateScreen() {
     }
     
     // Command buttons
-    $('#startGame').attr('checked', counterData.timeMode === CounterData.TimeMode.MATCH);
+    let gameRunning = 
+            counterData.timeMode == CounterData.TimeMode.MATCH ||
+            ((counterData.setHistory[cg][0] + counterData.setHistory[cg][1]) >= 18 && 
+                counterData.timeMode === CounterData.TimeMode.NONE)
+    ;
+    
+    $('#startGame').attr('checked', gameRunning);
     $('#setExpedite').attr('checked', counterData.expedite);
     // Nothing for swap names
     if (counterData.hasMatchFinished())
