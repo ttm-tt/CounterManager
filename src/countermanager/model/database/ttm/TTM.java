@@ -373,15 +373,15 @@ public final class TTM implements IDatabase {
             "       CAST(mt.mtDateTime AS DATE) = ? AND " +
             "       (mt.stA IS NULL OR mt.tmAtmID IS NOT NULL) AND " +
             "       (mt.stX IS NULL OR mt.tmXtmID IS NOT NULL) AND " +
-            "       plAplNr IS NOT NULL AND plXplNr IS NOT NULL AND " +
+            // "       plAplNr IS NOT NULL AND plXplNr IS NOT NULL AND " +
             "       mt.stA IS NOT NULL AND mt.stX IS NOT NULL AND " +
             // If all == false then exclude finished matches
             (all ? "" : (
             "       (mt.mtResA IS NULL OR 2 * mt.mtResA < mt.mtBestOf) AND " + 
             "       (mt.mtResX IS NULL OR 2 * mt.mtResX < mt.mtBestOf) AND " +
             "       (mt.mtWalkOverA IS NULL OR mt.mtWalkOverA = 0) AND " +
-            "       (mt.mtWalkOverX IS NULL OR mt.mtWalkOverX = 0) AND " 
-            // "       2 * mttmResA < mt.mtMatches AND 2 * mttmResX < mt.mtMatches AND "
+            "       (mt.mtWalkOverX IS NULL OR mt.mtWalkOverX = 0) AND " +
+            "       2 * mttmResA < mt.mtMatches AND 2 * mttmResX < mt.mtMatches AND "
             )) +
             "       cp.cpType = 4 AND mt.mtTable >= ? AND mt.mtTable <= ? " +
 
