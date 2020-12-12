@@ -36,7 +36,7 @@ public class CounterDataJsTest extends BaseJsTest {
             Logger.getLogger(CounterDataJsTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        driver.get("http://" + hn + "/scripts/modules/CounterDataJsTest.html");
+        driver.get("http://" + hn + ":" + HTTP_PORT + "/scripts/modules/CounterDataJsTest.html");
     }
     
     @After

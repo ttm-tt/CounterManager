@@ -15,7 +15,7 @@ public class CommonJsTest extends BaseJsTest{
     @Test
     public void testFormatRound() {
         // Load some piece of html with the script tag
-        driver.get("http://localhost/scripts/CommonJsTest.html");
+        driver.get("http://localhost:" + HTTP_PORT + "/scripts/CommonJsTest.html");
         
         String paramres[][] = {
             // Round Robin

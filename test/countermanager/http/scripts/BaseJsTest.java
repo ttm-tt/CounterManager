@@ -98,8 +98,8 @@ public class BaseJsTest {
         // Enable loging in chrome including Level.INFO (but that doesn't work yet)
         options.addArguments("--enable-logging=stderr --v=1");  
         
-        // options.addArguments("--proxy-server=\"http://localhost:3129\"");
-        // options.addArguments("--proxy-bypass-list=\"<-loopback>\"");
+        options.addArguments("--proxy-server=\"http://localhost:" + JSCOVER_PORT + "\"");
+        options.addArguments("--proxy-bypass-list=\"<-loopback>\"");
         
         // Enable logging in webdriver
         LoggingPreferences logPrefs = new LoggingPreferences();
