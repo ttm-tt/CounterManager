@@ -16,7 +16,7 @@ var debug = false;
 
 /**
  * Set config
- * @param cfg
+ * @param {Object} cfg
  */
 export function setConfig(cfg) {
     config = Object.assign({}, config, cfg);
@@ -24,7 +24,7 @@ export function setConfig(cfg) {
 
 /**
  * Set debug flag
- * @param b value of debug
+ * @param {boolean} b value of debug
  */
 export function setDebug(b) {
     debug = b;
@@ -33,9 +33,9 @@ export function setDebug(b) {
 /**
  * Rebuild matches with new data with removing finished matches
  * Finished and expired matches are discarded and new matches added to the list
- * @param matches the current list of matches
- * @param data list of matches from the server
- * @param ct current time
+ * @param {Object[]} matches the current list of matches
+ * @param {Object[]} data list of matches from the server
+ * @param {*Date} ct current time
  */
 export function rebuild(matches, data, ct = ((new Date()).getTime())) {
     sortData(data);
@@ -51,8 +51,8 @@ export function rebuild(matches, data, ct = ((new Date()).getTime())) {
 /**
  * Update matches with new data. but don't remove finished
  * Finished and expired matches are discarded and new matches added to the list
- * @param matches the current list of matches
- * @param {type} data
+ * @param {Object[]} matches the current list of matches
+ * @param {Object[]} data
  */
 export function update(matches, data) {
     sortData(data);
@@ -66,7 +66,7 @@ export function update(matches, data) {
 
 /**
  * Sort data received from server
- * @param {type} data
+ * @param {Object[]} data
  * @returns data
  */
 export function sortData(data) {
@@ -92,8 +92,8 @@ export function sortData(data) {
 
 /**
  * Get the maximum mtTimestamp of new data and current one
- * @param {type} data
- * @param {type} mtTimestamp
+ * @param {Object} data
+ * @param {number} mtTimestamp
  * @returns updated mtTimestamp
  */
 export function updateMtTimestamp(data, mtTimestamp) {
@@ -110,7 +110,7 @@ export function updateMtTimestamp(data, mtTimestamp) {
 
 /**
  * Initializes matches structure: each entry is just a plain match
- * @param matches the current list of matches
+ * @param {Object[]} matches the current list of matches
  */
 export function initialize(matches) {
     // Iterate over nun-numeric arrays with for..in
@@ -123,7 +123,7 @@ export function initialize(matches) {
 
 /**
  * Clear result from all finished matches so we don't show them again
- * @param matches the current list of matches
+ * @param {Object[]} matches the current list of matches
  */
 export function clearResult(matches) {
     for (const i in matches) {
@@ -135,10 +135,9 @@ export function clearResult(matches) {
 
 /**
  * Remove finished matches from matches no longer displayed
- * @param matches the current list of matches
- * @param data
- * @param ct current time
- * @param minTime the minimum time a finished match schal be shown
+ * @param {Object[]} matches the current list of matches
+ * @param {Object} data
+ * @param {Date} ct current time
  */
 export function removeFinished(matches, data, ct) {
     for (const i in matches) {
@@ -163,9 +162,8 @@ export function removeFinished(matches, data, ct) {
 
 /**
  * Update all unfinished matches with new result
- * @param matches the current list of matches
- * @param {type} data
- * @returns {undefined}
+ * @param {Object[]} matches the current list of matches
+ * @param {Object} data
  */
 export function updateUnfinished(matches, data) {
     for (const i in data) {
@@ -200,9 +198,9 @@ export function updateUnfinished(matches, data) {
 /**
  * Finalize matches list: 
  * each entry is a list of current and upcoming matches per table
- * @param matches the current list of matches
- * @param data
- * @param ct current time
+ * @param {Object[]} matches the current list of matches
+ * @param {Object} data
+ * @param {Date} ct current time
  */
 export function finalize(matches, data, ct) {
 
@@ -248,8 +246,8 @@ export function finalize(matches, data, ct) {
 
 /**
  * Update results of first match per table, but don't change matches
- * @param matches the current list of matches
- * @param {type} data
+ * @param {Object[]} matches the current list of matches
+ * @param {Object} data
  */
 export function updateResult(matches, data) {
     if (!data)
@@ -268,7 +266,7 @@ export function updateResult(matches, data) {
 
 /**
  * Check if a match has finished
- * @param mt the match
+ * @param {Object} mt the match
  * @return true if the match has finished
  */
 export function isFinished(mt) {
@@ -296,8 +294,8 @@ export function isFinished(mt) {
 
 /**
  * Check if a match has started
- * @param mt the match
- * @param ct the currenttime
+ * @param {Object} mt the match
+ * @param {Date} ct the currenttime
  * @returns true if the match has started
  */
 export function isStarted(mt, ct = new Date().getTime()) {
