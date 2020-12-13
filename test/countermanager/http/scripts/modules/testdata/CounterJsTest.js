@@ -216,117 +216,126 @@ export function testGameFinished(data, idx) {
 }
 
 export function testAddPointLeft(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.addPointLeft(d);
     return d;
 }
 
 export function testAddPointRight(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.addPointRight(d);
     return d;
 }
 
 export function testSubPointLeft(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.subPointLeft(d);
     return d;
 }
 
 export function testSubPointRight(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.subPointRight(d);
     return d;
 }
 
 export function testSwapSides(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.swapSides(d);
     return d;
 }
 
 export function testToggleServiceLeft(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.toggleServiceLeft(d);
     return d;
 }
 
 export function testToggleServiceRight(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.toggleServiceRight(d);
     return d;
 }
 
 export function testToggleServiceDoubleLeft(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.toggleServiceDoubleLeft(d);
     return d;
 }
 
 export function testToggleServiceDoubleRight(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.toggleServiceDoubleRight(d);
     return d;
 }
 
 export function testToggleTimeoutLeft(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.toggleTimeoutLeft(d);
     return d;
 }
 
 
 export function testToggleYLeft(data) {    
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.toggleYLeft(d);
     return d;
 }
 
 
 export function testToggleYR1PLeft(data) {    
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.toggleYR1PLeft(d);
     return d;
 }
 
 
 export function testToggleYR2PLeft(data) {    
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.toggleYR2PLeft(d);
     return d;
 }
 
 
 export function testToggleStartGame(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.toggleStartGame(d);
     return d;
 }
 
 
 export function testEndMatch(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.endMatch(d);
     return d;
 }
 
 
 export function testToggleExpedite(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.toggleExpedite(d);
     return d;
 }
 
 
 export function testWOLeft(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.setWOLeft(d);
     return d;
 }
 
 
 export function testWORight(data) {
-    var d = Object.assign({}, data);
+    var d = deepCopy(data);
     Counter.setWORight(d);
     return d;
+}
+
+
+// Fake a deep copy:
+function deepCopy(data) {
+    // Object.assign is a shallow copy and thus changes in setHistory will
+    // affect the original data. On the other hand JSON will remove the functins.
+    // So we do a shallow clone and then overwrite the data with JSON
+    return Object.assign({}, data, JSON.parse(JSON.stringify(data)));
 }
