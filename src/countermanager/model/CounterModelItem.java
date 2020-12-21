@@ -166,13 +166,6 @@ import java.io.IOException;
 
     // Set new match data from a counter.
     synchronized public void setCounterData(CounterData counterData) { 
-        // Zuerst das swapped flag setzen
-        if (counterData != null && match != null) {            
-            if ( counterData.getPlayerNrLeft() == UNKNOWN_PLNR_RIGHT ||
-                 counterData.getPlayerNrLeft() == match.plX.plNr )
-                counterData.swap();
-        }
-        
         // Wenn sich die Daten nicht geaendert haben, die Recivetime vom letzten Mal uebernehmen.
         // Ansonsten ist es die aktuelle Zeit.
         // Objekt trotzdem uebernehmen, weil hier die Zeit runtergezaehlt wird.
@@ -199,7 +192,7 @@ import java.io.IOException;
             return;
         
         // Check if this is the right match
-        if (counterData != null && match != null) {
+        if (match != null) {
             int plLeftPlNr = counterData.getPlayerNrLeft();
             int plRightPlNr = counterData.getPlayerNrRight();
             int mtNr = counterData.getGameNr();
@@ -245,15 +238,13 @@ import java.io.IOException;
         
         // Running / just finished match changes (different results or w/o-flag):
         // Update the result
-        if ( (counterData.getGameMode() == CounterData.GameMode.RUNNING ||
-              counterData.getGameMode() == CounterData.GameMode.END) &&
-             (oldCounterData == null || oldCounterData.getAbandonOrAbort() != counterData.getAbandonOrAbort() ||
-              !CounterData.equalSetHistory(oldCounterData.getSetHistory(), counterData.getSetHistory())
-             )
-           ) {
-            
+        if ( 
+                (counterData.getGameMode() == CounterData.GameMode.RUNNING ||
+                 counterData.getGameMode() == CounterData.GameMode.END) &&
+                (oldCounterData == null || oldCounterData.getAbandonOrAbort() != counterData.getAbandonOrAbort() ||
+                 !CounterData.equalSetHistory(oldCounterData.getSetHistory(), counterData.getSetHistory()))
+        ) {            
             counterModel.updateResult(counter);
-            
             return;
         }
         
@@ -273,7 +264,6 @@ import java.io.IOException;
     }
     
     public void setMatch(CounterModelMatch match) throws IOException {
-
         // If forced ignore
         if (forced && this.match != null && (match == null || this.match.mtNr != match.mtNr || this.match.mtMS != match.mtMS))
             return;

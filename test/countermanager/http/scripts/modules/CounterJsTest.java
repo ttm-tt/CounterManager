@@ -240,7 +240,6 @@ public class CounterJsTest extends BaseJsTest {
         ret = (Map) executeScript(script);
         
         assertTrue((Boolean) ret.get("swapped"));
-        assertTrue((Boolean) ret.get("swappedPlayers"));
         
         // It is easier to get these numbers as short than to cast around
         assertEquals(-2, ((Number) ret.get("playerNrLeft")).shortValue());

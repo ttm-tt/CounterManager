@@ -297,7 +297,7 @@ function setMatch(match) {
             return;
 
         // Detect missing player
-        const swapped = counterData.swappedPlayers;
+        const swapped = counterData.swapped;
         
         const missing = 
                 (namePlA === null && counterMatch.plA.plNr != 0) ||
@@ -450,7 +450,7 @@ function formatPlayer(pl) {
 
 // Format player left side
 function formatPlayersLeft() {
-    const swap = counterData.swappedPlayers;
+    const swap = counterData.swapped;
     // Player and partner left side
     const pl = swap ? namePlX : namePlA;
     const bd = swap ? namePlY : namePlB;
@@ -489,7 +489,7 @@ function formatPlayersLeft() {
 
 // Format player left side
 function formatPlayersRight() {
-    const swap = counterData.swappedPlayers;
+    const swap = counterData.swapped;
     // Player and partner left side
     const pl = swap ? namePlA : namePlX;
     const bd = swap ? namePlB : namePlY;
@@ -555,7 +555,7 @@ function updateScreen() {
         counterData = CounterData.create();
     
     const cg = counterData.setsLeft + counterData.setsRight;
-    const swap = counterData.swappedPlayers;
+    const swap = counterData.swapped;
 
     // Header
     $('#schedule .table').html('Table: ' + table);
@@ -581,7 +581,7 @@ function updateScreen() {
         $('#caption #teams').addClass('hidden');
     }
     
-    if (counterData.swappedPlayers) {
+    if (counterData.swapped) {
         $('#caption #teamleft').html(teamX);
         $('#caption #teamright').html(teamA);
     } else {

@@ -274,63 +274,7 @@ public class CounterData {
         return false;
     }
     
-    // Swap internal data
-    public void swap() {
-        {
-            boolean tmp = serviceLeft;
-            serviceLeft = serviceRight;
-            serviceRight = tmp;
-        }
-        
-        {
-            int tmp = playerNrLeft;
-            playerNrLeft = playerNrRight;
-            playerNrRight = tmp;
-        }
-
-        {
-            boolean tmp = timeoutLeft;
-            timeoutLeft = timeoutRight;
-            timeoutRight = tmp;
-        }
-
-        {
-            boolean tmp = injuredLeft;
-            injuredLeft = injuredRight;
-            injuredRight = tmp;
-        }
-
-        {
-            int tmp = setsLeft;
-            setsLeft = setsRight;
-            setsRight = tmp;
-        }
-
-        {
-            if (setHistory != null) {
-                for (int i = 0; i < setHistory.length; i++) {
-                    int tmp = setHistory[i][0];
-                    setHistory[i][0] = setHistory[i][1];
-                    setHistory[i][1] = tmp;
-                }
-            }
-        }
-        
-        {
-            boolean tmp = timeoutLeftRunning;
-            timeoutLeftRunning = timeoutRightRunning;
-            timeoutRightRunning = tmp;
-        }
-        
-        {
-            boolean tmp = injuredLeftRunning;
-            injuredLeftRunning = injuredRightRunning;
-            injuredRightRunning = tmp;
-        }
-        
-        // swapped = !swapped;
-    }
-
+    // Returns the swapped flag, i.e. if data is swapped w.r.t. match
     public boolean isSwapped() {
         return swapped;
     }

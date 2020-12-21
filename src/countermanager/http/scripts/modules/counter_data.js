@@ -107,8 +107,6 @@ export function create(match = null) {
         /* boolean       */ woLeft : false,
         /* boolean       */ woRight : false,
         
-        /* boolean       */ swappedPlayers: false,
-        
         /* String  */  alertText : '',
         /* boolean */  expedite : false,
         /* int     */  gameTime : TimeInterval.MATCH,
@@ -153,8 +151,6 @@ export function create(match = null) {
             this.swapSets();
             this.swapSetHistory();
             
-            this.swapped = !this.swapped;
-            
             return this;
         },
 
@@ -163,8 +159,8 @@ export function create(match = null) {
             this.playerNrLeft = this.playerNrRight;
             this.playerNrRight = player;
             
-            this.swappedPlayers = !this.swappedPlayers;
-            
+            this.swapped = !this.swapped;
+
             return this;
         },
 
@@ -307,8 +303,8 @@ export function create(match = null) {
         hasServiceLeft : function() {
             // We need parenthesis to avoid automatic insertion of ';' after return
             return (
-                this.service === Service.A && !this.swappedPlayers ||
-                this.service === Service.X && this.swappedPlayers
+                this.service === Service.A && !this.swapped ||
+                this.service === Service.X && this.swapped
             );
         },
         
@@ -316,8 +312,8 @@ export function create(match = null) {
         hasServiceRight : function() {
             // We need parenthesis to avoid automatic insertion of ';' after return
             return (
-                this.service === Service.A && this.swappedPlayers ||
-                this.service === Service.X && !this.swappedPlayers
+                this.service === Service.A && this.swapped ||
+                this.service === Service.X && !this.swapped
             );
         }
     };

@@ -67,7 +67,7 @@ $(document).ready(function() {
         ;
     }
     
-    if (false && typeof(localStorage) != 'undefined') {
+    if (typeof(localStorage) != 'undefined') {
         $(window).bind('storage', function(e) {
             if (e.originalEvent.key !== "table=" + table)
                 return;

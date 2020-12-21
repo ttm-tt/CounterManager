@@ -719,25 +719,32 @@ public class CounterModel {
         if (match == null)
             return;
         
-        int[][] mtSets = counterModelItem.getResult();
-        if (mtSets == null)            
+        if (counterModelItem.getResult() == null)            
             return;
+        
+        // "deep" clone
+        int[][] mtSets = counterModelItem.getResult().clone();
+        for (int i = 0; i < mtSets.length; i++)
+            mtSets[i] = mtSets[i].clone();
         
         int mtWalkOverA =                 
                 counterData.getAbandonOrAbort() && (2 * counterData.getSetsLeft() < match.mtBestOf) ? 1 : 0;
         int mtWalkOverX = 
-                counterData.getAbandonOrAbort() && (2 * counterData.getSetsRight() < match.mtBestOf) ? 1 : 0;
+                counterData.getAbandonOrAbort() && (2 * counterData.getSetsRight() < match.mtBestOf) ? 1 : 0;        
         
         // And swap if players are swapped
-        if (counterData.getPlayerNrLeft() == 0xFFFE || 
-            counterData.getPlayerNrLeft() == match.plX.plNr) {
+        if (counterData.isSwapped()) {
             int tmp = mtWalkOverX;
             mtWalkOverX = mtWalkOverA;
             mtWalkOverA = tmp;
-            
-            // XXX: if (match.mtMS > 0) match.mtReverse = true;
+
+            for (int i = 0; i < mtSets.length; i++) {
+                tmp = mtSets[i][0];
+                mtSets[i][0] = mtSets[i][1];
+                mtSets[i][1] = tmp;
+            }                
         }
-        
+                
         updateResult(match.mtNr, match.mtMS, mtSets, mtWalkOverA, mtWalkOverX);
     }
     

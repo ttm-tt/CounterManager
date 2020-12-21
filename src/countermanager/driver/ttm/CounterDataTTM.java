@@ -52,23 +52,13 @@ public class CounterDataTTM extends countermanager.driver.CounterData {
         return cardRight;
     }
     
+    @Override
     public boolean isLocked() {
         return locked;
     }
     
     @Override
-    public void swap() {
-        super.swap();
-        Cards tmp = cardLeft;
-        cardLeft = cardRight;
-        cardRight = tmp;
-        
-        // serviceDouble stays as is
-    }    
-    
-    @Override
     public boolean equals(Object obj) {
-
         if ( !(obj instanceof CounterDataTTM) )
             return false;
         
@@ -79,13 +69,13 @@ public class CounterDataTTM extends countermanager.driver.CounterData {
         
         // Vergleiche Felder
         return 
-                (alertText == null ? cd.alertText == null : alertText.equals(cd.alertText)) &&
-                expedite == cd.expedite &&
-                gameTime == cd.gameTime &&
-                cardLeft.equals(cd.cardLeft) &&
-                cardRight.equals(cd.cardRight) &&
-                serviceDouble == cd.serviceDouble &&
-                locked == cd.locked
-                ;
+            (alertText == null ? cd.alertText == null : alertText.equals(cd.alertText)) &&
+            expedite == cd.expedite &&
+            gameTime == cd.gameTime &&
+            cardLeft.equals(cd.cardLeft) &&
+            cardRight.equals(cd.cardRight) &&
+            serviceDouble == cd.serviceDouble &&
+            locked == cd.locked
+        ;
     }
 }

@@ -431,7 +431,7 @@ function toggleService(data, side) {
             // Clear service
             data.service = CounterData.Service.NONE;
             data.serviceDouble = CounterData.ServiceDouble.NONE;
-        } else if (!data.swappedPlayers) {
+        } else if (!data.swapped) {
             // Service is now A
             data.service = CounterData.Service.A;
             data.serviceDouble = CounterData.ServiceDouble.BX;            
@@ -445,7 +445,7 @@ function toggleService(data, side) {
             // Clear service
             data.service = CounterData.Service.NONE;
             data.serviceDouble = CounterData.ServiceDouble.NONE;
-        } else if (!data.swappedPlayers) {
+        } else if (!data.swapped) {
             // Service is now X
             data.service = CounterData.Service.X;
             data.serviceDouble = CounterData.ServiceDouble.XB;            
