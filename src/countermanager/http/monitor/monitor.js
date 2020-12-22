@@ -656,6 +656,10 @@ function formatPlayersLeft(swap) {
     if ( (currentMatch.plB === null || currentMatch.plB.plNr === 0) &&
          (currentMatch.plY === null || currentMatch.plY.plNr === 0) )
      return pl;
+ 
+    // If no currentData exists we assume ServiceDouble.NONE
+    if (currentData === null)
+        return pl + '<br>' + bd;
     
     // Both player left side exist
     if (!swap) {
@@ -702,6 +706,10 @@ function formatPlayersRight(swap) {
     if ( (currentMatch.plB === null || currentMatch.plB.plNr === 0) &&
          (currentMatch.plY === null || currentMatch.plY.plNr === 0) )
      return pl;
+    
+    // If no currentData exists we assume ServiceDouble.NONE
+    if (currentData === null)
+        return pl + '<br>' + bd;
     
     // Both player left side exist
     if (!swap) {
