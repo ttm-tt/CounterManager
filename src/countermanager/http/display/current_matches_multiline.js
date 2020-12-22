@@ -12,10 +12,10 @@
  *      date:               default ''          Auswahl Datum
  *      all:                default 0           Alle Spiele anzeigen
  *      rows:               default 999         Max. Anzahl Zeilen
- *      nameLength:         default 0           Max. Laenge der Namen (default: alles)
- *      firstNameLength:    default 0           Max. Laenge der Voramen (default: alles)
- *      lastNameLength:     default 0           Max. Laenge der Nachnamen (default: alles)
- *      teamNameLength:     default 0           Max. Laenge der Teamnamen (default: alles)
+ *      nameLength:         default -1          Max. Laenge der Namen (default: alles)
+ *      firstNameLength:    default -1          Max. Laenge der Voramen (default: alles)
+ *      lastNameLength:     default -1          Max. Laenge der Nachnamen (default: alles)
+ *      teamNameLength:     default -1          Max. Laenge der Teamnamen (default: alles)
  *      showTeams:          default 0           Mannschaften statt Spieler anzeigen
  *      flag:               default 'nation'    Choose either 'none', 'nation' or 'region' to show the flag
  *      showService:        default 1           Show who has the srevice
@@ -23,10 +23,10 @@
 
 var args = {};
 
-var nameLength = 0;
-var lastNameLength = 0;
-var firstNameLength = 0;
-var teamNameLength = 0;
+var nameLength = -1;
+var lastNameLength = -1;
+var firstNameLength = -1;
+var teamNameLength = -1;
 var flag = 'nation';
 var showService = false;
 var minTime = 60;    // [s]

@@ -37,10 +37,10 @@ var lastUpdateTime = null;
 var noUpdate = false;
 var showRunningTimeout = true;
 var prestart = 3600;
-var nameLength = 0;
-var lastNameLength = 0;
-var firstNameLength = 0;
-var teamNameLength = 0;
+var nameLength = -1;
+var lastNameLength = -1;
+var firstNameLength = -1;
+var teamNameLength = -1;
 var showService = true;
 
 
@@ -54,7 +54,7 @@ $(document).ready(function() {
     showService = parseInt(getParameterByName('showService', 1)) !== 0;
     showRunningTimeout = parseInt(getParameterByName('showRunningTimeout',1)) !== 0;
     prestart = parseInt(getParameterByName('prestart', 600));
-    nameLength = getParameterByName("nameLength", 0);
+    nameLength = getParameterByName("nameLength", nameLength);
     lastNameLength = getParameterByName("lastNameLength", nameLength);
     firstNameLength = getParameterByName("firstNameLength", nameLength);
     teamNameLength = getParameterByName("teamNameLength", nameLength);

@@ -13,7 +13,17 @@ function getParameterByName(name, def) {
          // Else try with parents location search
         results = regex.exec(parent.window.location.search);
     }
-    if(results == null)
+    
+    // Check possible unwanted values of results and return def in these cases
+    if(results === null)
+        return def;
+    else if (!Array.isArray(results))
+        return def;
+    else if (results.length < 2)
+        return def;
+    else if (typeof results[1] !== 'string')
+        return def;
+    else if (results[1].length === 0)
         return def;
     else
         return decodeURIComponent(results[1].replace(/\+/g, " "));
@@ -23,16 +33,19 @@ function formatString(s, len, appdx) {
     if (s === undefined)
         return '';
     
-    if (len < 0)
-        return '';
-
-    if (len === undefined || len == 0)
+    if (len === undefined || len < 0)
         return s;
+    
+    if (len == 0)
+        return '';
     
     if (s.length <= len)
         return s;
     
     if (appdx === undefined)
+        appdx = '';
+    
+    if (len < appdx.length)
         appdx = '';
     
     return s.substring(0, len - appdx.length) + appdx;

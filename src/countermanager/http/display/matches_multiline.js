@@ -6,23 +6,23 @@
  *      timeout:    default 5           Dauer der Anzeige
  *      noUpdate:   default 0           Anzeige stehen lassen
  *      rows:       default 999         Max. Anzahl Zeilen
- *      nameLength: default 0           Max. Laenge der Namen (default: alles)
- *      firstNameLength: default 0      Max. Laenge der Voramen (default: alles)
- *      lastNameLength:  default 0      Max. Laenge der Nachnamen (default: alles)
- *      teamNameLength:  default 0      Max. Laenge der Teamnamen (default: alles)
+ *      nameLength: default -1          Max. Laenge der Namen (default: alles)
+ *      firstNameLength: default -1     Max. Laenge der Voramen (default: alles)
+ *      lastNameLength:  default -1     Max. Laenge der Nachnamen (default: alles)
+ *      teamNameLength:  default -1     Max. Laenge der Teamnamen (default: alles)
  *      showTeams:  default 0           Mannschaften statt Spieler anzeigen
  *      mintime:    default 60          Mindestzeit in Sekunden, die ein fertiges Spiel angezeigt wird
  */
 
 var args = {};
 
-var nameLength = 0;
-var lastNameLength = 0;
-var firstNameLength = 0;
-var teamNameLength = 0;
+var nameLength = -1;
+var lastNameLength = -1;
+var firstNameLength = -1;
+var teamNameLength = -1;
 
 $(document).ready(function() {
-    nameLength = getParameterByName("nameLength", 0);
+    nameLength = getParameterByName("nameLength", nameLength);
     lastNameLength = getParameterByName("lastNameLength", nameLength);
     firstNameLength = getParameterByName("firstNameLength", nameLength);
     teamNameLength = getParameterByName("teamNameLength", nameLength);

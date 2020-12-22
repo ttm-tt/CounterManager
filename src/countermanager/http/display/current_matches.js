@@ -14,7 +14,6 @@
  *      date:       default ''          Auswahl Datum
  *      all:        default 0           Alle Spiele anzeigen
  *      rows:       default 999         Max. Anzahl Zeilen
- *      nameLength: default 11          Max. Laenge der Namen
  *      showTeams:  default 0           Mannschaften statt Spieler anzeigen
  *      mintime:    default 60          Mindestzeit in Sekunden, die ein fertiges Spiel angezeigt wird
  */

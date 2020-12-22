@@ -13,6 +13,24 @@ public class CommonJsTest extends BaseJsTest{
     }
     
     @Test
+    public void testFormatString() {
+        // Load some piece of html with the script tag
+        driver.get("http://localhost:" + HTTP_PORT + "/scripts/CommonJsTest.html");
+
+        String paramres[][] = {
+            { "var s = \"123456789\"; return formatString(s, -1);", "123456789" },
+            { "var s = \"123456789\"; return formatString(s, 0);", "" },
+            { "var s = \"123456789\"; return formatString(s, 1);", "1" },
+            { "var s = \"123456789\"; return formatString(s, 10);", "123456789" },
+        };
+
+        for (String pr[] : paramres) {
+            Object ret = ((JavascriptExecutor) driver).executeScript(pr[0]);
+            Assert.assertEquals(pr[0], pr[1], ret);
+        }
+    }
+    
+    @Test
     public void testFormatRound() {
         // Load some piece of html with the script tag
         driver.get("http://localhost:" + HTTP_PORT + "/scripts/CommonJsTest.html");

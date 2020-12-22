@@ -20,17 +20,17 @@
 
 var args = {};
 
-var nameLength = 0;
-var lastNameLength = 0;
-var firstNameLength = 0;
-var teamNameLength = 0;
+var nameLength = -1;
+var lastNameLength = -1;
+var firstNameLength = -1;
+var teamNameLength = -1;
 
 var matches = [];
 var mtTimestamp = 0;
 
 import * as Matches from '../scripts/modules/current_matches.js';
 
-nameLength = getParameterByName("nameLength", 0);
+nameLength = getParameterByName("nameLength", nameLength);
 lastNameLength = getParameterByName("lastNameLength", nameLength);
 firstNameLength = getParameterByName("firstNameLength", nameLength);
 teamNameLength = getParameterByName("teamNameLength", nameLength);
