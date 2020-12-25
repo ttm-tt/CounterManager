@@ -130,78 +130,78 @@ public class CounterDriverTTM implements countermanager.driver.ICounterDriver {
                 
                 Message msg = json.fromJson(bos.toString(), Message.class);
                 
-                int counter = msg.table - offsetTable;
-                
-                switch (Command.values()[msg.command]) {
-                    case AUTO_TABLE : {
-                        int c = 0;
-                        do {
-                            if (aliveMap.get(c) == null)
-                                break;
-                            
-                            if (aliveMap.get(c) + aliveTimeout * 1000 < System.currentTimeMillis())
-                                break;
-                            
-                            ++c;
-                        } while (true);
-                        
-                        if (c <= lastTable)
-                            aliveMap.put(c, System.currentTimeMillis());
-                        else
-                            c = -offsetTable;
-                        
-                        String address = null;
-                        // X-Forwarded-For may contain multiple addresses, take the first one
-                        if (he.getRequestHeaders().containsKey("X-Forwarded-For"))
-                            address = he.getRequestHeaders().getFirst("X-Forwarded-For").split(",")[0].trim();
-                        else if (he.getRemoteAddress().getAddress() != null)
-                             address = he.getRemoteAddress().getAddress().getHostAddress();
-
-                        if (address != null)
-                            Logger.getLogger(getClass().getName()).log(Level.INFO, "Connection for table " + (c + offsetTable) + " from: " + address);
-                        
-                        byte resp[] = json.toJson(c + offsetTable).getBytes();
-                        he.getResponseHeaders().set("Content-Type", "application/json");
-                        he.sendResponseHeaders(200, resp.length);
-                        he.getResponseBody().write(resp, 0, resp.length);
-                        he.getResponseBody().close();
-                        
-                        return;
-                    }
-                    case GET_DATA :
-                    case GET_DATA_BROADCAST :
-                        aliveMap.put(counter, System.currentTimeMillis());
-        
-                        String address = null;
-                        // X-Forwarded-For may contain multiple addresses, take the first one
-                        if (he.getRequestHeaders().containsKey("X-Forwarded-For"))
-                            address = he.getRequestHeaders().getFirst("X-Forwarded-For").split(",")[0].trim();
-                        else if (he.getRemoteAddress().getAddress() != null)
-                             address = he.getRemoteAddress().getAddress().getHostAddress();
-                        
-                        if (address != null)
-                            addressMap.put(counter, address);
-                        
-                        cbObject.getCounterDataCallback(counter, json.fromJson(msg.data, CounterDataTTM.class));
-                        break;
-                }
-                
-                if (connections.get(counter) == null)
-                    connections.put(counter, new java.util.ArrayList<>());
-                
-                byte resp[] = json.toJson(connections.get(counter)).getBytes();
+                byte[] resp = handleCommand(msg).getBytes();
                 he.getResponseHeaders().set("Content-Type", "application/json");
                 he.sendResponseHeaders(200, resp.length);
                 he.getResponseBody().write(resp, 0, resp.length);
                 he.getResponseBody().close();
                 
-                connections.get(counter).clear();
-                
-                aliveMap.put(counter, System.currentTimeMillis());
+                String address = null;
+                // X-Forwarded-For may contain multiple addresses, take the first one
+                if (he.getRequestHeaders().containsKey("X-Forwarded-For"))
+                    address = he.getRequestHeaders().getFirst("X-Forwarded-For").split(",")[0].trim();
+                else if (he.getRemoteAddress().getAddress() != null)
+                     address = he.getRemoteAddress().getAddress().getHostAddress();
+
+                if (address != null)
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Connection for table " + (msg.table - offsetTable) + " from: " + address);
+
+                if (address != null)
+                    addressMap.put(msg.table - offsetTable, address);
             }
         });
     }
+    
+    String handleCommand(Message msg) {
+        switch (Command.values()[msg.command]) {
+            case AUTO_TABLE : {
+                int c = 0;
+                do {
+                    if (aliveMap.get(c) == null)
+                        break;
 
+                    if (aliveMap.get(c) + aliveTimeout * 1000 < System.currentTimeMillis())
+                        break;
+
+                    ++c;
+                } while (true);
+
+                if (c <= lastTable)
+                    aliveMap.put(c, System.currentTimeMillis());
+                else
+                    c = -offsetTable;
+
+                // We modify the argument so the caller can access the table for logging
+                msg.table = c + offsetTable;
+                
+                return json.toJson(c + offsetTable);
+            }
+            
+            case GET_DATA :
+            case GET_DATA_BROADCAST : {
+                int counter = msg.table - offsetTable;
+
+                aliveMap.put(counter, System.currentTimeMillis());
+
+                cbObject.getCounterDataCallback(counter, json.fromJson(msg.data, CounterDataTTM.class));
+
+                if (connections.get(counter) == null)
+                    connections.put(counter, new java.util.ArrayList<>());
+
+                String ret = json.toJson(connections.get(counter));
+
+                connections.get(counter).clear();
+
+                aliveMap.put(counter, System.currentTimeMillis());
+
+                return ret;
+            }
+                
+            default :
+                return "";
+        }
+    }
+    
     @Override
     public void activateTrace(int type) {
         // throw new UnsupportedOperationException("Not supported yet.");
