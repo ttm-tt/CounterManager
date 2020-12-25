@@ -33,9 +33,9 @@ export function setDebug(b) {
 /**
  * Rebuild matches with new data with removing finished matches
  * Finished and expired matches are discarded and new matches added to the list
- * @param {Object[]} matches the current list of matches
- * @param {Object[]} data list of matches from the server
- * @param {*Date} ct current time
+ * @param {Array} matches the current list of matches
+ * @param {Array} data list of matches from the server
+ * @param {Date} ct current time
  */
 export function rebuild(matches, data, ct = ((new Date()).getTime())) {
     sortData(data);
@@ -51,8 +51,8 @@ export function rebuild(matches, data, ct = ((new Date()).getTime())) {
 /**
  * Update matches with new data. but don't remove finished
  * Finished and expired matches are discarded and new matches added to the list
- * @param {Object[]} matches the current list of matches
- * @param {Object[]} data
+ * @param {Array} matches the current list of matches
+ * @param {Array} data
  */
 export function update(matches, data) {
     sortData(data);
@@ -66,8 +66,8 @@ export function update(matches, data) {
 
 /**
  * Sort data received from server
- * @param {Object[]} data
- * @returns data
+ * @param {Array} data
+ * @returns {Array}
  */
 export function sortData(data) {
     if (!data)
@@ -94,7 +94,7 @@ export function sortData(data) {
  * Get the maximum mtTimestamp of new data and current one
  * @param {Object} data
  * @param {number} mtTimestamp
- * @returns updated mtTimestamp
+ * @returns {number} updated mtTimestamp
  */
 export function updateMtTimestamp(data, mtTimestamp) {
     if (!data)
@@ -110,7 +110,7 @@ export function updateMtTimestamp(data, mtTimestamp) {
 
 /**
  * Initializes matches structure: each entry is just a plain match
- * @param {Object[]} matches the current list of matches
+ * @param {Array} matches the current list of matches
  */
 export function initialize(matches) {
     // Iterate over nun-numeric arrays with for..in
@@ -123,7 +123,7 @@ export function initialize(matches) {
 
 /**
  * Clear result from all finished matches so we don't show them again
- * @param {Object[]} matches the current list of matches
+ * @param {Array} matches the current list of matches
  */
 export function clearResult(matches) {
     for (const i in matches) {
@@ -135,7 +135,7 @@ export function clearResult(matches) {
 
 /**
  * Remove finished matches from matches no longer displayed
- * @param {Object[]} matches the current list of matches
+ * @param {Array} matches the current list of matches
  * @param {Object} data
  * @param {Date} ct current time
  */
@@ -162,7 +162,7 @@ export function removeFinished(matches, data, ct) {
 
 /**
  * Update all unfinished matches with new result
- * @param {Object[]} matches the current list of matches
+ * @param {Array} matches the current list of matches
  * @param {Object} data
  */
 export function updateUnfinished(matches, data) {
@@ -198,7 +198,7 @@ export function updateUnfinished(matches, data) {
 /**
  * Finalize matches list: 
  * each entry is a list of current and upcoming matches per table
- * @param {Object[]} matches the current list of matches
+ * @param {Array} matches the current list of matches
  * @param {Object} data
  * @param {Date} ct current time
  */
@@ -246,7 +246,7 @@ export function finalize(matches, data, ct) {
 
 /**
  * Update results of first match per table, but don't change matches
- * @param {Object[]} matches the current list of matches
+ * @param {Array} matches the current list of matches
  * @param {Object} data
  */
 export function updateResult(matches, data) {
@@ -267,7 +267,7 @@ export function updateResult(matches, data) {
 /**
  * Check if a match has finished
  * @param {Object} mt the match
- * @return true if the match has finished
+ * @return {boolean} true if the match has finished
  */
 export function isFinished(mt) {
     if (mt === undefined || mt === null)
@@ -296,7 +296,7 @@ export function isFinished(mt) {
  * Check if a match has started
  * @param {Object} mt the match
  * @param {Date} ct the currenttime
- * @returns true if the match has started
+ * @returns {boolean} true if the match has started
  */
 export function isStarted(mt, ct = new Date().getTime()) {
     if (mt === undefined || mt === null)
