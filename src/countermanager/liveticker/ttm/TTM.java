@@ -168,6 +168,13 @@ public final class TTM extends Liveticker {
                             
                         }
                         client = null;
+                        
+                        // Clear cache
+                        lastUpdateString = "";
+                        updates.clear();
+                        
+                        // Also when a counter expires
+                        expires.clear();
                     }
                     
                     return;
