@@ -13,7 +13,7 @@
  *   compareTimeout:        Time after which a game is forcefully displayed, even without any changes
  *   timeToBlank:           Time a finished game will be shown before going blank for the next match
  *   errorTimeout:          Time after which the monitor will go blank if no data have been received
- *   noFlag:                Anzeige der Flagge unterdruecken
+ *   flag:                  What to show as flag: none | nation | region
  *   noUpdate:              No updates of content (for debugging)
  *   showService:           Indicates who has the service
  *   nameLength:            Max. Laenge der Namen (default: alles)
@@ -30,7 +30,7 @@ var table = 1;
 var compareTimeout = 2;
 var timeToBlank = 30;
 var errorTimeout = 60;
-var noFlag = 0;
+var flag = 'nation';
 var currentMatch = null;
 var currentData = null;
 var lastUpdateTime = null;
@@ -48,7 +48,7 @@ $(document).ready(function() {
     compareTimeout = parseInt(getParameterByName('compareTimeout', compareTimeout));
     timeToBlank = parseInt(getParameterByName("timeToBlank", timeToBlank));
     errorTimeout = parseInt(getParameterByName('errorTimeout', errorTimeout));
-    noFlag = parseInt(getParameterByName('noFlag', 0));
+    flag = getParameterByName('flag', flag);
     table = parseInt(getParameterByName('table', 1));
     noUpdate = parseInt(getParameterByName('noUpdate', 0)) !== 0;
     showService = parseInt(getParameterByName('showService', 1)) !== 0;
@@ -562,15 +562,15 @@ function setCaption(swap) {
         return;
     
     var nationleft, nationright;
-    var flaga = '', flagb = '', flagx = '', flagy = '';    
+    var flaga = '', flagb = '', flagx = '', flagy = ''; 
     
     switch (currentMatch.cpType) {
         case 1 :
-            nationleft = (swap ? currentMatch.plX.naRegion : currentMatch.plA.naRegion);
-            nationright = (swap ? currentMatch.plA.naRegion : currentMatch.plX.naRegion);
+            nationleft = (swap ? currentMatch.plX.naName : currentMatch.plA.naName);
+            nationright = (swap ? currentMatch.plA.naName : currentMatch.plX.naName);
             
-            flaga = formatFlag(swap ? currentMatch.plX.naRegion : currentMatch.plA.naRegion);
-            flagx = formatFlag(swap ? currentMatch.plA.naRegion : currentMatch.plX.naRegion);
+            flaga = formatFlag(swap ? currentMatch.plX : currentMatch.plA);
+            flagx = formatFlag(swap ? currentMatch.plA : currentMatch.plX);
             
             $('#teamresult span').html('');
             
@@ -578,20 +578,20 @@ function setCaption(swap) {
             
         case 2 :
         case 3 :
-            if (currentMatch.plA.naRegion == currentMatch.plB.naRegion && currentMatch.plX.naRegion == currentMatch.plY.naRegion) {
+            if (currentMatch.plA.naName == currentMatch.plB.naName && currentMatch.plX.naName == currentMatch.plY.naName) {
                 nationleft = (swap ? currentMatch.plX.naName : currentMatch.plA.naName);   
                 nationright = (swap ? currentMatch.plA.naName : currentMatch.plX.naName); 
                 
-                flaga = formatFlag(swap ? currentMatch.plX.naRegion : currentMatch.plA.naRegion);
-                flagx = formatFlag(swap ? currentMatch.plA.naRegion : currentMatch.plX.naName);
+                flaga = formatFlag(swap ? currentMatch.plX : currentMatch.plA);
+                flagx = formatFlag(swap ? currentMatch.plA : currentMatch.plX);
             } else {
                 nationleft = (swap ? currentMatch.plX.naName + '&thinsp;/&thinsp;' + currentMatch.plY.naName : currentMatch.plA.naName + '&thinsp;/&thinsp;' +currentMatch.plB.naName);   
                 nationright = (swap ? currentMatch.plA.naName + '&thinsp;/&thinsp;' +currentMatch.plB.naName : currentMatch.plX.naName + '&thinsp;/&thinsp;' + currentMatch.plY.naName);    
                 
-                flagb = formatFlag(swap ? currentMatch.plX.naRegion : currentMatch.plA.naRegion);
-                flaga = formatFlag(swap ? currentMatch.plY.naRegion : currentMatch.plB.naRegion);
-                flagx = formatFlag(swap ? currentMatch.plA.naRegion : currentMatch.plX.naRegion);
-                flagy = formatFlag(swap ? currentMatch.plB.naRegion : currentMatch.plY.naRegion);
+                flagb = formatFlag(swap ? currentMatch.plX : currentMatch.plA);
+                flaga = formatFlag(swap ? currentMatch.plY : currentMatch.plB);
+                flagx = formatFlag(swap ? currentMatch.plA : currentMatch.plX);
+                flagy = formatFlag(swap ? currentMatch.plB : currentMatch.plY);
             }
             
             $('#teamresult span').html('');
@@ -602,8 +602,8 @@ function setCaption(swap) {
             nationleft = (swap ? currentMatch.tmX.tmName : currentMatch.tmA.tmName);
             nationright = (swap ? currentMatch.tmA.tmName : currentMatch.tmX.tmName);
             
-            flaga = formatFlag(swap ? currentMatch.tmX.naRegion : currentMatch.tmA.naRegion);
-            flagx = formatFlag(swap ? currentMatch.tmA.naRegion : currentMatch.tmX.naRegion);
+            flaga = formatFlag(swap ? currentMatch.tmX : currentMatch.tmA);
+            flagx = formatFlag(swap ? currentMatch.tmA : currentMatch.tmX);
                 
             if (swap)
                 $('#teamresult span').html(currentMatch.mttmResX + '&nbsp;:&nbsp;' + currentMatch.mttmResA);
@@ -749,11 +749,14 @@ function formatName(pl) {
 }
 
 
-function formatFlag(name) {
-    if (noFlag == 1)
+function formatFlag(pl) {
+    if (flag === 'none')
         return '';
     
-    if (name == '')
+    // pl is not a player, so to be on the safe side use array access
+    var name = (flag === 'region' ? pl['naRegion'] : pl['naName']);
+    
+    if (name === undefined || name === '')
         return '';
     
     // <img> tag is not closed!
