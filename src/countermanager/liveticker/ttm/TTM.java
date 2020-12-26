@@ -337,6 +337,11 @@ public final class TTM extends Liveticker {
         CounterData counterData = CounterModel.getDefaultInstance().getCounterData(counter);
         CounterModelMatch counterMatch = CounterModel.getDefaultInstance().getCounterMatch(counter);
         
+        doCounterChanged(counter, counterData, counterMatch);
+    }
+    
+    // Implementation; package private so we can test it
+    void doCounterChanged(int counter, CounterData counterData, CounterModelMatch counterMatch) {        
         if (counterData == null || counterData.getGameMode() == CounterData.GameMode.RESET) {
             long ct = System.currentTimeMillis();
 
