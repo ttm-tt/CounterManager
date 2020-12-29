@@ -1,6 +1,6 @@
 /* Copyright (C) 2020 Christoph Theis */
 /**
- * Base logic to maintain a list of upcoming matches, groups by table.
+ * Base logic to maintain a list of upcoming matches, grouped by table.
  * It is up to the implementation to request and update the data
  */
 
