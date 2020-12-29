@@ -10,7 +10,10 @@
  * timeout: Zeit, bis weitergeschalten wird
  */
 
+var noUpdate = false;
+
 $(document).ready(function() {
+    noUpdate = parseInt(getParameterByName("timeout", 1)) === 0;
     update();
 });
 
@@ -98,9 +101,12 @@ function show(data, start) {
     else    
         start = i;
 
+    if (noUpdate)
+        return;
+    
     // Show next data (if there is any)
-    if (getParameterByName('noUpdate', 0) == 0)
-        setTimeout(function() {show(data, start);}, getParameterByName('timeout', start - origStart) * 1000);
+    var timeout = getParameterByName('timeout', start - origStart) * 1000;
+    setTimeout(function() {show(data, start);}, timeout);
 }
 
 

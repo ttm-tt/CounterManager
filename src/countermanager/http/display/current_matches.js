@@ -21,6 +21,7 @@
 
 var args = {};
 
+var noUpdate = false;
 var minTime = 60;    // [s]
 var prestart = 3600; // [s]
 
@@ -29,6 +30,7 @@ var mtTimestamp = 0;
 
 import * as Matches from '../scripts/modules/current_matches.js';
 
+noUpdate = parseInt(getParameterByName("timeout", 1)) === 0;
 minTime = getParameterByName("minTime", minTime);
 prestart = getParameterByName("prestart", prestart);
 
@@ -192,10 +194,11 @@ function doShow(start, mtTimestamp) {
             break;
     }
 
+    if (noUpdate)
+        return;
     // Show next data (if there is any)
     var timeout = getParameterByName('timeout', 2 * rowCount) * 1000;
-    if (getParameterByName('noUpdate', 0) == 0)
-        setTimeout(function() {show(start);}, timeout);
+    setTimeout(function() {show(start);}, timeout);
 }
 
 

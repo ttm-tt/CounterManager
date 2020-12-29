@@ -16,12 +16,14 @@
 
 var args = {};
 
+var noUpdate = false;
 var nameLength = -1;
 var lastNameLength = -1;
 var firstNameLength = -1;
 var teamNameLength = -1;
 
 $(document).ready(function() {
+    noUpdate = parseInt(getParameterByName("timeout", 1)) === 0;
     nameLength = getParameterByName("nameLength", nameLength);
     lastNameLength = getParameterByName("lastNameLength", nameLength);
     firstNameLength = getParameterByName("firstNameLength", nameLength);
@@ -149,10 +151,12 @@ function show(matches, start, mtTimestamp) {
         
     }
 
+    if (noUpdate)
+        return;
+    
     // Show next data (if there is any)
     var timeout = getParameterByName('timeout', 3 * matchCount + 1) * 1000;
-    if (getParameterByName('noUpdate', 0) == 0)
-        setTimeout(function() { show(matches, start); }, timeout);
+    setTimeout(function() { show(matches, start); }, timeout);
 }
 
 

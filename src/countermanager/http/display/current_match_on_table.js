@@ -29,12 +29,14 @@ var teamNameLength = -1;
 var flag = 'nation';
 var minTime = 60;
 var prestart = 3600;
+var noUpdate = false;
 
 var matches = [];
 var mtTimestamp = 0;
 
 import * as Matches from '../scripts/modules/current_matches.js';
 
+noUpdate = parseInt(getParameterByName("timeout", 1)) === 0;
 nameLength = getParameterByName("nameLength", nameLength);
 lastNameLength = getParameterByName("lastNameLength", nameLength);
 firstNameLength = getParameterByName("firstNameLength", nameLength);
@@ -210,7 +212,7 @@ function doShow(start, idx, mtTimestamp) {
         formatMatch(mt, idx);
         currentIdx = idx;
         
-        if (getParameterByName('noUpdate', 0) > 0)
+        if (noUpdate)
             return;
 
         if (++idx == matches[table].length) {

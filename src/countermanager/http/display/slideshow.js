@@ -1,5 +1,6 @@
 /* Copyright (C) 2020 Christoph Theis */
 
+var noUpdate = false;
 var path = null;
 var patthern = null;
 var ext  = null;
@@ -7,6 +8,7 @@ var ext  = null;
 var urls = [];
 
 $(document).ready(function() {
+    noUpdate = parseInt(getParameterByName("timeout", 1)) === 0;
     path = getParameterByName('path', null);
     if (!path.startsWith('/'))
         path = '/' + path;
@@ -48,7 +50,7 @@ function doComplete(idx) {
     
     $('#img').attr('src', urls[idx]);
     
-    if (getParameterByName('noUpdate', 0) != 0)
+    if (noUpdate)
         return;
     
     var timeout = getParameterByName('timeout', 10);

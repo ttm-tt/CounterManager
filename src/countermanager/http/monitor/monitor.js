@@ -50,7 +50,7 @@ $(document).ready(function() {
     errorTimeout = parseInt(getParameterByName('errorTimeout', errorTimeout));
     flag = getParameterByName('flag', flag);
     table = parseInt(getParameterByName('table', 1));
-    noUpdate = parseInt(getParameterByName('noUpdate', 0)) !== 0;
+    noUpdate = parseInt(getParameterByName("timeout", 1)) === 0;
     showService = parseInt(getParameterByName('showService', 1)) !== 0;
     showRunningTimeout = parseInt(getParameterByName('showRunningTimeout',1)) !== 0;
     prestart = parseInt(getParameterByName('prestart', 600));

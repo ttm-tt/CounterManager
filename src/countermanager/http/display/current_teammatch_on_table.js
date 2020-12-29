@@ -20,6 +20,7 @@
 
 var args = {};
 
+var noUpdate = false;
 var nameLength = -1;
 var lastNameLength = -1;
 var firstNameLength = -1;
@@ -30,6 +31,7 @@ var mtTimestamp = 0;
 
 import * as Matches from '../scripts/modules/current_matches.js';
 
+noUpdate = parseInt(getParameterByName("timeout", 1)) === 0;
 nameLength = getParameterByName("nameLength", nameLength);
 lastNameLength = getParameterByName("lastNameLength", nameLength);
 firstNameLength = getParameterByName("firstNameLength", nameLength);
@@ -80,11 +82,13 @@ function show() {
             $('table tbody').append(tr);
         }
     }
+
+    if (noUpdate)
+        return;
     
     // Show next data (if there is any)
     var timeout = getParameterByName('timeout', 1) * 1000;
-    if (getParameterByName('noUpdate', 0) == 0)
-        setTimeout(function() { update(args); }, timeout);
+    setTimeout(function() { update(args); }, timeout);
 }
 
 
