@@ -1,6 +1,7 @@
 /* Copyright (C) 2020 Christoph Theis */
 package countermanager.http.scripts;
 
+import countermanager.http.BaseJsTest;
 import org.junit.Assert;
 import org.junit.Test;
 

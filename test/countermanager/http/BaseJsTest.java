@@ -1,6 +1,7 @@
 /* Copyright (C) 2020 Christoph Theis */
-package countermanager.http.scripts;
+package countermanager.http;
 
+import countermanager.http.scripts.modules.CounterDataJsTest;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,8 +15,9 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import countermanager.http.HTTP;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,7 +43,9 @@ public class BaseJsTest {
     protected WebDriver driver;   
     private static String JSCOVER_PORT = "3129";
     protected static int HTTP_PORT = 8085;
-    
+    protected static String hn = "localhost";
+
+
     public BaseJsTest() {
     }
     
@@ -60,6 +64,15 @@ public class BaseJsTest {
                     "--log=INFO"
                 }); }
         }).start();
+        
+        // We can't use localhost because then chrome will bypass the proxy
+        // (despite the docs for proxy-bypass-list=<-loopback>)
+        // So in order for confusion we use the hostname instead
+        try {
+           hn = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(BaseJsTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         HTTP.getDefaultInstance().startHttpServer(HTTP_PORT);
         WebDriverManager.chromedriver().setup();
@@ -140,6 +153,11 @@ public class BaseJsTest {
             driver.quit();
         }        
     }  
+    
+    
+    protected void loadHtml(String page) {
+        driver.get("http://" + hn + ":" + HTTP_PORT + page);        
+    }
     
     
     protected Object executeScript(String script) {

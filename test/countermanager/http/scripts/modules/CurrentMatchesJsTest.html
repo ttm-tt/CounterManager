@@ -10,7 +10,7 @@
             import * as Testdata from './testdata/CurrentMatchesJsTest.js';
             window.Testdata = Testdata;
         </script>
-        <script type="text/javascript" >
+        <script>
             // Webdriver can't access output of console.log, only of console.warn and .error
             // As a workaround we put the logs into its own div and read that after the test.
             console.log = function(message) {document.getElementById('log').innerHTML += '<span>' + message + '</span>';};

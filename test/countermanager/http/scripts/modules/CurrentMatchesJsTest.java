@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.JavascriptExecutor;
-import countermanager.http.scripts.BaseJsTest;
+import countermanager.http.BaseJsTest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.logging.Logger;
@@ -31,17 +31,7 @@ public class CurrentMatchesJsTest extends BaseJsTest {
         super.setUp();
 
         // Load some piece of html with the script tag
-        // We can't use localhost because then chrome will bypass the proxy
-        // (despite the docs for proxy-bypass-list=<-loopback>)
-        // So in order for confusion we use the hostname instead
-        String hn = "localhost";
-        try {
-           hn = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(CounterDataJsTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        driver.get("http://" + hn + ":" + HTTP_PORT + "/scripts/modules/CurrentMatchesJsTest.html");
+        loadHtml("/scripts/modules/CurrentMatchesJsTest.html");
     }
     
     @After
