@@ -269,9 +269,19 @@ public class CounterData {
     }
     
     
-    // Returns if the counter is locked
+    // The counter's locked is locked
+    // There is no property in the base class for this
+    public void setLocked(boolean b) {
+        // Nothing
+    }
+    
     public boolean isLocked() {
         return false;
+    }
+    
+    // Set the swapped flag
+    public void setSwapped(boolean b) {
+        swapped = b;
     }
     
     // Returns the swapped flag, i.e. if data is swapped w.r.t. match

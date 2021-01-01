@@ -53,6 +53,11 @@ public class CounterDataTTM extends countermanager.driver.CounterData {
     }
     
     @Override
+    public void setLocked(boolean b) {
+        locked = b;
+    }
+    
+    @Override
     public boolean isLocked() {
         return locked;
     }

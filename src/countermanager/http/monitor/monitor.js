@@ -106,7 +106,7 @@ function update() {
     doUpdateMatch();
 }
 
-function doUpdateMatch() {
+export function doUpdateMatch() {
     // Next step is either called in the else branch or in the complete-callback
     if (currentData === null || currentData.gameMode == 'RESET') {
         // Any error getting currentMatch leads to case 1) and 2) above
@@ -148,7 +148,7 @@ function doUpdateMatch() {
     }
 }
 
-function doUpdateData() {
+export function doUpdateData() {
     // setTimeout is either called in the else branch or in the complete-callback
     if (currentData === null || currentMatch !== null) {
         // Case 4) and 5) of above: never set to invisible
@@ -191,7 +191,7 @@ function doUpdateData() {
     }    
 }
 
-function onError() {
+export function onError() {
     // Case 1) and 4): Only 1) set to invisible after timeout
     if (lastUpdateTime === null)
         lastUpdateTime = new Date().getTime();
@@ -200,7 +200,7 @@ function onError() {
 }
 
 
-function onSuccess() {
+export function onSuccess() {
     // Case 2), 3), 5): only 3) and 5) set to visible
     if (currentMatch !== null) {
         lastUpdateTime = new Date().getTime();
@@ -211,7 +211,7 @@ function onSuccess() {
         $('#content').addClass('invisible');    
 }
 
-function onStorage(data) {
+export function onStorage(data) {
     if (data === null)
         return;
     
@@ -242,7 +242,12 @@ function onStorage(data) {
 }
 
 
-function setCurrentMatch(match) {   
+export function getCurrentMatch() {
+    return currentMatch;
+}
+
+
+export function setCurrentMatch(match) {   
     // Avoid unnecessary work if this is the same data as before
     if ( currentMatch !== null && match !== null && 
          currentMatch.mtNr == match.mtNr && 
@@ -297,7 +302,12 @@ function setCurrentMatch(match) {
 }
 
 
-function setCurrentData(data) {
+export function getCurrentData() {
+    return currentData;
+}
+
+
+export function setCurrentData(data) {
 
     if ( currentData !== null && data !== null ) {
         // Compare against latest data
@@ -323,12 +333,9 @@ function setCurrentData(data) {
     // If left/right as seen from the umpire shall be swapped on the display
     var swap = parseInt(getParameterByName("swap", 0)) > 0;
 
-    // Only if either swapNames or swap is true, then names should be displayed swapped
-    swap = (swap ^ swapNames);
-
-    setCaption(swap);
+    setCaption(swap ^ swapNames);
         
-    setNames(swap);
+    setNames(swap ^ swapNames);
         
     if ( (currentData === null || currentData.gameMode == 'RESET') && 
          (currentMatch === null || currentMatch.cpType != 4 || currentMatch.mtMS == 1) ) {
