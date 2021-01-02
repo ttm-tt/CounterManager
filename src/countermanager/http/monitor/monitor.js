@@ -323,18 +323,13 @@ export function setCurrentData(data) {
     checkPrestart();
     
     // If names are swapped with respect to A/X in the match
-    var swapNames = 
-        (currentData !== null) && (
-            currentData.playerNrLeft == CounterData.PlayerDefault.RIGHT || 
-            currentMatch !== null && currentData.playerNrLeft == currentMatch.plX.plNr ||
-            currentData.swapped
-        )
-    ;
+    var swapNames = (currentData !== null) &&  currentData.swapped;
+
     // If left/right as seen from the umpire shall be swapped on the display
     var swap = parseInt(getParameterByName("swap", 0)) > 0;
 
-    setCaption(swap ^ swapNames);
-        
+    // Names are derived from currentMatch
+    setCaption(swap ^ swapNames);        
     setNames(swap ^ swapNames);
         
     if ( (currentData === null || currentData.gameMode == 'RESET') && 
