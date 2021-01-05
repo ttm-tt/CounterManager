@@ -8,27 +8,6 @@
 package countermanager.liveticker;
 
 import countermanager.model.ICounterModelListener;
-import countermanager.prefs.Properties;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.attribute.AclEntry;
-import java.nio.file.attribute.AclEntryPermission;
-import java.nio.file.attribute.AclEntryType;
-import java.nio.file.attribute.AclFileAttributeView;
-import java.nio.file.attribute.PosixFilePermissions;
-import java.nio.file.attribute.UserPrincipal;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 
 /**
