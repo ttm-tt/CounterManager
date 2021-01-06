@@ -155,7 +155,7 @@ class UpdateMatch {
         serviceRight = tmpBool;
     }
 
-    private String roundToString(countermanager.model.CounterModelMatch counterMatch) {
+    static String roundToString(countermanager.model.database.Match counterMatch) {
         switch (counterMatch.grModus) {
             case 1:
                 // RR
@@ -165,6 +165,9 @@ class UpdateMatch {
                 // SKO
                 {
                     int nof = counterMatch.grSize >> counterMatch.mtRound;
+                    if (counterMatch.grWinner > 1) {
+                        return "Rd.&nbsp;of&nbsp;" + (2 * nof);                        
+                    }
                     if (counterMatch.grNofRounds > 0 || counterMatch.grNofMatches > 0) {
                         return "Rd.&nbsp;" + counterMatch.mtRound;
                     }
@@ -206,7 +209,7 @@ class UpdateMatch {
                     int from = (m / nof) * nof;
                     int to = from + nof;
                     // 1 hier ist grWinner
-                    return "P.&nbsp;" + (counterMatch.grWinner - 1 + (1 + 2 * from)) + "-" + (counterMatch.grWinner - 1 + (1 + 2 * to - 1));
+                    return "Pos&nbsp;" + (counterMatch.grWinner - 1 + (1 + 2 * from)) + "&mdash;" + (counterMatch.grWinner - 1 + (1 + 2 * to - 1));
                 }
         }
         return "Rd.&nbsp;" + counterMatch.mtRound;
