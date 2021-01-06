@@ -23,6 +23,17 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 public final class TTM extends Liveticker {
 
+    // A simple tuple
+    class Pair {
+        public Pair(long t, String s) {
+            this.t = t;
+            this.s = s;
+        }
+
+        public long t;
+        public String s;
+    };
+            
     java.util.Timer timer;
 
     /**
@@ -137,21 +148,8 @@ public final class TTM extends Liveticker {
         timer = new java.util.Timer();
         
         timer.schedule(new java.util.TimerTask() {
-            class Pair {
-                public Pair(long t, String s) {
-                    this.t = t;
-                    this.s = s;
-                }
-                
-                public long t;
-                public String s;
-            };
-            
-            List<Pair> msgList = new java.util.ArrayList<>();
-            
             long lastErrorTime = 0;
-            String lastUpdateString = "";
-            
+
             @Override
             @SuppressWarnings("UseSpecificCatch")
             public void run() {
@@ -175,52 +173,38 @@ public final class TTM extends Liveticker {
                         
                         // Also when a counter expires
                         expires.clear();
+                        
+                        // And the delay queue
+                        msgList.clear();
                     }
                     
                     return;
-                }
+                } 
                 
-                if (client == null) {
-                    msgList.clear();
-                }
-                
-                String updateString;
-                
-                synchronized(updates) {
-                    updateString = json.toJson(updates.values());
-                }
-                
-                if (client != null && updateString.equals(lastUpdateString)) {                    
-                    return;
-                } else {
-                    msgList.add(new Pair(System.currentTimeMillis(), updateString));
-                    lastUpdateString = updateString;
-                }
-                
-                try {
-                    if (client == null) {  
-                        try {
-                            client = (com.enterprisedt.net.ftp.FileTransferClientInterface) Class.forName("at.co.ttm.ftp.FtpClient").getConstructor(Boolean.TYPE).newInstance(ftpSecure);
-                        } catch (ClassNotFoundException ex) {
-                            // We expect this when we can't use the commercial lib
-                            Logger.getLogger(TTM.class.getName()).log(Level.FINE, null, ex);                
-                        } catch (Exception ex) {
-                            // Anything unexpected like the Spanish Inquistion
-                            Logger.getLogger(TTM.class.getName()).log(Level.WARNING, null, ex);                
-                        }
+                if (client == null) {  
+                    try {
+                        client = (com.enterprisedt.net.ftp.FileTransferClientInterface) Class.forName("at.co.ttm.ftp.FtpClient").getConstructor(Boolean.TYPE).newInstance(ftpSecure);
+                    } catch (ClassNotFoundException ex) {
+                        // We expect this when we can't use the commercial lib
+                        Logger.getLogger(TTM.class.getName()).log(Level.FINE, null, ex);
+                    } catch (Exception ex) {
+                        // Anything unexpected like the Spanish Inquistion
+                        Logger.getLogger(TTM.class.getName()).log(Level.WARNING, null, ex);
+                    }
 
-                        if (client == null) {
-                            client = new com.enterprisedt.net.ftp.FileTransferClient() {
-                                @Override
-                                public synchronized void connect() throws FTPException, IOException {
-                                    // UTF-8 Filenamen
-                                    masterContext.setControlEncoding("UTF-8");
+                    if (client == null) {
+                        client = new com.enterprisedt.net.ftp.FileTransferClient() {
+                            @Override
+                            public synchronized void connect() throws FTPException, IOException {
+                                // UTF-8 Filenamen
+                                masterContext.setControlEncoding("UTF-8");
 
-                                    super.connect();
-                                }                
-                            };
-                        }
+                                super.connect();
+                            }
+                        };
+                    }
                         
+                    try {  
                         client.setRemoteHost(ftpHost);
                         client.setUserName(ftpUser);
                         client.setPassword(ftpPassword);
@@ -228,19 +212,20 @@ public final class TTM extends Liveticker {
                         client.connect();
                         if (!ftpDirectory.isEmpty())
                             client.changeDirectory(ftpDirectory);
-
+                        
                         // always in the js subdirectory
                         client.changeDirectory("js");
-                    }  
-
-                    // Continue only if there is a string old enough
-                    if (msgList.isEmpty() || msgList.get(0).t > System.currentTimeMillis() - uploadDelay * 1000)
+                    } catch (FTPException | IOException ex) {
+                        Logger.getLogger(TTM.class.getName()).log(Level.SEVERE, null, ex); 
+                        client = null;
+                        
                         return;
+                    }
+                }  
 
-                    // And then use the first entry
-                    updateString = msgList.get(0).s;
-                    msgList.remove(0);
-
+                String updateString = getUpdateString(System.currentTimeMillis());
+                
+                try {
                     if (!isUploadWithRename()) {
                         // Direktes upload
                         uploadString(updateString, venue + ".js");
@@ -292,6 +277,33 @@ public final class TTM extends Liveticker {
         }, updateTime * 1000, updateTime * 1000);
     }
     
+    
+    // Calculate what to upload, if there is anything to do so
+    // Called periodically when ftp client is connected
+    String getUpdateString(long ct) {
+        String updateString;
+        
+        // First calculate Strings from update
+        synchronized(updates) {
+            updateString = json.toJson(updates.values());
+        }
+
+        if (!updateString.equals(lastUpdateString)) {                    
+            msgList.add(new Pair(ct, updateString));
+            lastUpdateString = updateString;
+        }
+                
+        // Now check the first entry if it can be dequeued
+        if (msgList.isEmpty() || msgList.get(0).t > ct - uploadDelay * 1000)
+            return null;
+
+        // And then use the first entry
+        updateString = msgList.get(0).s;
+        msgList.remove(0);
+
+        return updateString;
+    }
+    
     @Override
     public void setMessage(int counter, String message) {
         
@@ -337,13 +349,12 @@ public final class TTM extends Liveticker {
         CounterData counterData = CounterModel.getDefaultInstance().getCounterData(counter);
         CounterModelMatch counterMatch = CounterModel.getDefaultInstance().getCounterMatch(counter);
         
-        doCounterChanged(counter, counterData, counterMatch);
+        doCounterChanged(counter, counterData, counterMatch, System.currentTimeMillis());
     }
     
     // Implementation; package private so we can test it
-    void doCounterChanged(int counter, CounterData counterData, CounterModelMatch counterMatch) {        
+    void doCounterChanged(int counter, CounterData counterData, CounterModelMatch counterMatch, long ct) {        
         if (counterData == null || counterData.getGameMode() == CounterData.GameMode.RESET) {
-            long ct = System.currentTimeMillis();
 
             synchronized(expires) {
                 if (expires.get(counter) != null && expires.get(counter) + expireTimeout * 1000 > ct) {
@@ -454,10 +465,11 @@ public final class TTM extends Liveticker {
         synchronized(updates) {
             if (!data.equals(updates.get(counter))) {
                 updates.put(counter, data);  
-                expires.put(counter, System.currentTimeMillis());
+                expires.put(counter, ct);
             }
         }
     }
+    
     
     public String getResultLocation() {
         return resultLocation;
@@ -620,8 +632,12 @@ public final class TTM extends Liveticker {
     final private static Gson json = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
     // final private static Gson json = new GsonBuilder().create();
     
-    final private Map<Integer, String> updates = new java.util.HashMap<>();
-    final private Map<Integer, Long>   expires  = new java.util.HashMap<>();
+    String lastUpdateString = "";
+            
+    final Map<Integer, String> updates = new java.util.HashMap<>();
+    final Map<Integer, Long>   expires  = new java.util.HashMap<>();
+    final List<Pair> msgList = new java.util.ArrayList<>();
+            
 
     final static private java.nio.charset.Charset charsetUTF = java.nio.charset.Charset.forName("UTF-8");
 }
