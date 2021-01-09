@@ -25,7 +25,6 @@ en.Language=en
 de.Language=de
           
                                                                                                  
-
 [Types]
 Name: "client"; Description: "Scoreboard Manager for TTM"
 
@@ -52,12 +51,10 @@ Source: ".\dist\lib\*.jar"; DestDir: "{app}\lib"; Excludes: "edtftpj*.jar"; Flag
 ; Source: ".\lib\edtftpj.jar"; DestDir: "{app}\lib"; Flags:  ignoreversion
 Source: "..\FtpClient\dist\FtpClient.jar"; DestDir: "{app}\lib"; Flags:  ignoreversion
 Source: "..\FtpClient\lib\edtftpj-pro.jar"; DestDir: "{app}\lib"; Flags:  ignoreversion
-Source: ".\dist\http\scripts\*"; DestDir: "{code:GetIniDir}\http\scripts"; Flags: ignoreversion 
-Source: ".\dist\http\scripts\*"; DestDir: "{code:GetIniDir}\http\scripts"; Flags: ignoreversion 
-Source: ".\dist\http\counter\modules\*"; DestDir: "{code:GetIniDir}\http\counter\modules"; Flags: ignoreversion
+Source: ".\dist\http\scripts\*"; DestDir: "{code:GetIniDir}\http\scripts"; Flags: ignoreversion   recursesubdirs
 Source: ".\dist\http\display\*"; DestDir: "{code:GetIniDir}\http\display"; Excludes: ".\dist\http\display\scenes\*"; Flags: ignoreversion recursesubdirs
 Source: ".\dist\http\monitor\*"; DestDir: "{code:GetIniDir}\http\monitor"; Flags: ignoreversion recursesubdirs
-Source: ".\dist\http\ticker\*"; DestDir: "{code:GetIniDir}\http\ticker"; Flags: ignoreversion
+Source: ".\dist\http\ticker\*"; Excludes: mobile,mobile\*; DestDir: "{code:GetIniDir}\http\ticker"; Flags: ignoreversion
 Source: ".\dist\http\flags\*"; DestDir: "{code:GetIniDir}\http\flags"; Flags: ignoreversion
 Source: ".\dist\http\fonts\*"; DestDir: "{code:GetIniDir}\http\fonts"; Flags: ignoreversion
 Source: ".\dist\CounterManager.ico"; DestDir: "{app}"; Flags: ignoreversion
