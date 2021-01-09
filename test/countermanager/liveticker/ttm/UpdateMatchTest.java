@@ -5,9 +5,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import countermanager.model.database.Match;
 import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -64,7 +61,7 @@ public class UpdateMatchTest {
             { "{grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 7}", "Pos&nbsp;13&mdash;16" },
             { "{grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 8}", "Pos&nbsp;13&mdash;16" },
             // Not finals
-            { "{grModus: 2, grSize: 16, grWinner: 17, mtRound: 3, mtMatch: 1}", "Rd.&nbsp;of&nbsp;4" },
+            { "{grModus: 2, grSize: 16, grWinner: 17, mtRound: 3, mtMatch: 1}", "Rd.&nbsp;3" },
             { "{grModus: 2, grSize: 16, grWinner: 1, grNofRounds: 3, mtRound: 3, mtMatch: 1}", "Rd.&nbsp;3" },
             // TODO Qualification round(s)
         };

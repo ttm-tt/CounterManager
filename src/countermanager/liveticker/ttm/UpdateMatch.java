@@ -166,7 +166,7 @@ class UpdateMatch {
                 {
                     int nof = counterMatch.grSize >> counterMatch.mtRound;
                     if (counterMatch.grWinner > 1) {
-                        return "Rd.&nbsp;of&nbsp;" + (2 * nof);                        
+                        return "Rd.&nbsp;" + counterMatch.mtRound;
                     }
                     if (counterMatch.grNofRounds > 0 || counterMatch.grNofMatches > 0) {
                         return "Rd.&nbsp;" + counterMatch.mtRound;
