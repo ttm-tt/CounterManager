@@ -24,17 +24,16 @@ import org.junit.runners.Parameterized.Parameter;
 import org.openqa.selenium.WebElement;
 
 
-
 @RunWith(Parameterized.class)
 public class MonitorJsTest extends BaseJsTest{
     @Parameters
     public static Collection<Object[]> swapScreen() {
         return Arrays.asList(new Object[][] {
             // {counter, monitor}
-            {false, false}, 
-            {false, true}, 
-            {true,  false}, 
-            {true,  true}
+            {Boolean.FALSE, Boolean.FALSE}, 
+            {Boolean.FALSE, Boolean.TRUE}, 
+            {Boolean.TRUE,  Boolean.FALSE}, 
+            {Boolean.TRUE,  Boolean.TRUE}
         });
     }
     
