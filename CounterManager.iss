@@ -12,7 +12,7 @@ MinVersion= 0,6.0
 OutputBaseFilename=setup
 
 ; Sign installer
-SignTool=MS /d $qTTM Installer$q $f
+; SignTool=MS /d $qTTM Installer$q $f
 
 
 [Languages]
