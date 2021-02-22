@@ -904,7 +904,7 @@ public final class TTM implements IDatabase {
         else 
             sql += " UNION " +
                 "SELECT cpName, cpDesc, cpType, grName, grDesc, grModus, grSize, grWinner, grNofRounds, grNofMatches, " +
-                "   mtRound, mtMatch, 1 AS mtMatches, mtBestOf, mtNr, mtMS, mtWalkOverA, mtWalkOverX, mt.mtResA, mt.mtResX, mtReverse, " +
+                "   mtRound, mtMatch, 1 AS mtMatches, mtBestOf, mtNr, mt.mtMS AS mtMS, mtWalkOverA, mtWalkOverX, mt.mtResA, mt.mtResX, mtReverse, " +
                 "   plAplNr, plApsLast, plApsFirst, plAnaName, plAnaDesc, plAnaRegion, plAplExtID, " +
                 "   plBplNr, plBpsLast, plBpsFirst, plBnaName, plBnaDesc, plBnaRegion, plBplExtID, " +
                 "   plXplNr, plXpsLast, plXpsFirst, plXnaName, plXnaDesc, plXnaRegion, plXplExtID, " +
@@ -921,12 +921,12 @@ public final class TTM implements IDatabase {
                 "    INNER JOIN GrList gr ON mt.grID = gr.grID " +
                 "    INNER JOIN CpList cp ON gr.cpID = cp.cpID AND cp.cpType = 4 " +
                 "    LEFT OUTER JOIN MtSet mtSet1 ON mtSet1.mtID = mt.mtID AND mtSet1.mtSet = 1 AND mtSet1.mtMS = mt.mtMS " +
-                "    LEFT OUTER JOIN MtSet mtSet2 ON mtSet2.mtID = mt.mtID AND mtSet2.mtSet = 2 AND mtSet1.mtMS = mt.mtMS " +
-                "    LEFT OUTER JOIN MtSet mtSet3 ON mtSet3.mtID = mt.mtID AND mtSet3.mtSet = 3 AND mtSet1.mtMS = mt.mtMS " +
-                "    LEFT OUTER JOIN MtSet mtSet4 ON mtSet4.mtID = mt.mtID AND mtSet4.mtSet = 4 AND mtSet1.mtMS = mt.mtMS " +
-                "    LEFT OUTER JOIN MtSet mtSet5 ON mtSet5.mtID = mt.mtID AND mtSet5.mtSet = 5 AND mtSet1.mtMS = mt.mtMS " +
-                "    LEFT OUTER JOIN MtSet mtSet6 ON mtSet6.mtID = mt.mtID AND mtSet6.mtSet = 6 AND mtSet1.mtMS = mt.mtMS " +
-                "    LEFT OUTER JOIN MtSet mtSet7 ON mtSet7.mtID = mt.mtID AND mtSet7.mtSet = 7 AND mtSet1.mtMS = mt.mtMS " +
+                "    LEFT OUTER JOIN MtSet mtSet2 ON mtSet2.mtID = mt.mtID AND mtSet2.mtSet = 2 AND mtSet2.mtMS = mt.mtMS " +
+                "    LEFT OUTER JOIN MtSet mtSet3 ON mtSet3.mtID = mt.mtID AND mtSet3.mtSet = 3 AND mtSet3.mtMS = mt.mtMS " +
+                "    LEFT OUTER JOIN MtSet mtSet4 ON mtSet4.mtID = mt.mtID AND mtSet4.mtSet = 4 AND mtSet4.mtMS = mt.mtMS " +
+                "    LEFT OUTER JOIN MtSet mtSet5 ON mtSet5.mtID = mt.mtID AND mtSet5.mtSet = 5 AND mtSet5.mtMS = mt.mtMS " +
+                "    LEFT OUTER JOIN MtSet mtSet6 ON mtSet6.mtID = mt.mtID AND mtSet6.mtSet = 6 AND mtSet6.mtMS = mt.mtMS " +
+                "    LEFT OUTER JOIN MtSet mtSet7 ON mtSet7.mtID = mt.mtID AND mtSet7.mtSet = 7 AND mtSet7.mtMS = mt.mtMS " +
                 " WHERE mtDateTime IS NOT NULL AND mtTable IS NOT NULL " +
                 "       AND plAplNr IS NOT NULL AND plXplNR IS NOT NULL " +
                 where
