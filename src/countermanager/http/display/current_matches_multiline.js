@@ -67,7 +67,7 @@ args = {
 };
 
 if (getParameterByName('date', '') != '')
-    args['date'] = getParameterByName('date', formatDate(date));
+    args['date'] = getParameterByName('date', formatDate(new Date()));
 
 if (getParameterByName('fromTable', 0) != 0)
     args['fromTable'] = getParameterByName('fromTable', 0);
