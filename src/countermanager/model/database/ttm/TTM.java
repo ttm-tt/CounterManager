@@ -1005,6 +1005,12 @@ public final class TTM implements IDatabase {
                         mt.mtDateTime = result.getTimestamp(++idx).getTime();
                         mt.mtTable = result.getInt(++idx);
                         mt.mtTimestamp = result.getTimestamp(++idx).getTime();
+                        
+                        mt.mtResult = new int[mt.mtBestOf][2];
+                        for (int i = 0; i < mt.mtBestOf && i < 7; i++) {
+                            mt.mtResult[i][0] = result.getInt(++idx);
+                            mt.mtResult[i][1] = result.getInt(++idx);
+                        }
 
                         list.add(mt);
                     }
