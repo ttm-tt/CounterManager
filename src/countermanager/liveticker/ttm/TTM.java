@@ -588,7 +588,13 @@ public final class TTM extends Liveticker {
     }   
     
     private void uploadString(String str, String remoteFile) throws FTPException, IOException {
+        if (str == null)
+            return;
+        
         byte[] bytes = str.getBytes(charsetUTF);
+        
+        if (bytes == null)
+            return;
         
         try (FileTransferOutputStream fos = client.uploadStream(remoteFile)) {
             fos.write(bytes);
