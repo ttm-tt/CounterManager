@@ -112,6 +112,20 @@ class UpdateMatch {
         }
     }
     
+    public void swapResult() {
+        int tmpInt = mtResA;
+        mtResA = mtResX;
+        mtResX = tmpInt;
+        
+        if (mtSets != null) {
+            for (int i = 0; i < mtSets.length; i++) {
+                tmpInt = mtSets[i][0];
+                mtSets[i][0] = mtSets[i][1];
+                mtSets[i][1] = tmpInt;
+            }
+        }                
+    }
+    
     public void reverse() {
         Player tmpPl;
         Team   tmpTm;

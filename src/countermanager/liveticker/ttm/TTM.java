@@ -422,6 +422,9 @@ public final class TTM extends Liveticker {
             updateMatch.copyGames(counterMatch.getMtResult());
         }
         
+        if (counterData.isSwapped())
+            updateMatch.swapResult();
+        
         if (counterMatch.cpType == 4) {
             if (counterData != null) {
                 // Sobald das Spiel in die DB eingetragen wurde sehe ich das
