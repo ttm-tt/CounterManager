@@ -983,7 +983,8 @@ public final class CounterPanelItem extends javax.swing.JPanel {
         countermanager.model.database.Player plX = reverse ? counterMatch.plA : counterMatch.plX;
         countermanager.model.database.Player plY = reverse ? counterMatch.plB : counterMatch.plY;
             
-        String result = getResultString(reverse);
+        // Results are as seen from umpire, so the parameter is not necessary
+        String result = getResultString(false);
 
         if (result == null) 
             result = "";
