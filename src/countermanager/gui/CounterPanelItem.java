@@ -1048,9 +1048,9 @@ public final class CounterPanelItem extends javax.swing.JPanel {
         else if (result == null || result.length() == 0)
             tt +=      "<td></td>";
         else if (reverse ^ swap)
-            tt +=      "<td><b>" + counterData.getSetsRight() + " : " + counterData.getSetsLeft() + "</b></td>";
+            tt +=      "<td><b>" + counterData.getSetsRight() + "&nbsp;:&nbsp;" + counterData.getSetsLeft() + "</b></td>";
         else
-            tt +=      "<td><b>" + counterData.getSetsLeft() + " : " + counterData.getSetsRight() + "</b></td>";
+            tt +=      "<td><b>" + counterData.getSetsLeft() + "&nbsp;:&nbsp;" + counterData.getSetsRight() + "</b></td>";
         
         tt += 
                    "</tr>" +
