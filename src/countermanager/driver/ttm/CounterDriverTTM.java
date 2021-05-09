@@ -144,7 +144,7 @@ public class CounterDriverTTM implements countermanager.driver.ICounterDriver {
                      address = he.getRemoteAddress().getAddress().getHostAddress();
 
                 if (address != null)
-                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Connection for table " + (msg.table - offsetTable) + " from: " + address);
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "Connection for table " + (msg.table - offsetTable + 1) + " from: " + address);
 
                 if (address != null)
                     addressMap.put(msg.table - offsetTable, address);

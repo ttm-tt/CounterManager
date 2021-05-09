@@ -13,7 +13,9 @@ import countermanager.model.CounterModel;
 import countermanager.model.CounterModelMatch;
 import countermanager.prefs.PasswordCrypto;
 import countermanager.prefs.Preferences;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -176,6 +178,18 @@ public final class TTM extends Liveticker {
                         
                         // And the delay queue
                         msgList.clear();
+                    }
+                    
+                    // If host is empty store locally for debugging purposes
+                    if (isEnabled()) { 
+                        String updateString = getUpdateString(System.currentTimeMillis());
+                        if (updateString != null && !updateString.isEmpty()) {
+                            try (PrintWriter pw = new PrintWriter(venue + ".js")) {
+                                pw.print(updateString);
+                            } catch (FileNotFoundException ex) {
+                                Logger.getLogger(TTM.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
                     }
                     
                     return;

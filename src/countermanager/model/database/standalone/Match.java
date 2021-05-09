@@ -26,7 +26,7 @@ public class Match implements Comparable<Match> {
     
     @XmlElement
     @XmlIDREF
-    Competition cp;
+    Group gr;
     
     @XmlAttribute
     int mtRound;
@@ -69,10 +69,10 @@ public class Match implements Comparable<Match> {
     int    mttmResX;
     
     public boolean isFinished() {
-        if (2 * mtResA > cp.mtBestOf && mtResA > mtResX + 1)
+        if (2 * mtResA > gr.cp.mtBestOf && mtResA > mtResX + 1)
             return true;
         
-        if (2 * mtResX > cp.mtBestOf && mtResX > mtResA + 1)
+        if (2 * mtResX > gr.cp.mtBestOf && mtResX > mtResA + 1)
             return true;
         
         return false;
@@ -84,11 +84,12 @@ public class Match implements Comparable<Match> {
         match.cpType = 1;
         match.grModus = 1;
         
-        if (cp != null) {
-            match.cpName = cp.cpName;
-            match.cpDesc = cp.cpDesc;
-            match.grName = cp.cpName;
-            match.grDesc = cp.cpDesc;
+        if (gr != null) {
+            match.cpName = gr.cp.cpName;
+            match.cpDesc = gr.cp.cpDesc;
+            match.cpType = gr.cp.cpType;
+            match.grName = gr.grName;
+            match.grDesc = gr.grDesc;
         }
         
         match.grStage = "Main Draw";
@@ -101,8 +102,8 @@ public class Match implements Comparable<Match> {
         match.mtRound = mtRound;
         match.mtMatch = 1;
         match.mtReverse = false;
-        match.mtBestOf = cp.mtBestOf;
-        match.mtMatches = cp.mtMatches;
+        match.mtBestOf = gr.cp.mtBestOf;
+        match.mtMatches = gr.cp.mtMatches;
         match.mtDateTime = mtDateTime;
         match.mtTable = mtTable;
 

@@ -27,6 +27,9 @@ public class Competition implements Comparable<Competition> {
     String cpDesc;
     
     @XmlAttribute
+    int    cpType;
+    
+    @XmlAttribute
     int    mtBestOf;
     
     @XmlAttribute

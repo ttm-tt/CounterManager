@@ -27,87 +27,13 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
         this.db = database;
         
         initComponents();
-        
+
+        jGroupsTable.setDefaultEditor(Competition.class, new DefaultCellEditor(new JComboBox<>(db.database.competitions)));
         jPlayersTable.setDefaultEditor(Nation.class, new DefaultCellEditor(new JComboBox<>(db.database.nations)));
-        jMatchTable.setDefaultEditor(Competition.class, new DefaultCellEditor(new JComboBox<>(db.database.competitions)));
-        jMatchTable.setDefaultEditor(Player.class, new DefaultCellEditor(new JComboBox<>(db.database.players)));
+        jMatchesTable.setDefaultEditor(Group.class, new DefaultCellEditor(new JComboBox<>(db.database.groups)));
+        jMatchesTable.setDefaultEditor(Player.class, new DefaultCellEditor(new JComboBox<>(db.database.players)));
     }
     
-    class NationTableModel extends AbstractTableModel {
-
-        private final String[] columnNames = {"Name", "Description", "Delete"};
-        private final Class[] columnClasses = {String.class, String.class, Boolean.class};
-        
-        @Override
-        public int getRowCount() {
-            return db.database.nations.size() + 1;
-        }
-
-        @Override
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            if (rowIndex == getRowCount() - 1)
-                return null;
-            
-            switch (columnIndex) {
-                case 0 :
-                    return db.database.nations.get(rowIndex).naName;
-                    
-                case 1 :
-                    return db.database.nations.get(rowIndex).naDesc;
-                    
-                case 2 :
-                    return Boolean.FALSE;
-            }
-            
-            return null;
-        }
-
-        @Override
-        public String getColumnName(int columnIndex) {
-            return columnNames[columnIndex];
-        }
-
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return columnClasses[columnIndex];
-        }
-
-        @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return true;
-        }
-
-        @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {            
-            if (rowIndex == getRowCount() - 1) {
-                db.database.nations.add(new Nation());
-                
-                fireTableRowsInserted(rowIndex + 1, rowIndex + 1);
-            }
-            
-            if (columnIndex == columnNames.length - 1) {
-                db.database.nations.remove(rowIndex);
-                fireTableRowsDeleted(rowIndex, rowIndex);
-            } else {
-                switch (columnIndex) {
-                    case 0 :
-                        db.database.nations.get(rowIndex).naName = aValue.toString();
-                        break;
-                        
-                    case 1 :
-                        db.database.nations.get(rowIndex).naDesc = aValue.toString();
-                        break;
-                }
-            }
-            
-        }        
-    }
-
     class EventsTableModel extends AbstractTableModel {
 
         private final String[] columnNames = {"Name", "Description", "Best Of", "Team Matches", "Delete"};
@@ -190,6 +116,96 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
 
                     case 3 :
                         db.database.competitions.get(rowIndex).mtMatches = ((Integer) aValue);
+                        db.database.competitions.get(rowIndex).cpType = ((Integer) aValue) > 1 ? 4 : 1;
+                        break;
+                }
+            }
+            
+        }        
+    }    
+
+    class GroupsTableModel extends AbstractTableModel {
+
+        private final String[] columnNames = {"Competition", "Name", "Description", "Stage", "Delete"};
+        private final Class[] columnClasses = {Competition.class, String.class, String.class, String.class, Boolean.class};
+        
+        @Override
+        public int getRowCount() {
+            return db.database.groups.size() + 1;
+        }
+
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            if (rowIndex == getRowCount() - 1)
+                return null;
+            
+            switch (columnIndex) {
+                case 0 :
+                    return db.database.groups.get(rowIndex).cp;
+                    
+                case 1 :
+                    return db.database.groups.get(rowIndex).grName;
+                    
+                case 2 :
+                    return db.database.groups.get(rowIndex).grDesc;
+                    
+                case 3 :
+                    return db.database.groups.get(rowIndex).grStage;
+                    
+                case 4 :
+                    return Boolean.FALSE;
+            }
+            
+            return null;
+        }
+
+        @Override
+        public String getColumnName(int columnIndex) {
+            return columnNames[columnIndex];
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            return columnClasses[columnIndex];
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return true;
+        }
+
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {            
+            if (rowIndex == getRowCount() - 1) {
+                db.database.groups.add(new Group());
+                
+                fireTableRowsInserted(rowIndex + 1, rowIndex + 1);
+            }
+            
+            if (columnIndex == columnNames.length - 1) {
+                db.database.groups.remove(rowIndex);
+                fireTableRowsDeleted(rowIndex, rowIndex);
+            } else {
+                switch (columnIndex) {
+                    case 0 :
+                        db.database.groups.get(rowIndex).cp = (Competition) aValue;
+                        break;
+                        
+                    case 1 :
+                        db.database.groups.get(rowIndex).grName = aValue.toString();
+                        break;
+                        
+                    case 2 :
+                        db.database.groups.get(rowIndex).grDesc = aValue.toString();
+                        break;
+                        
+                    case 3 :
+                        db.database.groups.get(rowIndex).grStage = aValue.toString();
                         break;
                 }
             }
@@ -197,6 +213,81 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
         }        
     }
     
+    class NationTableModel extends AbstractTableModel {
+
+        private final String[] columnNames = {"Name", "Description", "Delete"};
+        private final Class[] columnClasses = {String.class, String.class, Boolean.class};
+        
+        @Override
+        public int getRowCount() {
+            return db.database.nations.size() + 1;
+        }
+
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            if (rowIndex == getRowCount() - 1)
+                return null;
+            
+            switch (columnIndex) {
+                case 0 :
+                    return db.database.nations.get(rowIndex).naName;
+                    
+                case 1 :
+                    return db.database.nations.get(rowIndex).naDesc;
+                    
+                case 2 :
+                    return Boolean.FALSE;
+            }
+            
+            return null;
+        }
+
+        @Override
+        public String getColumnName(int columnIndex) {
+            return columnNames[columnIndex];
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            return columnClasses[columnIndex];
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return true;
+        }
+
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {            
+            if (rowIndex == getRowCount() - 1) {
+                db.database.nations.add(new Nation());
+                
+                fireTableRowsInserted(rowIndex + 1, rowIndex + 1);
+            }
+            
+            if (columnIndex == columnNames.length - 1) {
+                db.database.nations.remove(rowIndex);
+                fireTableRowsDeleted(rowIndex, rowIndex);
+            } else {
+                switch (columnIndex) {
+                    case 0 :
+                        db.database.nations.get(rowIndex).naName = aValue.toString();
+                        break;
+                        
+                    case 1 :
+                        db.database.nations.get(rowIndex).naDesc = aValue.toString();
+                        break;
+                }
+            }
+            
+        }        
+    }
+
     class PlayersTableModel extends AbstractTableModel {
 
         private final String[] columnNames = {"Start No.", "Given Name", "Family Name", "Nation", "Delete"};
@@ -288,8 +379,12 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
     
     class MatchesTableModel extends AbstractTableModel {
 
-        private final String[] columnNames = {"Competition", "Round", "Player A", "Player X", "Date", "Time", "Table", "Ind. Mt.", "Res", "Delete"};
-        private final Class[] columnClasses = {Competition.class, Integer.class, Player.class, Player.class, String.class, String.class, Integer.class, Integer.class, String.class, Boolean.class};
+        private final String[] columnNames = {
+            "Group", "Round", "Player A", "Player X", "Date", "Time", "Table", "Ind. Mt.", "Res", "Delete"
+        };
+        private final Class[] columnClasses = {
+            Group.class, Integer.class, Player.class, Player.class, String.class, String.class, Integer.class, Integer.class, String.class, Boolean.class
+        };
         
         @Override
         public int getRowCount() {
@@ -353,7 +448,7 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
             
             switch (columnIndex) {
                 case 0 :
-                    return mt.cp;
+                    return mt.gr;
                     
                 case 1 :
                     return mt.mtRound;
@@ -409,7 +504,7 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
                 if (rowIndex > 0) {
                     Match prevMt = db.database.matches.get(rowIndex - 1);
                     
-                    if (prevMt.cp.mtMatches > 1 && prevMt.mtMS < prevMt.cp.mtMatches) {
+                    if (prevMt.gr.cp.mtMatches > 1 && prevMt.mtMS < prevMt.gr.cp.mtMatches) {
                         mt.mtDateTime = prevMt.mtDateTime;
                         mt.mtTable = prevMt.mtTable;
                         mt.mtRound = prevMt.mtRound;
@@ -441,7 +536,7 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
                 
                 switch (columnIndex) {
                     case 0 :
-                        mt.cp = (Competition) aValue;
+                        mt.gr = (Group) aValue;
                         break;
                         
                     case 1 :
@@ -492,18 +587,71 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        Competitions = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jCompetitionsTable = new javax.swing.JTable();
+        Groups = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jGroupsTable = new javax.swing.JTable();
         Associations = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jNationTable = new javax.swing.JTable();
         Players = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jPlayersTable = new javax.swing.JTable();
-        Competitions = new javax.swing.JPanel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        jCompetitionTable = new javax.swing.JTable();
         Matches = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jMatchTable = new javax.swing.JTable();
+        jMatchesTable = new javax.swing.JTable();
+
+        jCompetitionsTable.setModel(new EventsTableModel());
+        jCompetitionsTable.setFillsViewportHeight(true);
+        jScrollPane4.setViewportView(jCompetitionsTable);
+
+        javax.swing.GroupLayout CompetitionsLayout = new javax.swing.GroupLayout(Competitions);
+        Competitions.setLayout(CompetitionsLayout);
+        CompetitionsLayout.setHorizontalGroup(
+            CompetitionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CompetitionsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 929, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        CompetitionsLayout.setVerticalGroup(
+            CompetitionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CompetitionsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Events", Competitions);
+
+        jGroupsTable.setModel(new GroupsTableModel());
+        jGroupsTable.setFillsViewportHeight(true);
+        jScrollPane5.setViewportView(jGroupsTable);
+
+        javax.swing.GroupLayout GroupsLayout = new javax.swing.GroupLayout(Groups);
+        Groups.setLayout(GroupsLayout);
+        GroupsLayout.setHorizontalGroup(
+            GroupsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 949, Short.MAX_VALUE)
+            .addGroup(GroupsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(GroupsLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 929, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        GroupsLayout.setVerticalGroup(
+            GroupsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 535, Short.MAX_VALUE)
+            .addGroup(GroupsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, GroupsLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        jTabbedPane1.addTab("Groups", Groups);
 
         jNationTable.setModel(new NationTableModel());
         jNationTable.setCellSelectionEnabled(true);
@@ -516,14 +664,14 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
             AssociationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(AssociationsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 694, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 929, Short.MAX_VALUE)
                 .addContainerGap())
         );
         AssociationsLayout.setVerticalGroup(
             AssociationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(AssociationsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -540,45 +688,22 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
             PlayersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PlayersLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 859, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 929, Short.MAX_VALUE)
                 .addContainerGap())
         );
         PlayersLayout.setVerticalGroup(
             PlayersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PlayersLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         jTabbedPane1.addTab("Players", Players);
 
-        jCompetitionTable.setModel(new EventsTableModel());
-        jCompetitionTable.setFillsViewportHeight(true);
-        jScrollPane4.setViewportView(jCompetitionTable);
-
-        javax.swing.GroupLayout CompetitionsLayout = new javax.swing.GroupLayout(Competitions);
-        Competitions.setLayout(CompetitionsLayout);
-        CompetitionsLayout.setHorizontalGroup(
-            CompetitionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CompetitionsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 929, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        CompetitionsLayout.setVerticalGroup(
-            CompetitionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CompetitionsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        jTabbedPane1.addTab("Events", Competitions);
-
-        jMatchTable.setModel(new MatchesTableModel());
-        jMatchTable.setFillsViewportHeight(true);
-        jScrollPane1.setViewportView(jMatchTable);
+        jMatchesTable.setModel(new MatchesTableModel());
+        jMatchesTable.setFillsViewportHeight(true);
+        jScrollPane1.setViewportView(jMatchesTable);
 
         javax.swing.GroupLayout MatchesLayout = new javax.swing.GroupLayout(Matches);
         Matches.setLayout(MatchesLayout);
@@ -586,13 +711,13 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
             MatchesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(MatchesLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 837, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 929, Short.MAX_VALUE)
                 .addContainerGap())
         );
         MatchesLayout.setVerticalGroup(
             MatchesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(MatchesLayout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -611,7 +736,7 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -620,16 +745,19 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Associations;
     private javax.swing.JPanel Competitions;
+    private javax.swing.JPanel Groups;
     private javax.swing.JPanel Matches;
     private javax.swing.JPanel Players;
-    private javax.swing.JTable jCompetitionTable;
-    private javax.swing.JTable jMatchTable;
+    private javax.swing.JTable jCompetitionsTable;
+    private javax.swing.JTable jGroupsTable;
+    private javax.swing.JTable jMatchesTable;
     private javax.swing.JTable jNationTable;
     private javax.swing.JTable jPlayersTable;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 

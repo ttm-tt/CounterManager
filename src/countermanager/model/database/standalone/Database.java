@@ -12,6 +12,11 @@ public class Database {
     @SuppressWarnings("UseOfObsoleteCollectionType")
     java.util.Vector<Competition> competitions = new java.util.Vector<>();
     
+    @XmlElementWrapper(name="groups")
+    @XmlElement(name="group")
+    @SuppressWarnings("UseOfObsoleteCollectionType")
+    java.util.Vector<Group> groups = new java.util.Vector<>();
+    
     @XmlElementWrapper(name="nations")
     @XmlElement(name="nation")
     @SuppressWarnings("UseOfObsoleteCollectionType")

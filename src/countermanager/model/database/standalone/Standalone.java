@@ -80,19 +80,19 @@ public class Standalone implements IDatabase {
                 continue;
             
             // Only not finished matches
-            if (2 * match.mtResA > match.cp.mtBestOf) {
+            if (2 * match.mtResA > match.gr.cp.mtBestOf) {
                 continue;
             }
             
-            if (2 * match.mtResX > match.cp.mtBestOf) {
+            if (2 * match.mtResX > match.gr.cp.mtBestOf) {
                 continue;
             }
             
             // Not finished team matches
-            if (match.cp.mtMatches > 1 && 2 * match.mttmResA > match.cp.mtMatches)
+            if (match.gr.cp.mtMatches > 1 && 2 * match.mttmResA > match.gr.cp.mtMatches)
                 continue;
             
-            if (match.cp.mtMatches > 1 && 2 * match.mttmResX > match.cp.mtMatches)
+            if (match.gr.cp.mtMatches > 1 && 2 * match.mttmResX > match.gr.cp.mtMatches)
                 continue;
             
             if (set.contains(match.mtTable))
