@@ -6,7 +6,7 @@ package countermanager.model.database.standalone;
 import java.util.UUID;
 import javax.xml.bind.annotation.*;
 
-public class Nation {
+public class Nation implements Comparable<Nation> {
     public Nation() {
         naID = UUID.randomUUID().toString();
     }
@@ -28,4 +28,9 @@ public class Nation {
     
     @XmlAttribute
     String naDesc;
+
+    @Override
+    public int compareTo(Nation na) {
+        return naName.compareTo(na.toString());
+    }
 }

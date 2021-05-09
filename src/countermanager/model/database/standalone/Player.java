@@ -6,7 +6,7 @@ package countermanager.model.database.standalone;
 import java.util.UUID;
 import javax.xml.bind.annotation.*;
 
-public class Player {
+public class Player implements Comparable<Player> {
     public Player() {
         plID = UUID.randomUUID().toString();
     }
@@ -23,16 +23,16 @@ public class Player {
             s += " ";
         }
         
-        if (psFirst != null && !psFirst.isEmpty()) {
-            s += psFirst;
-            s += " ";
-        }
-        
         s += psLast;
         
-        if (nation != null && nation.naName != null && !nation.naName.isEmpty()) {
+        if (psFirst != null && !psFirst.isEmpty()) {
+            s += ", ";
+            s += psFirst;
+        }
+        
+        if (na != null && na.naName != null && !na.naName.isEmpty()) {
             s += " (";
-            s += nation.naName;
+            s += na.naName;
             s += ")";
         }
         
@@ -57,5 +57,10 @@ public class Player {
     
     @XmlAttribute
     @XmlIDREF
-    Nation nation;
+    Nation na;
+
+    @Override
+    public int compareTo(Player pl) {
+        return toString().compareTo(pl.toString());
+    }
 }

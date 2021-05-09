@@ -110,8 +110,8 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
 
     class EventsTableModel extends AbstractTableModel {
 
-        private final String[] columnNames = {"Name", "Description", "Best Of", "Delete"};
-        private final Class[] columnClasses = {String.class, String.class, Integer.class, Boolean.class};
+        private final String[] columnNames = {"Name", "Description", "Best Of", "Team Matches", "Delete"};
+        private final Class[] columnClasses = {String.class, String.class, Integer.class, Integer.class, Boolean.class};
         
         @Override
         public int getRowCount() {
@@ -139,6 +139,9 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
                     return db.database.competitions.get(rowIndex).mtBestOf;
                     
                 case 3 :
+                    return db.database.competitions.get(rowIndex).mtMatches;
+                    
+                case 4 :
                     return Boolean.FALSE;
             }
             
@@ -184,6 +187,10 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
                     case 2 :
                         db.database.competitions.get(rowIndex).mtBestOf = ((Integer) aValue);
                         break;
+
+                    case 3 :
+                        db.database.competitions.get(rowIndex).mtMatches = ((Integer) aValue);
+                        break;
                 }
             }
             
@@ -221,7 +228,7 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
                     return db.database.players.get(rowIndex).psLast;
                     
                 case 3 :
-                    return db.database.players.get(rowIndex).nation;
+                    return db.database.players.get(rowIndex).na;
                     
                 case 4 :
                     return Boolean.FALSE;
@@ -271,7 +278,7 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
                         break;
                         
                     case 3 :
-                        db.database.players.get(rowIndex).nation = (Nation) aValue;
+                        db.database.players.get(rowIndex).na = (Nation) aValue;
                         break;
                 }
             }
@@ -281,8 +288,8 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
     
     class MatchesTableModel extends AbstractTableModel {
 
-        private final String[] columnNames = {"Competition", "Round", "Player A", "Player X", "Date", "Time", "Table", "Delete"};
-        private final Class[] columnClasses = {Competition.class, Integer.class, Player.class, Player.class, String.class, String.class, Integer.class, Boolean.class};
+        private final String[] columnNames = {"Competition", "Round", "Player A", "Player X", "Date", "Time", "Table", "Ind. Mt.", "Res", "Delete"};
+        private final Class[] columnClasses = {Competition.class, Integer.class, Player.class, Player.class, String.class, String.class, Integer.class, Integer.class, String.class, Boolean.class};
         
         @Override
         public int getRowCount() {
@@ -367,6 +374,12 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
                     return mt.mtTable;
                     
                 case 7 :
+                    return mt.mtMS;
+                    
+                case 8 :
+                    return "" + mt.mtResA + " : " + mt.mtResX;
+                    
+                case 9 :
                     return Boolean.FALSE;
             }
             
@@ -385,23 +398,37 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return true;
+            return columnIndex != 8;
         }
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {            
             if (rowIndex == getRowCount() - 1) {
                 Match mt = new Match();
-                mt.mtNr = ++db.database.lastMtNr;
-                db.database.matches.add(mt);
                 
                 if (rowIndex > 0) {
                     Match prevMt = db.database.matches.get(rowIndex - 1);
                     
-                    mt.mtDateTime = prevMt.mtDateTime;
-                    mt.mtTable = prevMt.mtTable + 1;
-                    mt.mtRound = prevMt.mtRound;
+                    if (prevMt.cp.mtMatches > 1 && prevMt.mtMS < prevMt.cp.mtMatches) {
+                        mt.mtDateTime = prevMt.mtDateTime;
+                        mt.mtTable = prevMt.mtTable;
+                        mt.mtRound = prevMt.mtRound;
+
+                        mt.mtNr = prevMt.mtNr;
+                        mt.mtMS = prevMt.mtMS + 1;
+                    } else {
+                        mt.mtDateTime = prevMt.mtDateTime;
+                        mt.mtTable = prevMt.mtTable + 1;
+                        mt.mtRound = prevMt.mtRound;
+
+                        mt.mtMS = 1;
+                        mt.mtNr = ++db.database.lastMtNr;
+                    }
+                } else {
+                    mt.mtNr = ++db.database.lastMtNr;
                 }
+
+                db.database.matches.add(mt);                    
                                 
                 fireTableRowsInserted(rowIndex + 1, rowIndex + 1);
             }
@@ -439,6 +466,10 @@ public class StandaloneSettings extends javax.swing.JPanel implements IDatabaseS
                     
                     case 6 :
                         mt.mtTable = (Integer) aValue;
+                        break;
+                    
+                    case 7 :
+                        mt.mtMS = (Integer) aValue;
                         break;
                 }
             }

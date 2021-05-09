@@ -6,7 +6,7 @@ package countermanager.model.database.standalone;
 import java.util.UUID;
 import javax.xml.bind.annotation.*;
 
-public class Competition {
+public class Competition implements Comparable<Competition> {
     public Competition() {
         cpID = UUID.randomUUID().toString();
     }
@@ -28,4 +28,12 @@ public class Competition {
     
     @XmlAttribute
     int    mtBestOf;
+    
+    @XmlAttribute
+    int    mtMatches;
+
+    @Override
+    public int compareTo(Competition cp) {
+        return cpName.compareTo(cp.cpName);
+    }
 }

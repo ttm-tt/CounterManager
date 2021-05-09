@@ -28,47 +28,6 @@ public class Standalone implements IDatabase {
     Database database;
     JAXBContext context;
     
-    public static void main(String[] args) throws JAXBException, FileNotFoundException {
-/*        
-        int id = 0;
-        
-        Database db = new Database();
-        
-        db.nations = new java.util.ArrayList<>();
-        Nation na = new Nation();
-        na.naName = "GER";
-        na.naDesc = "Germany";
-        na.naID = "" + ++id;
-        db.nations.add(na);
-        
-        db.competitions = new java.util.ArrayList<>();
-        Competition cp = new Competition();
-        cp.cpName = "JB";
-        cp.cpDesc = "Junior Boys";
-        cp.cpID = "" + ++id;
-        
-        db.players = new java.util.ArrayList<>();
-        Player plA = new Player();
-        plA.nation = na;
-        plA.psFirst = "Timo";
-        plA.psLast = "Boll";
-        plA.psSex = 1;
-        plA.plID = "" + ++id;
-        db.players.add(plA);
-        
-        JAXBContext context = JAXBContext.newInstance(Database.class);
-        Marshaller m = context.createMarshaller();
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
-        // Write to System.out
-        m.marshal(db, System.out);    
-        
-        JAXBContext context = JAXBContext.newInstance(Database.class);
-        Unmarshaller um = context.createUnmarshaller();
-        Database db = (Database) um.unmarshal(new java.io.FileReader("F:\\tmp\\db.xml"));    
-*/
-    }
-    
     public Standalone() {
         try {
             context = JAXBContext.newInstance(Database.class);
@@ -112,36 +71,30 @@ public class Standalone implements IDatabase {
     public List<CounterModelMatch> update(int fromTable, int toTable, java.time.LocalDate when, boolean all) {
         List<CounterModelMatch> list = new java.util.ArrayList<>();
         
-        java.util.Collections.sort(database.matches, new java.util.Comparator<countermanager.model.database.standalone.Match>() {
-
-            @Override
-            public int compare(countermanager.model.database.standalone.Match o1, countermanager.model.database.standalone.Match o2) {
-                if (o1.mtDateTime < o2.mtDateTime)
-                    return -1;
-                if (o1.mtDateTime > o2.mtDateTime)
-                    return +1;
-
-                if (o1.mtTable < o2.mtTable)
-                    return -1;
-                if (o1.mtTable > o2.mtTable)
-                    return +1;
-
-                return 0;
-            }
-        });
+        java.util.Collections.sort(database.matches);
 
         Set<Integer> set = new java.util.HashSet<>();
 
         for (countermanager.model.database.standalone.Match match : database.matches) {
             if (match.mtTable < fromTable || match.mtTable > toTable)
                 continue;
-
+            
             // Only not finished matches
-            if (match.mtResA > match.cp.mtBestOf / 2)
+            if (2 * match.mtResA > match.cp.mtBestOf) {
                 continue;
-            if (match.mtResX > match.cp.mtBestOf / 2)
+            }
+            
+            if (2 * match.mtResX > match.cp.mtBestOf) {
                 continue;
-
+            }
+            
+            // Not finished team matches
+            if (match.cp.mtMatches > 1 && 2 * match.mttmResA > match.cp.mtMatches)
+                continue;
+            
+            if (match.cp.mtMatches > 1 && 2 * match.mttmResX > match.cp.mtMatches)
+                continue;
+            
             if (set.contains(match.mtTable))
                 continue;
 
@@ -155,11 +108,23 @@ public class Standalone implements IDatabase {
 
     @Override
     public boolean updateResult(int mtNr, int mtMS, int[][] mtSets, int mtWalkOverA, int mtWalkOverX) {
+        int mttmResA = 0, mttmResX = 0;
+        
         for (countermanager.model.database.standalone.Match match : database.matches) {
-            if (match.mtNr == mtNr) {
+            if (match.mtNr == mtNr && match.mtMS == mtMS) {
                 match.setResult(mtSets);
 
+                mttmResA = match.mttmResA;
+                mttmResX = match.mttmResX;
+                
                 break;
+            }
+        }
+        
+        for (countermanager.model.database.standalone.Match match : database.matches) {
+            if (match.mtNr == mtNr) {
+                match.mttmResA = mttmResA;
+                match.mttmResX = mttmResX;
             }
         }
         
@@ -201,6 +166,12 @@ public class Standalone implements IDatabase {
     
 
     boolean store() {
+        // Sort tables
+        java.util.Collections.sort(database.nations);
+        java.util.Collections.sort(database.players);
+        java.util.Collections.sort(database.competitions);
+        java.util.Collections.sort(database.matches);
+
         try {
             Marshaller m = context.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);

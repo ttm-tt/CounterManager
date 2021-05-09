@@ -8,7 +8,7 @@ import countermanager.model.CounterModelMatch;
 import java.util.UUID;
 import javax.xml.bind.annotation.*;
 
-public class Match {
+public class Match implements Comparable<Match> {
     public Match() {
         mtID = UUID.randomUUID().toString();
         mtResult = "";
@@ -20,6 +20,9 @@ public class Match {
     
     @XmlAttribute
     int mtNr;
+    
+    @XmlAttribute
+    int mtMS;
     
     @XmlElement
     @XmlIDREF
@@ -59,6 +62,22 @@ public class Match {
     @XmlAttribute
     int    mtResX;
     
+    @XmlAttribute
+    int    mttmResA;
+    
+    @XmlAttribute
+    int    mttmResX;
+    
+    public boolean isFinished() {
+        if (2 * mtResA > cp.mtBestOf && mtResA > mtResX + 1)
+            return true;
+        
+        if (2 * mtResX > cp.mtBestOf && mtResX > mtResA + 1)
+            return true;
+        
+        return false;
+    }
+    
     public CounterModelMatch toMatch() {
         CounterModelMatch match = new CounterModelMatch();
         
@@ -78,18 +97,18 @@ public class Match {
         match.grNofRounds = 0;
         match.grNofMatches = 0;
         match.mtNr = mtNr;
-        match.mtMS = 0;
+        match.mtMS = mtMS;
         match.mtRound = mtRound;
         match.mtMatch = 1;
         match.mtReverse = false;
         match.mtBestOf = cp.mtBestOf;
-        match.mtMatches = 0;
+        match.mtMatches = cp.mtMatches;
         match.mtDateTime = mtDateTime;
         match.mtTable = mtTable;
 
         if (plA != null) {
-            match.plA.naName = plA.nation.naName;
-            match.plA.naRegion = plA.nation.naRegion;
+            match.plA.naName = plA.na.naName;
+            match.plA.naRegion = plA.na.naRegion;
             match.plA.plExtID = "";
             match.plA.plNr = plA.plNr;
             match.plA.psFirst = plA.psFirst;
@@ -97,8 +116,8 @@ public class Match {
         }
     
         if (plB != null) {
-            match.plB.naName = plB.nation.naName;
-            match.plB.naRegion = plB.nation.naRegion;
+            match.plB.naName = plB.na.naName;
+            match.plB.naRegion = plB.na.naRegion;
             match.plB.plExtID = "";
             match.plB.plNr = plB.plNr;
             match.plB.psFirst = plB.psFirst;
@@ -106,8 +125,8 @@ public class Match {
         }
     
         if (plX != null) {
-            match.plX.naName = plX.nation.naName;
-            match.plX.naRegion = plX.nation.naRegion;
+            match.plX.naName = plX.na.naName;
+            match.plX.naRegion = plX.na.naRegion;
             match.plX.plExtID = "";
             match.plX.plNr = plX.plNr;
             match.plX.psFirst = plX.psFirst;
@@ -115,8 +134,8 @@ public class Match {
         }
          
         if (plY != null) {
-            match.plY.naName = plY.nation.naName;
-            match.plY.naRegion = plY.nation.naRegion;
+            match.plY.naName = plY.na.naName;
+            match.plY.naRegion = plY.na.naRegion;
             match.plY.plExtID = "";
             match.plY.plNr = plY.plNr;
             match.plY.psFirst = plY.psFirst;
@@ -142,7 +161,34 @@ public class Match {
             if (res[1] >= 11 && res[1] >= res[0] + 2)
                 mtResX++;
         }
+        
+        if (isFinished()) {
+            if (mtResA > mtResX)
+                ++mttmResA;
+            else if (mtResX > mtResA)
+                ++mttmResX;
+        }
     }
 
     static Gson json = new Gson();
+
+    @Override
+    public int compareTo(Match mt) {
+        if (mtTable < mt.mtTable)
+            return -1;
+        if (mtTable > mt.mtTable)
+            return +1;
+
+        if (mtDateTime < mt.mtDateTime)
+            return -1;
+        if (mtDateTime > mt.mtDateTime)
+            return +1;
+
+        if (mtMS < mt.mtMS)
+            return -1;
+        if (mtMS > mt.mtMS)
+            return +1;
+
+        return 0;
+    }
 }
