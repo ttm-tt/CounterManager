@@ -450,12 +450,12 @@ var ttm = new function() {
                 list[idx].tmA = list[idx].tmX;
                 list[idx].tmX = tm;
                 
-                for (i = 0; i < list[idx].mtResult.length; ++idx) {
+                for (i = 0; i < list[idx].mtResult.length; ++i) {
                     var r = list[idx].mtResult[i][0];
                     list[idx].mtResult[i][0] = list[idx].mtResult[i][1];
                     list[idx].mtResult[i][1] = r;
                 }
-                
+
                 var r = list[idx].mtResA;
                 list[idx].mtResA = list[idx].mtResX;
                 list[idx].mtResX = r;    
