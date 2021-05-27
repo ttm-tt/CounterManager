@@ -886,9 +886,9 @@ public final class TTM implements IDatabase {
                 "   NULL AS plBplNr, NULL AS plBpsLast, NULL AS plBpsFirst, NULL AS plBnaName, NULL AS plBnaDesc, NULL AS plBnaRegion, NULL AS plBplExtID, " +
                 "   NULL AS plXplNr, NULL AS plXpsLast, NULL AS plXpsFirst, NULL AS plXnaName, NULL AS plXnaDesc, NULL AS plXnaRegion, NULL AS plXplExtID, " +
                 "   NULL AS plYplNr, NULL AS plYpsLast, NULL AS plYpsFirst, NULL AS plYnaName, NULL AS plYnaDesc, NULL AS plYnaRegion, NULL AS plYplExtID, " +
-                "   mt.mtResA AS mttmResA, mt.mtResX AS mttmResX, " +
                 "   tmAtmName, tmAtmDesc, tmAnaName, tmAnaDesc, tmAnaRegion, " +
                 "   tmXtmName, tmXtmDesc, tmXnaName, tmXnaDesc, tmXnaRegion, " +
+                "   mt.mtResA AS mttmResA, mt.mtResX AS mttmResX, " +
                 "   mtDateTime, mtTable, mtTimeStamp, " +
                 "   NULL AS mtSet1mtResA, NULL AS mtSet1mtResX, NULL AS mtSet2mtResA, NULL AS mtSet2mtResX, " +
                 "   NULL AS mtSet3mtResA, NULL AS mtSet3mtResX, NULL AS mtSet4mtResA, NULL AS mtSet4mtResX, " +

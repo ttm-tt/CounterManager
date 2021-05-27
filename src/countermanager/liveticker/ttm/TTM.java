@@ -436,7 +436,7 @@ public final class TTM extends Liveticker {
             updateMatch.copyGames(counterMatch.getMtResult());
         }
         
-        if (counterData.isSwapped())
+        if (counterData != null && counterData.isSwapped())
             updateMatch.swapResult();
         
         if (counterMatch.cpType == 4) {
