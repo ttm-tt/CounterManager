@@ -236,13 +236,23 @@ public class CounterJsTest extends BaseJsTest {
         assertEquals(-1, ((Number) ret.get("playerNrRight")).shortValue());
         
         // Change sides at 5 in the last game
-        script = "return Testdata.testSwapSides(Object.assign({}, Testdata.data[0], Testdata.midLastGameBefore));";
+        script = "return Testdata.testSwapSides(Object.assign(" + 
+                        " {}, Testdata.data[0], Testdata.midLastGameBefore, " +
+                        "Testdata.firstServiceLeft, Testdata.serviceRightYB" +
+                 "));";
         ret = (Map) executeScript(script);
         
         // It is easier to get these numbers as short than to cast around
         assertEquals(-2, ((Number) ret.get("playerNrLeft")).shortValue());
         assertEquals(-1, ((Number) ret.get("playerNrRight")).shortValue());
         assertEquals(-1L, ret.get("sideChange"));
+        
+        // Service should be on the right side
+        assertTrue((Boolean) ret.get("serviceLeft"));
+        assertFalse((Boolean) ret.get("serviceRight"));
+        // And should be YA
+        assertEquals(-3L, ret.get("serviceDouble"));
+        
         
         // Change sides back at 5 in the last game
         script = "return Testdata.testSwapSides(Object.assign({}, Testdata.data[0], Testdata.midLastGameAfter));";

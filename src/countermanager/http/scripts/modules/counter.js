@@ -91,7 +91,9 @@ export function swapSides(data) {
         // If in the last game, just reverse service
         if (cg === data.bestOf - 1 && data.hasGameStarted(cg)) {
             // This must be the middle of the last game
-            // In this case reverse the service
+            // For doubles it would be the reverse of the previous service / return
+            changeServicePrev(data);
+            // And correct for the service change done above
             data.service = -data.service;
             data.serviceDouble = -data.serviceDouble;
         } else if (data.sideChange === CounterData.SideChange.AFTER) {
