@@ -20,6 +20,10 @@
     var DRAG = 1 - DAMPING;
 
     var G = 9.80665; // m/s^2
+    
+    // Max dimensions for flags
+    var maxFlagWidth = innerWidth * 0.21;
+    var maxFlagHeight = innerHeight * 0.21;
 
     /**
      * Enum for flag hoisting side.
@@ -657,6 +661,8 @@
         this.object = new THREE.Object3D();
         this.object.add(this.mesh);
         this.pin(settings.pin);
+        this.width = options.width;
+        this.height = options.height;
       }
 
       _createClass(Flag, [{
@@ -935,19 +941,29 @@
         width: options.width,
         height: options.height
       };
-
+      
       if (image) {
         size = computeSizeFromImage(image, size);
       }
 
-      if (isNumeric(size.width) && isNumeric(size.height)) {
-        return size;
-      } else {
-        return {
+      if (!isNumeric(size.width) || !isNumeric(size.height)) {
+        size = {
           width: Flag.defaults.width,
           height: Flag.defaults.height
         };
       }
+      
+      if (size.width > maxFlagWidth) {
+          size.height *= (maxFlagWidth / size.width);
+          size.width = maxFlagWidth;
+      }
+      
+      if (size.height > maxFlagHeight) {
+          size.width *= (maxFlagHeight / size.height);
+          size.height = maxFlagHeight;
+      }
+      
+      return size;
     } // Check if flag has been rotated into a vertical position
 
 
@@ -1350,12 +1366,12 @@
         key: "simulate",
         value: function simulate(deltaTime) {
           // ChT: Raise the flag! 
-          if (!window.FW_App.raiseFlags) return; // Get our own delta because the argument  may be shorter than the 
-          // real time difference
+          if (!window.FW_App.raiseFlags) 
+              return; // Get our own delta because the argument may be shorter than the real time difference
 
           var delta = this.clock.getDelta(); // Calculate offset
 
-          var flagStart = window.innerWidth * 0.21 * 2 / 3 * 1.1 * 2.2;
+          var flagStart = window.innerHeight * 0.21 * 1.1 * 2.2;
           var offset = (window.innerHeight * 0.9 - flagStart) / this.duration * delta;
           var maxY = this.flagpole.object.position.y - 4;
 
@@ -1367,7 +1383,10 @@
             try {
               for (var _iterator4 = this.flagInterfaces[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
                 var flagInterface = _step4.value;
-                if (maxY > flagInterface.object.position.y + offset) flagInterface.object.position.y += offset;else if (maxY > flagInterface.object.y) flagInterface.object.position.y = maxY;
+                if (maxY > flagInterface.object.position.y + offset) 
+                    flagInterface.object.position.y += offset;
+                else if (maxY > flagInterface.object.y) 
+                    flagInterface.object.position.y = maxY;
                 maxY -= flagInterface.flag.cloth.height * 1.1;
               }
             } catch (err) {
@@ -2706,12 +2725,14 @@
         height: imgHeight,
         duration: duration
       })); // ChT: And put them in an orderly way, 2nd, 1st, 3rd and 4th
+
       // Distance between poles is 0.24 x innerWidth, flag width is 0.21 x innerWidth
       // Calculate offset of flag from bottom to give room for 2 flags
       // var flagStart = app.module(FlagModule.displayName, 0).subject.flag.cloth.height * 2.1;
 
-      var flagDistance = window.innerWidth * 0.21 * 2 / 3 * 1.1;
-      if (Number.isInteger(getParameterByName('flagHeight', 'auto'))) flagDistance = parseInt(getParameterByName('flagHeight', 'auto')) * 1.1;
+      var flagDistance = Math.min(window.innerHeight, window.innerWidth * 2 / 3) * 0.21 * 1.1;
+      if (Number.isInteger(getParameterByName('flagHeight', 'auto'))) 
+          flagDistance = parseInt(getParameterByName('flagHeight', 'auto')) * 1.1;
       var flagStart = flagDistance * 2.2;
       app.module(FlagGroupModule.displayName, 0).subject.object.position.set(-(window.innerWidth * 0.45), window.innerHeight * 0.6 / 2, 0);
       app.module(FlagGroupModule.displayName, 0).moveFlags(-(window.innerHeight + window.innerHeight * 0.6) / 2 + flagStart, flagDistance);
