@@ -530,6 +530,57 @@ var ttm = new function() {
         return Packages.countermanager.model.CounterModel.getDefaultInstance().getDatabase().getCurrentTeamMatches(1, 999);
     };
     
+    this.listNationsForCeremony = function(args) {
+        // Ergebnis muss ein Java-Typ sein
+        var array = new java.util.Vector();
+
+        var cpName = args.get('cpName');
+        var grName = args.get('grName');
+        if (cpName === null || grName === null)
+            return res;
+
+        var flagType = args.get('flagType') || 'Name';
+        
+        var sql = 
+                "SELECT na" + flagType + " AS plAnaName, NULL AS plBnaName, stPos " +
+                "  FROM StSingleList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
+                " WHERE cpType = 1 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos < 4 " +
+                "UNION " +
+                "SELECT plna" + flagType + " AS plAnaName, bdna" + flagType + " AS plBnaName, stpos" +
+                "  FROM StDoubleList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
+                " WHERE (cpType = 2 OR cpType = 3) AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos < 4 " +
+                "UNION " +
+                "SELECT na" + flagType + " AS plAnaName, NULL AS plBnaName, stPos " +
+                "  FROM StTeamList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
+                " WHERE cpType = 4 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos < 4 " +
+                " ORDER BY stPos"
+        ;
+        
+        var connection = getConnection();
+        var statement = connection.createStatement();
+        var result = statement.executeQuery(sql);
+        
+        while (result.next()) {
+            var plAnaName = result.getString(1);
+            var plBnaName = result.getString(2);
+            
+            if (plAnaName === null) {
+                array.clear();
+                break;
+            }
+            
+            if (plBnaName === null || plBnaName === plAnaName)
+                array.add(plAnaName);
+            else
+                array.add(plAnaName + "," + plBnaName);
+        }
+        
+        result.close();
+        statement.close();
+                
+        return array;
+    }
+    
     // Some helpers
     this.getTime = function(result, idx) {
         var date = result.getTimestamp(idx);

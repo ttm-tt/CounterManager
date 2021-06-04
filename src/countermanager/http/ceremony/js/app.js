@@ -2601,12 +2601,38 @@
           results = regex.exec(parent.window.location.search);
         }
 
-        if (results == null) return def;else return decodeURIComponent(results[1].replace(/\+/g, " "));
+        if (results == null) 
+            return def;
+        else 
+            return decodeURIComponent(results[1].replace(/\+/g, " "));
       };
     }
 
     function fromQuery() {
       var flags = [];
+      
+      var cpName = getParameterByName('cpName', '');
+      var grName = getParameterByName('grName', '');
+      var flagType = getParameterByName('flagType', 'Name');
+      
+      if (cpName !== '' && grName !== '') {
+        xmlrpc("../RPC2", "ttm.listNationsForCeremony", [{cpName : cpName, grName : grName}], 
+          function success(data) {
+            if (data.length === 4) {
+              for (var i = 0; i < 4; i++)
+                flags.push(data[i]);
+            }
+          },
+          function error(err) {},
+          function final() {},
+          false
+        );
+      }
+      
+      if (flags.length === 4)
+          return flags;
+      
+      flags = [];
 
       for (var i = 0; i < 4; i++) {
         var imgURL = getParameterByName('' + (i + 1), null) || 'AUT';
