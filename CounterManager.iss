@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=ScoreBoardManager
-AppVerName=ScoreBoardManager 21.01
+AppVerName=ScoreBoardManager 21.06
 AppPublisher=Christoph Theis
 DefaultDirName={pf}\TTM\CounterManager
 DefaultGroupName=TTM
@@ -109,17 +109,17 @@ begin
 end;
 
 
-(* looks for JDK or JRE version in Registry *)
+(* looks for JRE version in Registry *)
 function getJREVersion(): String;
 var
 	jreVersion: String;
 begin
 	jreVersion := '';
   if IsWin64 then begin
-	  RegQueryStringValue(HKLM64, 'SOFTWARE\JavaSoft\Java Runtime Environment', 'CurrentVersion', jreVersion);
+	  RegQueryStringValue(HKLM64, 'SOFTWARE\JavaSoft\JRE', 'CurrentVersion', jreVersion);
   end
   else begin
-  	RegQueryStringValue(HKLM, 'SOFTWARE\JavaSoft\Java Runtime Environment', 'CurrentVersion', jreVersion);
+  	RegQueryStringValue(HKLM, 'SOFTWARE\JavaSoft\JRE', 'CurrentVersion', jreVersion);
   end;
 	Result := jreVersion;
 end;
@@ -131,75 +131,30 @@ var
 begin
 	jdkVersion := '';
   if IsWin64 then begin
-	  RegQueryStringValue(HKLM64, 'SOFTWARE\JavaSoft\Java Development Kit', 'CurrentVersion', jdkVersion);
+	  RegQueryStringValue(HKLM64, 'SOFTWARE\JDK', 'CurrentVersion', jdkVersion);
   end
   else begin
-  	RegQueryStringValue(HKLM, 'SOFTWARE\JavaSoft\Java Development Kit', 'CurrentVersion', jdkVersion);
+  	RegQueryStringValue(HKLM, 'SOFTWARE\JDK', 'CurrentVersion', jdkVersion);
   end;
 	Result := jdkVersion;
-end;
-
-(* Finds path to "javaw.exe" by looking up JDK or JRE locations *)
-(* in the registry.  Ensures the file actually exists.  If none *)
-(* is found, an empty string is returned. 						          *)
-function GetJavaPath(Default: String): String;
-var
-	javaVersion: String;
-	javaHome: String;
-	path: String;
-begin
-	path := '';
-	javaVersion := getJDKVersion();
-	if (Length(javaVersion) > 0) and (javaVersion >= '1.8') then begin
-    if IsWin64 then begin
-  		RegQueryStringValue(HKLM64, 'SOFTWARE\JavaSoft\Java Development Kit\' + javaVersion, 'JavaHome', javaHome)
-    end 
-    else begin
-  		RegQueryStringValue(HKLM, 'SOFTWARE\JavaSoft\Java Development Kit\' + javaVersion, 'JavaHome', javaHome)
-    end;
-    if javaHome <> '' then begin
-		  path := javaHome + '\bin\' + 'javaw.exe';
-		  if not FileExists(path) then begin
-        path := '';
-		  end;
-    end;
-	end;
-  (* if we didn't find a JDK "javaw.exe", try for a JRE one *)
-	if Length(path) = 0 then begin
-		javaVersion := getJREVersion();
-	  if (Length(javaVersion) > 0) and ((javaVersion) >= '1.8') then begin
-      if IsWin64 then begin
-	      RegQueryStringValue(HKLM64, 'SOFTWARE\JavaSoft\Java Runtime Environment\' + javaVersion, 'JavaHome', javaHome) 
-      end
-      else begin
-	      RegQueryStringValue(HKLM, 'SOFTWARE\JavaSoft\Java Runtime Environment\' + javaVersion, 'JavaHome', javaHome) 
-      end;
-      if javaHome <> '' then begin
-        path := javaHome + '\bin\' + 'javaw.exe';
-	      if not FileExists(path) then begin
-	        path := '';
-	      end;
-      end;
-    end;
-  end;
-  Result := path;
 end;
 
 (* Called on setup startup *)
 function InitializeSetup(): Boolean;
 var
-	javaPath: String;
+	javaVersion: String;
 begin
-	javaPath := GetJavaPath('');
-	if Length(javaPath) > 0 then begin
-		(* MsgBox('Found javaw.exe here: ' + javaPath, mbInformation, MB_OK); *)
-		Result := true;
-	end
-	else begin
-		MsgBox('Setup is unable to find a Java Development Kit or Java Runtime 8, or higher, installed.' + #13 +
-			     'You must have installed at least JDK or JRE, 7 or higher to continue setup.' + #13 +
-           'Please install one from http://java.sun.com and then run this setup again.', mbInformation, MB_OK);
-		Result := true;
-	end;
+	javaVersion := getJDKVersion();
+  if javaVersion = '' then begin
+    javaVersion := getJREVersion();
+  end;
+
+	if javaVersion <> '11' then begin
+		MsgBox('Setup is unable to find a Java Development Kit or Java Runtime 11 installed.' + #13 +
+			     'You must have installed at least JDK or JRE, 11 or higher to continue setup.' + #13 +
+           'Please install one from https://adoptopenjdk.com or select one from http://downloads.ttm.co.at/index.html', mbInformation, MB_OK);
+  end;
+		
+  Result := true;
 end;
 
