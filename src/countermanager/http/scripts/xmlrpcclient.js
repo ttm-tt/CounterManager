@@ -26,13 +26,13 @@
  * Parameters are passed as JS Objects, and the callback function is
  * given a single JS Object representing the server's response.
  */
-var xmlrpc = function(server, method, params, callback, callErr, callFinal) {
+var xmlrpc = function(server, method, params, callback, callErr, callFinal, async = true) {
     if (callErr == null)
         callErr = alert;
 
     var request = window.XMLHttpRequest ? new XMLHttpRequest()
         : new ActiveXObject("MSXML2.XMLHTTP.3.0");
-    request.open("POST", server, true);
+    request.open("POST", server, async);
     request.onreadystatechange = function() {
         if (request.readyState != 4)
             return; // TODO: callbacks?
