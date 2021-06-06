@@ -224,6 +224,9 @@ public class CounterModel {
     
     
     public CounterData getCounterData(int counter) {
+        if (counter >= counterList.length)
+            return null;
+        
         if (counterList[counter] != null)
             return counterList[counter].getCounterData();
         else
@@ -232,6 +235,9 @@ public class CounterModel {
     
     
     public int[][] getResults(int counter) {
+        if (counter >= counterList.length)
+            return null;
+        
         if (counterList[counter] != null)
             return counterList[counter].getResult();
         else
@@ -254,6 +260,9 @@ public class CounterModel {
 
     
     public CounterModelMatch getCounterMatch(int counter) {
+        if (counter >= counterList.length)
+            return null;
+        
         if (counterList[counter] == null)
             return null;
         else

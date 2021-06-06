@@ -39,7 +39,8 @@ public class LivetickerAdmininstration {
     private static class LivetickerList {
         @XmlElements({
             @XmlElement(name="ttm", type=countermanager.liveticker.ttm.TTM.class),
-            @XmlElement(name="unas", type=countermanager.liveticker.unas.Unas.class)
+            @XmlElement(name="unas", type=countermanager.liveticker.unas.Unas.class),
+            @XmlElement(name="scripting", type=countermanager.liveticker.scripting.Scripting.class)
         })
         @XmlElementWrapper(name="livetickers")
         List<countermanager.liveticker.Liveticker> list = new java.util.ArrayList<>();

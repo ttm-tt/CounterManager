@@ -2,6 +2,7 @@
 
 package countermanager.model;
 
+import countermanager.model.database.Umpire;
 import javax.xml.bind.annotation.*;
 
 
@@ -16,6 +17,10 @@ public class CounterModelMatch extends countermanager.model.database.Match imple
         
         tmA = new Team();
         tmX = new Team();
+        
+        // Not store in xml 
+        up1 = new Umpire();
+        up2 = new Umpire();
     }
     
     @XmlRootElement

@@ -45,6 +45,9 @@ public class Match {
     public Player  plX;
     public Player  plY;
     
+    public Umpire  up1;  // Main umpire
+    public Umpire  up2;  // Assistent umpire
+    
     public Map<String, Object> convertToMap(String prefix) {
         Map map = new java.util.HashMap<>();
         

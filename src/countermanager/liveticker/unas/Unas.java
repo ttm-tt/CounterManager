@@ -426,6 +426,17 @@ public class Unas extends Liveticker {
         this.script = script;
     }
     
+    public String getMethod() {
+        return method;
+    }
+    
+    public void setMethod(String method) {
+        if (!method.equals(this.method))
+            jsEngine = null;
+        
+        this.method = method;
+    }
+    
 
     @Override
     public void setMessage(int counter, String message) {
@@ -528,6 +539,7 @@ public class Unas extends Liveticker {
     private int toTable = 999;
     
     private String script = "unas.js";
+    private String method = "fixtures";
 
     private int updateTime = 30;
         

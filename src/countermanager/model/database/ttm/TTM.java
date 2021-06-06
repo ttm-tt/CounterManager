@@ -244,6 +244,8 @@ public final class TTM implements IDatabase {
             "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
             "       mtTimeStamp, mtNr, 0 AS mtMS, mtRound, mtMatch, " +
             "       mtTable, mtDateTime, mtBestOf, mtMatches, 0 AS mtReverse, " +
+            "       up1.upNr AS up1upnr, up1.psLast AS up1psLast, up1.psFirst AS up1psFirst, up1.naName AS up1naName, up1.naDesc AS up1naDesc, up1.naRegion AS up1naRegion, " +
+            "       up2.upNr AS up2upnr, up2.psLast AS up2psLast, up2.psFirst AS up2psFirst, up2.naName AS up2naName, up2.naDesc AS up2naDesc, up2.naRegion AS up2naRegion, " +
             "       mt.mtResA, mt.mtResX, " +
             "       plAplNr, plAplExtId, plApsLast, plApsFirst, plAnaName, plAnaRegion, " +
             "       NULL AS plBplNr, NULL AS plBplExtId, NULL AS plBpsLast, NULL AS plBpsFirst, NULL AS plBnaName, NULL AS plBnaRegion, " +
@@ -264,6 +266,8 @@ public final class TTM implements IDatabase {
             "  FROM MtSingleList mt " +
             "       INNER JOIN GrList gr ON mt.grID = gr.grID " +
             "       INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
+            "       LEFT OUTER JOIN UpList up1 ON mt.mtUmpire = up1.upNr " +
+            "       LEFT OUTER JOIN UpList up2 ON mt.mtUmpire2 = up2.upNr " +
             "       LEFT OUTER JOIN MtSet mtSet1 ON mt.mtID = mtSet1.mtID AND mtSet1.mtSet = 1 " +
             "       LEFT OUTER JOIN MtSet mtSet2 ON mt.mtID = mtSet2.mtID AND mtSet2.mtSet = 2 " +
             "       LEFT OUTER JOIN MtSet mtSet3 ON mt.mtID = mtSet3.mtID AND mtSet3.mtSet = 3 " +
@@ -291,6 +295,8 @@ public final class TTM implements IDatabase {
             "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
             "       mtTimeStamp, mtNr, 0 AS mtMS, mtRound, mtMatch, " +
             "       mtTable, mtDateTime, mtBestOf, mtMatches, 0 AS mtReverse, " +
+            "       up1.upNr AS up1upnr, up1.psLast AS up1psLast, up1.psFirst AS up1psFirst, up1.naName AS up1naName, up1.naDesc AS up1naDesc, up1.naRegion AS up1naRegion, " +
+            "       up2.upNr AS up2upnr, up2.psLast AS up2psLast, up2.psFirst AS up2psFirst, up2.naName AS up2naName, up2.naDesc AS up2naDesc, up2.naRegion AS up2naRegion, " +
             "       mt.mtResA, mt.mtResX, " +
             "       plAplNr, plAplExtId, plApsLast, plApsFirst, plAnaName,plAnaRegion,  " +
             "       plBplNr, plBplExtId, plBpsLast, plBpsFirst, plBnaName, plBnaRegion, " +
@@ -311,6 +317,8 @@ public final class TTM implements IDatabase {
             "  FROM MtDoubleList mt " +
             "       INNER JOIN GrList gr ON mt.grID = gr.grID " +
             "       INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
+            "       LEFT OUTER JOIN UpList up1 ON mt.mtUmpire = up1.upNr " +
+            "       LEFT OUTER JOIN UpList up2 ON mt.mtUmpire2 = up2.upNr " +
             "       LEFT OUTER JOIN MtSet mtSet1 ON mt.mtID = mtSet1.mtID AND mtSet1.mtSet = 1 " +
             "       LEFT OUTER JOIN MtSet mtSet2 ON mt.mtID = mtSet2.mtID AND mtSet2.mtSet = 2 " +
             "       LEFT OUTER JOIN MtSet mtSet3 ON mt.mtID = mtSet3.mtID AND mtSet3.mtSet = 3 " +
@@ -338,6 +346,8 @@ public final class TTM implements IDatabase {
             "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
             "       mt.mtTimeStamp, mt.mtNr, mt.mtMS AS mtMS, mt.mtRound, mt.mtMatch, " +
             "       mt.mtTable, mt.mtDateTime, mt.mtBestOf, mt.mtMatches, mt.mtReverse, " +
+            "       up1.upNr AS up1upnr, up1.psLast AS up1psLast, up1.psFirst AS up1psFirst, up1.naName AS up1naName, up1.naDesc AS up1naDesc, up1.naRegion AS up1naRegion, " +
+            "       up2.upNr AS up2upnr, up2.psLast AS up2psLast, up2.psFirst AS up2psFirst, up2.naName AS up2naName, up2.naDesc AS up2naDesc, up2.naRegion AS up2naRegion, " +
             "       mt.mtResA, mt.mtResX, " +
             "       plAplNr, plAplExtId, plApsLast, plApsFirst, plAnaName, plAnaRegion, " +
             "       plBplNr, plBplExtId, plBpsLast, plBpsFirst, plBnaName, plBnaRegion, " +
@@ -358,6 +368,8 @@ public final class TTM implements IDatabase {
             "  FROM MtIndividualList mt " +
             "       INNER JOIN GrList gr ON mt.grID = gr.grID " +
             "       INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
+            "       LEFT OUTER JOIN UpList up1 ON mt.mtUmpire = up1.upNr " +
+            "       LEFT OUTER JOIN UpList up2 ON mt.mtUmpire2 = up2.upNr " +
             "       INNER JOIN StTeamList stA ON mt.stA = stA.stID " +
             "       INNER JOIN StTeamList stX ON mt.stX = stX.stID " +
             "       LEFT OUTER JOIN MtSet mtSet1 ON mt.mtID = mtSet1.mtID AND mtSet1.mtSet = 1 AND mtSet1.mtMS = mt.mtMS " +
@@ -441,6 +453,21 @@ public final class TTM implements IDatabase {
                         int     mtBestOf    = result.getInt(idx++);
                         int     mtMatches   = result.getInt(idx++);
                         boolean mtReverse   = result.getBoolean(idx++);
+                        
+                        int     up1upNr = result.getInt(idx++);
+                        String  uppsLast = getString(result, idx++);
+                        String  up1psFirst = getString(result, idx++);
+                        String  up1naName = getString(result, idx++);
+                        String  up1naDesc = getString(result, idx++);
+                        String  up1naRegion = getString(result, idx++);
+                        
+                        int     up2upNr = result.getInt(idx++);
+                        String  up2psLast = getString(result, idx++);
+                        String  up2psFirst = getString(result, idx++);
+                        String  up2naName = getString(result, idx++);
+                        String  up2naDesc = getString(result, idx++);
+                        String  up2naRegion = getString(result, idx++);
+                        
                         int     mtResA      = result.getInt(idx++);
                         int     mtResX      = result.getInt(idx++);
                         
@@ -514,6 +541,20 @@ public final class TTM implements IDatabase {
                         match.mtBestOf    = mtBestOf;
                         match.mtMatches   = mtMatches;
                         match.mtReverse   = mtReverse;
+                        
+                        match.up1.upNr     = up1upNr;
+                        match.up1.psLast   = uppsLast;
+                        match.up1.psFirst  = up1psFirst;
+                        match.up1.naName   = up1naName;
+                        match.up1.naDesc   = up1naDesc;
+                        match.up1.naRegion = up1naRegion;
+                        
+                        match.up2.upNr     = up2upNr;
+                        match.up2.psLast   = up2psLast;
+                        match.up2.psFirst  = up2psFirst;
+                        match.up2.naName   = up2naName;
+                        match.up2.naDesc   = up2naDesc;
+                        match.up2.naRegion = up2naRegion;
 
                         match.mtResA      = mtResA;
                         match.mtResX      = mtResX;
@@ -829,6 +870,8 @@ public final class TTM implements IDatabase {
             "   NULL AS tmXtmName, NULL AS tmXtmDesc, NULL AS tmXnaName, NULL AS tmXnaDesc, NULL AS tmXnaRegion, " +
             "   NULL AS mttmResA, NULL AS mttmResX, " +
             "   mtDateTime, mtTable, mtTimeStamp, " +
+            "   up1.upNr AS up1upnr, up1.psLast AS up1psLast, up1.psFirst AS up1psFirst, up1.naName AS up1naName, up1.naDesc AS up1naDesc, up1.naRegion AS up1naRegion, " +
+            "   up2.upNr AS up2upnr, up2.psLast AS up2psLast, up2.psFirst AS up2psFirst, up2.naName AS up2naName, up2.naDesc AS up2naDesc, up2.naRegion AS up2naRegion, " +
             "   mtSet1.mtResA, mtSet1.mtResX, mtSet2.mtResA, mtSet2.mtResX, " +
             "   mtSet3.mtResA, mtSet3.mtResX, mtSet4.mtResA, mtSet4.mtResX, " +
             "   mtSet5.mtResA, mtSet5.mtResX, mtSet6.mtResA, mtSet6.mtResX, " +
@@ -836,6 +879,8 @@ public final class TTM implements IDatabase {
             "  FROM MtSingleList mt " +
             "    INNER JOIN GrList gr ON mt.grID = gr.grID " +
             "    INNER JOIN CpList cp ON gr.cpID = cp.cpID AND cp.cpType = 1 " +
+            "    LEFT OUTER JOIN UpList up1 ON mt.mtUmpire = up1.upNr " +
+            "    LEFT OUTER JOIN UpList up2 ON mt.mtUmpire2 = up2.upNr " +
             "    LEFT OUTER JOIN MtSet mtSet1 ON mtSet1.mtID = mt.mtID AND mtSet1.mtSet = 1 " +
             "    LEFT OUTER JOIN MtSet mtSet2 ON mtSet2.mtID = mt.mtID AND mtSet2.mtSet = 2 " +
             "    LEFT OUTER JOIN MtSet mtSet3 ON mtSet3.mtID = mt.mtID AND mtSet3.mtSet = 3 " +
@@ -859,6 +904,8 @@ public final class TTM implements IDatabase {
             "   NULL AS tmXtmName, NULL AS tmXtmDesc, NULL AS tmXnaName, NULL AS tmXnaDesc, NULL AS tmXnaRegion, " +
             "   NULL AS mttmResA, NULL AS mttmResX, " +
             "   mtDateTime, mtTable, mtTimeStamp, " +
+            "   up1.upNr AS up1upnr, up1.psLast AS up1psLast, up1.psFirst AS up1psFirst, up1.naName AS up1naName, up1.naDesc AS up1naDesc, up1.naRegion AS up1naRegion, " +
+            "   up2.upNr AS up2upnr, up2.psLast AS up2psLast, up2.psFirst AS up2psFirst, up2.naName AS up2naName, up2.naDesc AS up2naDesc, up2.naRegion AS up2naRegion, " +
             "   mtSet1.mtResA, mtSet1.mtResX, mtSet2.mtResA, mtSet2.mtResX, " +
             "   mtSet3.mtResA, mtSet3.mtResX, mtSet4.mtResA, mtSet4.mtResX, " +
             "   mtSet5.mtResA, mtSet5.mtResX, mtSet6.mtResA, mtSet6.mtResX, " +
@@ -866,6 +913,8 @@ public final class TTM implements IDatabase {
             "  FROM MtDoubleList mt " +
             "    INNER JOIN GrList gr ON mt.grID = gr.grID " +
             "    INNER JOIN CpList cp ON gr.cpID = cp.cpID AND (cp.cpType = 2 OR cp.cpType = 3) " +
+            "    LEFT OUTER JOIN UpList up1 ON mt.mtUmpire = up1.upNr " +
+            "    LEFT OUTER JOIN UpList up2 ON mt.mtUmpire2 = up2.upNr " +
             "    LEFT OUTER JOIN MtSet mtSet1 ON mtSet1.mtID = mt.mtID AND mtSet1.mtSet = 1 " +
             "    LEFT OUTER JOIN MtSet mtSet2 ON mtSet2.mtID = mt.mtID AND mtSet2.mtSet = 2 " +
             "    LEFT OUTER JOIN MtSet mtSet3 ON mtSet3.mtID = mt.mtID AND mtSet3.mtSet = 3 " +
@@ -890,6 +939,8 @@ public final class TTM implements IDatabase {
                 "   tmXtmName, tmXtmDesc, tmXnaName, tmXnaDesc, tmXnaRegion, " +
                 "   mt.mtResA AS mttmResA, mt.mtResX AS mttmResX, " +
                 "   mtDateTime, mtTable, mtTimeStamp, " +
+                "   up1.upNr AS up1upnr, up1.psLast AS up1psLast, up1.psFirst AS up1psFirst, up1.naName AS up1naName, up1.naDesc AS up1naDesc, up1.naRegion AS up1naRegion, " +
+                "   up2.upNr AS up2upnr, up2.psLast AS up2psLast, up2.psFirst AS up2psFirst, up2.naName AS up2naName, up2.naDesc AS up2naDesc, up2.naRegion AS up2naRegion, " +
                 "   NULL AS mtSet1mtResA, NULL AS mtSet1mtResX, NULL AS mtSet2mtResA, NULL AS mtSet2mtResX, " +
                 "   NULL AS mtSet3mtResA, NULL AS mtSet3mtResX, NULL AS mtSet4mtResA, NULL AS mtSet4mtResX, " +
                 "   NULL AS mtSet5mtResA, NULL AS mtSet5mtResX, NULL AS mtSet6mtResA, NULL AS mtSet6mtResX, " +
@@ -897,6 +948,8 @@ public final class TTM implements IDatabase {
                 "  FROM MtTeamList mt" +
                 "       INNER JOIN GrList gr ON mt.grID = gr.grID " +
                 "       INNER JOIN CpList cp ON gr.cpID = cp.cpID AND cp.cpType = 4" +
+                "       LEFT OUTER JOIN UpList up1 ON mt.mtUmpire = up1.upNr " +
+                "       LEFT OUTER JOIN UpList up2 ON mt.mtUmpire2 = up2.upNr " +
                 " WHERE mtDateTime IS NOT NULL AND mtTable IS NOT NULL " +
                 "       AND tmAtmName IS NOT NULL AND tmXtmName IS NOT NULL " +
                 whereTeam
@@ -913,6 +966,8 @@ public final class TTM implements IDatabase {
                 "   NULL AS tmXtmName, NULL AS tmXtmDesc, NULL AS tmXnaName, NULL AS tmXnaDesc, NULL AS tmXnaRegion, " +
                 "   mt.mttmResA, mt.mttmResX, " +
                 "   mtDateTime, mtTable, mtTimeStamp, " +
+                "   up1.upNr AS up1upnr, up1.psLast AS up1psLast, up1.psFirst AS up1psFirst, up1.naName AS up1naName, up1.naDesc AS up1naDesc, up1.naRegion AS up1naRegion, " +
+                "   up2.upNr AS up2upnr, up2.psLast AS up2psLast, up2.psFirst AS up2psFirst, up2.naName AS up2naName, up2.naDesc AS up2naDesc, up2.naRegion AS up2naRegion, " +
                 "   mtSet1.mtResA, mtSet1.mtResX, mtSet2.mtResA, mtSet2.mtResX, " +
                 "   mtSet3.mtResA, mtSet3.mtResX, mtSet4.mtResA, mtSet4.mtResX, " +
                 "   mtSet5.mtResA, mtSet5.mtResX, mtSet6.mtResA, mtSet6.mtResX, " +
@@ -920,6 +975,8 @@ public final class TTM implements IDatabase {
                 "  FROM MtIndividualList mt " +
                 "    INNER JOIN GrList gr ON mt.grID = gr.grID " +
                 "    INNER JOIN CpList cp ON gr.cpID = cp.cpID AND cp.cpType = 4 " +
+                "    LEFT OUTER JOIN UpList up1 ON mt.mtUmpire = up1.upNr " +
+                "    LEFT OUTER JOIN UpList up2 ON mt.mtUmpire2 = up2.upNr " +
                 "    LEFT OUTER JOIN MtSet mtSet1 ON mtSet1.mtID = mt.mtID AND mtSet1.mtSet = 1 AND mtSet1.mtMS = mt.mtMS " +
                 "    LEFT OUTER JOIN MtSet mtSet2 ON mtSet2.mtID = mt.mtID AND mtSet2.mtSet = 2 AND mtSet2.mtMS = mt.mtMS " +
                 "    LEFT OUTER JOIN MtSet mtSet3 ON mtSet3.mtID = mt.mtID AND mtSet3.mtSet = 3 AND mtSet3.mtMS = mt.mtMS " +
@@ -1005,6 +1062,20 @@ public final class TTM implements IDatabase {
                         mt.mtDateTime = result.getTimestamp(++idx).getTime();
                         mt.mtTable = result.getInt(++idx);
                         mt.mtTimestamp = result.getTimestamp(++idx).getTime();
+                        
+                        mt.up1.upNr = result.getInt(++idx);
+                        mt.up1.psLast = getString(result, ++idx);
+                        mt.up1.psFirst = getString(result, ++idx);
+                        mt.up1.naName = getString(result, ++idx);
+                        mt.up1.naDesc = getString(result, +idx);
+                        mt.up1.naRegion = getString(result, ++idx);
+                        
+                        mt.up2.upNr = result.getInt(++idx);
+                        mt.up2.psLast = getString(result, ++idx);
+                        mt.up2.psFirst = getString(result, ++idx);
+                        mt.up2.naName = getString(result, ++idx);
+                        mt.up2.naDesc = getString(result, +idx);
+                        mt.up2.naRegion = getString(result, ++idx);
                         
                         mt.mtResult = new int[mt.mtBestOf][2];
                         for (int i = 0; i < mt.mtBestOf && i < 7; i++) {
