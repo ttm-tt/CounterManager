@@ -2,7 +2,7 @@
 
 function getParameterByName(name, def) {
     name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-    var regexS = "[\\?&]" + name + "=([^&#]*)";
+    var regexS = "[\\?&]" + name + "=([^&#]*)/i";
     var regex = new RegExp(regexS);
     var results = regex.exec(window.location.search);
     if(results == null && parent != undefined) {
