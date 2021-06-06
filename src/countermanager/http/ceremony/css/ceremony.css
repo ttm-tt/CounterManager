@@ -1,4 +1,4 @@
 .bg-sky {
-    background: url("/eu21c2020/blue-sky.jpg") no-repeat;
+    background: url("../img/blue-sky.jpg") no-repeat;
     background-size: cover;
 }
