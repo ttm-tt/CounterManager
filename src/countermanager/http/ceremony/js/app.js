@@ -3,6 +3,14 @@
  * @author krikienoid / https://github.com/krikienoid
  */
 
+/*
+ * Parameters:
+ * damping: smoothing of wobbling, use 0.3 on Raspberry
+ * 1, 2, 3, 4: flags to use for 1st, 2nd, ... place
+ * cpName, grName: CP and GR to get the flags for 1st, 2nd, ... place
+ * 
+ */
+
 (function (THREE) {
     'use strict';
 
@@ -16,7 +24,7 @@
     // were lowwer, but they still wouldn't hang down.
     var FPS = 30;
     var TIME_STEP = 1 / FPS;
-    var DAMPING = 0.03;
+    var DAMPING = getParameterByName('damping', 0.03);
     var DRAG = 1 - DAMPING;
 
     var G = 9.80665; // m/s^2
