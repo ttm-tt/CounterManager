@@ -2600,8 +2600,8 @@
     if (window.getParameterByName === undefined) {
       window.getParameterByName = function (name, def) {
         name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-        var regexS = "[\\?&]" + name + "=([^&#]*)/i";
-        var regex = new RegExp(regexS);
+        var regexS = "[\\?&]" + name + "=([^&#]*)";
+        var regex = new RegExp(regexS, "i");
         var results = regex.exec(window.location.search);
 
         if (results == null && parent != undefined) {

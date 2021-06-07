@@ -2,8 +2,8 @@
 
 function getParameterByName(name, def) {
     name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-    var regexS = "[\\?&]" + name + "=([^&#]*)/i";
-    var regex = new RegExp(regexS);
+    var regexS = "[\\?&]" + name + "=([^&#]*)";
+    var regex = new RegExp(regexS, "i");
     var results = regex.exec(window.location.search);
     if(results == null && parent != undefined) {
         // If parent defines getParameterByName, use it.
