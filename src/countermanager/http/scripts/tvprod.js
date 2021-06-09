@@ -120,8 +120,10 @@ function counterChanged(matchList, dataList) {
                 }
             }
 
-            // Match or set point player A
-            if (cg < setHistory.length && setHistory[cg][swapped ? 1 : 0] >= 10 && setHistory[cg][swapped ? 1 : 0] > setHistory[cg][swapped ? 0 : 1]) {
+            // Timeout, match or set point player A
+            if ((swapped ? d.isTimeoutRightRunning() : d.isTimeoutLeftRunning())) {
+                row.push("T");
+            } else if (cg < setHistory.length && setHistory[cg][swapped ? 1 : 0] >= 10 && setHistory[cg][swapped ? 1 : 0] > setHistory[cg][swapped ? 0 : 1]) {
                 // Last point, except if we are finished or in a break
                 if (d.gameMode == 'END')
                     row.push("");
@@ -139,7 +141,9 @@ function counterChanged(matchList, dataList) {
             }
             
             // And for player X
-            if (cg < setHistory.length && setHistory[cg][swapped ? 0 : 1] >= 10 && setHistory[cg][swapped ? 0 : 1] > setHistory[cg][swapped ? 1 : 0]) {
+            if ((swapped ? d.isTimeoutLeftRunning() : d.isTimeoutRightRunning())) {
+                row.push("T");
+            } else if (cg < setHistory.length && setHistory[cg][swapped ? 0 : 1] >= 10 && setHistory[cg][swapped ? 0 : 1] > setHistory[cg][swapped ? 1 : 0]) {
                 // Last point, except if we are finished or in a break
                 if (d.gameMode == 'END')
                     row.push("");
