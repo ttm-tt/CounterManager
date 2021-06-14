@@ -221,18 +221,18 @@ public class Scripting extends Liveticker {
                 return;
             
             // Check if we have to store the result
-            File outputFile = new File(outputName);
+            File outputFile = new File(getOutputName());
             boolean doSave = !outputFile.exists();
             doSave |= !s.equals(lastResult);
 
             if (!s.isEmpty() && doSave) {                                            
-                try (PrintWriter pw = new PrintWriter(outputName, StandardCharsets.UTF_8)) {
+                try (PrintWriter pw = new PrintWriter(getOutputName(), StandardCharsets.UTF_8)) {
                     // Store with current timestamp
                     pw.print(s.replaceAll("<CURRENT_TIMESTAMP>", "" + System.currentTimeMillis()));
                     lastResult = s;  // Unchanged string
                     
                     // We ignore errors in upload, for the moment at least
-                    upload(outputName, s.replaceAll("<CURRENT_TIMESTAMP>", "" + System.currentTimeMillis()));                    
+                    upload(getOutputName(), s.replaceAll("<CURRENT_TIMESTAMP>", "" + System.currentTimeMillis()));                    
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(Scripting.class.getName()).log(Level.SEVERE, null, ex);
                     lastResult = null;
@@ -281,7 +281,7 @@ public class Scripting extends Liveticker {
 
                 if (ftpDebug) {
                     // Wenn Debugging eingeschalten ist, auch den Log-Level setzen.
-                    // Eigentljch geschieht das fuer de.webgen in MainFrame, aber aus
+                    // Eigentlich geschieht das fuer de.webgen in MainFrame, aber aus
                     // seltsamen Gruenden kommt es vor, dass er zurueckgesetzt wird.
                     // Oder es wird ueberhaupt ein anderer Logger verwendet ...
                     Logger.getLogger(getClass().getName()).setLevel(Level.FINE);
@@ -307,14 +307,6 @@ public class Scripting extends Liveticker {
                 client.connect();
                 if (!ftpDirectory.isEmpty())
                     client.changeDirectory(ftpDirectory);
-
-                // always in the unas subdirectory
-                try {                            
-                    client.changeDirectory("unas");
-                } catch (com.enterprisedt.net.ftp.FTPException e) {
-                    client.createDirectory("unas");
-                    client.changeDirectory("unas");
-                }
             }
             
             uploadString(data, fileName);
@@ -391,4 +383,12 @@ public class Scripting extends Liveticker {
     };
 
     private com.enterprisedt.net.ftp.FileTransferClientInterface client = null;                    
+
+    public String getOutputName() {
+        return outputName;
+    }
+
+    public void setOutputName(String outputName) {
+        this.outputName = outputName;
+    }
 }

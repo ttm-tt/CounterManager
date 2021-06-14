@@ -13,26 +13,27 @@ function counterChanged(matchList, dataList) {
         // Use place holder instead, so we can compare with previous result
         row.push("<CURRENT_TIMESTAMP>");
         
-        // Event type
-        switch (m.cpType) {
-            case 1 :
-                row.push('S');
-                break;
-            case 2 :
-                row.push('D');
-                break;
-            case 3 :
-                row.push('X');
-                break;
-            case 4 :
-                row.push('T');
-                break;
+        // Round of
+        if (m.grModus == 1)
+            row.push('F' + m.mtRound);
+        else {
+            switch (m.grSize >> (m.mtRound - 1)) {
+                case 2 :
+                    row.push('F');
+                    break;
+                case 4 :
+                    row.push('SF');
+                    break;
+                case 8 :
+                    row.push('QF');
+                    break;
+                default :
+                    row.push('R' + (m.grSize >> (m.mtRound - 1)));
+                    break;
+            }
         }
         
-        // Round of
-        row.push('R' + (m.grSize << (m.mtRound - 1)));
-        
-        // Sex
+        // cpSex
         switch (m.cpSex) {
             case 1 :
                 row.push('M');
@@ -160,6 +161,35 @@ function counterChanged(matchList, dataList) {
                 row.push("");
             }
         }        
+        
+        // Games
+        row.push(m.mtResA);
+        row.push(m.mtResX);
+        
+        // Event type
+        switch (m.cpType) {
+            case 1 : // Singles
+                row.push('S');
+                break;
+            case 2 : // Doubles
+                row.push('D');
+                break;
+            case 3 :  // Mixed (Doubles)
+                row.push('D');
+                break;
+            case 4 : // Depends on the actual match
+                if ((m.plB != null && m.plB.plNr != 0) || (m.plY != null && m.plY.plNr != 0))
+                    row.push('D');
+                else
+                    row.push('S');
+                break;
+            default: // Should never happen
+                row.push("");
+                break;
+        }
+        
+        // And empty field
+        row.push("");
         
         return row.join(";");
     };

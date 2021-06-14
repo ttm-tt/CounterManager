@@ -11,6 +11,7 @@ public class Match {
     public String  cpName;
     public String  cpDesc;
     public int     cpType;
+    public int     cpSex;
     public String  grStage;
     public String  grName;
     public String  grDesc;

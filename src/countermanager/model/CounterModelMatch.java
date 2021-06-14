@@ -131,6 +131,13 @@ public class CounterModelMatch extends countermanager.model.database.Match imple
     }
 
     /**
+     * @return the cpSex
+     */
+    public int getCpSex() {
+        return cpSex;
+    }
+
+    /**
      * @return the grModus
      */
     public int getGrModus() {

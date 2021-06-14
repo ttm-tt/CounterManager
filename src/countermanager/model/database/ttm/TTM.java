@@ -240,7 +240,7 @@ public final class TTM implements IDatabase {
     public List<CounterModelMatch> update(int fromTable, int toTable, java.time.LocalDate date, boolean all) {
         String sql =             
             // Singles
-            "SELECT cpType, cpName, cpDesc, grName, grDesc, grStage, grModus, grSize, " +
+            "SELECT cpType, cpName, cpDesc, cpSex, grName, grDesc, grStage, grModus, grSize, " +
             "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
             "       mtTimeStamp, mtNr, 0 AS mtMS, mtRound, mtMatch, " +
             "       mtTable, mtDateTime, mtBestOf, mtMatches, 0 AS mtReverse, " +
@@ -291,7 +291,7 @@ public final class TTM implements IDatabase {
 
             // Doubles and Mixed
             "UNION " +                        
-            "SELECT cpType, cpName, cpDesc, grName, grDesc, grStage, grModus, grSize, " +
+            "SELECT cpType, cpName, cpDesc, cpSEx, grName, grDesc, grStage, grModus, grSize, " +
             "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
             "       mtTimeStamp, mtNr, 0 AS mtMS, mtRound, mtMatch, " +
             "       mtTable, mtDateTime, mtBestOf, mtMatches, 0 AS mtReverse, " +
@@ -342,7 +342,7 @@ public final class TTM implements IDatabase {
 
             // Team (Individual)
             "UNION " + 
-            "SELECT cp.cpType, cp.cpName, cp.cpDesc, gr.grName, gr.grDesc, gr.grStage, gr.grModus, gr.grSize, " +
+            "SELECT cp.cpType, cp.cpName, cp.cpDesc, cp.cpSex, gr.grName, gr.grDesc, gr.grStage, gr.grModus, gr.grSize, " +
             "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
             "       mt.mtTimeStamp, mt.mtNr, mt.mtMS AS mtMS, mt.mtRound, mt.mtMatch, " +
             "       mt.mtTable, mt.mtDateTime, mt.mtBestOf, mt.mtMatches, mt.mtReverse, " +
@@ -435,6 +435,7 @@ public final class TTM implements IDatabase {
                         int     cpType      = result.getInt(idx++);
                         String  cpName      = getString(result, idx++);
                         String  cpDesc      = getString(result, idx++);
+                        int     cpSex       = result.getInt(idx++);
                         String  grName      = getString(result, idx++);
                         String  grDesc      = getString(result, idx++);
                         String  grStage     = getString(result, idx++);
@@ -522,6 +523,7 @@ public final class TTM implements IDatabase {
 
                         match.cpType      = cpType;
                         match.cpName      = cpName;
+                        match.cpSex       = cpSex;
                         match.cpDesc      = cpDesc;
                         match.grName      = grName;
                         match.grDesc      = grDesc;
