@@ -225,8 +225,10 @@ public class Scripting extends Liveticker {
             boolean doSave = !outputFile.exists();
             doSave |= !s.equals(lastResult);
 
-            if (!s.isEmpty() && doSave) {                                            
-                try (PrintWriter pw = new PrintWriter(outputFile, StandardCharsets.UTF_8)) {
+            if (!s.isEmpty() && doSave) {     
+                outputFile.getParentFile().mkdirs();
+                
+                try (PrintWriter pw = new PrintWriter(outputFile.getPath(), StandardCharsets.UTF_8)) {
                     // Store with current timestamp
                     pw.print(s.replaceAll("<CURRENT_TIMESTAMP>", "" + System.currentTimeMillis()));
                     lastResult = s;  // Unchanged string
