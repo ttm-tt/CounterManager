@@ -221,12 +221,12 @@ public class Scripting extends Liveticker {
                 return;
             
             // Check if we have to store the result
-            File outputFile = new File(getOutputName());
+            File outputFile = new File(getLocalDirectory(), getOutputName());
             boolean doSave = !outputFile.exists();
             doSave |= !s.equals(lastResult);
 
             if (!s.isEmpty() && doSave) {                                            
-                try (PrintWriter pw = new PrintWriter(getOutputName(), StandardCharsets.UTF_8)) {
+                try (PrintWriter pw = new PrintWriter(outputFile, StandardCharsets.UTF_8)) {
                     // Store with current timestamp
                     pw.print(s.replaceAll("<CURRENT_TIMESTAMP>", "" + System.currentTimeMillis()));
                     lastResult = s;  // Unchanged string
@@ -363,6 +363,7 @@ public class Scripting extends Liveticker {
     private boolean ftpSecure = false;
     private boolean ftpDebug = false;
     private String  outputName = "tvprod.csv";
+    private String  localDirectory = "";
     private String  lastResult;
     
     private int fromTable = 1;
@@ -390,5 +391,19 @@ public class Scripting extends Liveticker {
 
     public void setOutputName(String outputName) {
         this.outputName = outputName;
+    }
+
+    /**
+     * @return the localDirectory
+     */
+    public String getLocalDirectory() {
+        return localDirectory;
+    }
+
+    /**
+     * @param localDirectory the localDirectory to set
+     */
+    public void setLocalDirectory(String localDirectory) {
+        this.localDirectory = localDirectory;
     }
 }
