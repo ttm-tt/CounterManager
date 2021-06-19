@@ -13,6 +13,7 @@ import countermanager.model.database.IDatabaseSettings;
 import countermanager.model.database.Player;
 import countermanager.model.database.Match;
 import countermanager.model.database.Team;
+import countermanager.model.database.Umpire;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -766,6 +767,20 @@ public final class TTM implements IDatabase {
     }
     
     
+    private static Umpire getUmpire(java.sql.ResultSet res, int idx) throws SQLException {
+        Umpire up = new Umpire();
+        
+        up.upNr = res.getInt(++idx);
+        up.psLast = getString(res, ++idx);
+        up.psFirst = getString(res, ++idx);
+        up.naName = getString(res, ++idx);
+        up.naDesc = getString(res, +idx);
+        up.naRegion = getString(res, ++idx);
+                        
+        return up;
+    }
+    
+    
     private static int[][] getResult(java.sql.ResultSet res, int idx) throws SQLException {
         int[][] games = new int[7][2];
         
@@ -1065,19 +1080,11 @@ public final class TTM implements IDatabase {
                         mt.mtTable = result.getInt(++idx);
                         mt.mtTimestamp = result.getTimestamp(++idx).getTime();
                         
-                        mt.up1.upNr = result.getInt(++idx);
-                        mt.up1.psLast = getString(result, ++idx);
-                        mt.up1.psFirst = getString(result, ++idx);
-                        mt.up1.naName = getString(result, ++idx);
-                        mt.up1.naDesc = getString(result, +idx);
-                        mt.up1.naRegion = getString(result, ++idx);
-                        
-                        mt.up2.upNr = result.getInt(++idx);
-                        mt.up2.psLast = getString(result, ++idx);
-                        mt.up2.psFirst = getString(result, ++idx);
-                        mt.up2.naName = getString(result, ++idx);
-                        mt.up2.naDesc = getString(result, +idx);
-                        mt.up2.naRegion = getString(result, ++idx);
+                        mt.up1 = getUmpire(result, idx);
+                        idx += 6;
+
+                        mt.up2 = getUmpire(result, idx);
+                        idx += 6;
                         
                         mt.mtResult = new int[mt.mtBestOf][2];
                         for (int i = 0; i < mt.mtBestOf && i < 7; i++) {
