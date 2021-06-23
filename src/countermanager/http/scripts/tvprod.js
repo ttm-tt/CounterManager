@@ -104,6 +104,11 @@ function counterChanged(matchList, dataList) {
                 row.push(sl ? "X" : ""); // Service
                 row.push(setHistory[cg][swapped ? 0 : 1]);
                 row.push(sr ? "X" : ""); // Service
+            } else {
+                row.push("");
+                row.push("");
+                row.push("");
+                row.push("");
             }
             
             // Add 7 games
