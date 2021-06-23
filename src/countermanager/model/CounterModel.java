@@ -474,6 +474,9 @@ public class CounterModel {
     }
     
     public boolean isLivetickerActive(int counter) {
+        if (counter < 0 || counter >= counterList.length)
+            return false;
+        
         if (counterList[counter] != null)
             return counterList[counter].isLivetickerActive();
         else
