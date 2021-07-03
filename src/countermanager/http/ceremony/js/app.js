@@ -11,6 +11,18 @@
  * 
  */
 
+/*
+ * If prestart is used flags are shown on 1st click and raised on 2nd click
+ * Clicks can be simulated via
+ *   export DISPLAY=:0
+ *   xdotool click 1
+ * Browser can be reloaded via
+ *   export DISPLAY=:0
+ *   xdotool key F5
+ * or
+ *   xdotool key Ctrl+F5
+ */
+
 /* global Symbol */
 
 (function (THREE) {
