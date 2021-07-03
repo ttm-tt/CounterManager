@@ -11,6 +11,8 @@
  * 
  */
 
+/* global Symbol */
+
 (function (THREE) {
     'use strict';
 
@@ -2792,6 +2794,7 @@
       var prestart = getParameterByName('prestart', 1);
 
       if (prestart > 0) {
+        app.raiseFlags = false;
         setTimeout(function () {
           // remove (in) visibility
           $('.bg-sky').css('visibility', '');
@@ -2836,8 +2839,14 @@
         $('.js-flag-canvas').append(app.renderer.domElement);
         window.dispatchEvent(new window.Event('resize')); // On click anywhere in browser start raising the flags
 
+        // Use "xdotool" or similiar to do it fom command line
         $('body').on('click', function () {
-          FW_App.raiseFlags = true;
+          if (window.FW_App.raiseFlags)
+            return;
+          else if ($('.bg-sky').css('visibility') !== 'visible')
+            $('.bg-sky').css('visibility', '');
+          else
+            window.FW_App.raiseFlags = true;
         });
       });
     })(window, document, jQuery);
