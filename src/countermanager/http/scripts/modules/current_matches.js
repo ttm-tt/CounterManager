@@ -41,6 +41,7 @@ export function rebuild(matches, data, ct = ((new Date()).getTime())) {
     sortData(data);
 
     initialize(matches);
+    removeNotStarted(matches);
     removeFinished(matches, data, ct);
     updateUnfinished(matches, data);
     finalize(matches, data, ct);
@@ -134,7 +135,7 @@ export function clearResult(matches) {
 
 
 /**
- * Remove finished matches from matches no longer displayed
+ * Remove finished matches from list so they are no longer displayed
  * @param {Array} matches the current list of matches
  * @param {Object} data
  * @param {Date} ct current time
@@ -155,6 +156,22 @@ export function removeFinished(matches, data, ct) {
                         " ct - minTime = " + (ct - config.minTime * 1000)
                 );
             }
+        }
+    }
+}
+
+
+/**
+ * Remove not started matches from list
+ * @param {Array} matches the current list of matches
+ */
+export function removeNotStarted(matches) {
+    for (const i in matches) {
+        if (!isStarted(matches[i])) {
+            if (debug)
+                console.log("Remove not started: remove nr " + matches[i].mtNr);
+            
+            matches[i] = null;
         }
     }
 }
@@ -310,12 +327,12 @@ export function isStarted(mt, ct = new Date().getTime()) {
         return true;
 
     if (mt.cpType == 4) {
-        if ((mt.mtDateTime > ct && mt.mtResA === 0 && mt.mtResX === 0) ||
+        if ((mt.mtResA === 0 && mt.mtResX === 0) ||
                 (mt.plAplNr === undefined || mt.plAplNr === 0 || mt.plXplNr === undefined || mt.plXplNr === 0)) {
             return false;
         }
     } else {
-        if ((mt.mtDateTime > ct && mt.mtResA === 0 && mt.mtResX === 0) ||
+        if ((mt.mtResA === 0 && mt.mtResX === 0) ||
                 (mt.plAplNr === undefined || mt.plAplNr === 0 || mt.plXplNr === undefined || mt.plXplNr === 0)) {
             return false;
         }
