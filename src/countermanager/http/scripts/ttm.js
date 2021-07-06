@@ -368,9 +368,8 @@ var ttm = new function() {
         var from = null; 
         var to = null; 
         var mtTimestamp = 0;
-        // Possibly default to the visible range
-        var fromTable = 0;
-        var toTable = 999;
+        var fromTable = Packages.countermanager.model.CounterModel.getDefaultInstance().getFromTable();
+        var toTable = Packages.countermanager.model.CounterModel.getDefaultInstance().getToTable();;
         var mtNr = 0;        
         var notStarted = false;
         var notFinished = false;
