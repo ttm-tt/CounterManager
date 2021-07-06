@@ -85,7 +85,7 @@ var ttm = new function() {
             if (args.get('fromTable') !== null)
                 fromTable = args.get('fromTable');
             if (args.get('toTable') !== null)
-                toTable = args.get('fromTable');
+                toTable = args.get('toTable');
 
             if (args.get('mtTimestamp') !== null)
                 mtTimestamp = args.get('mtTimestamp');           
@@ -396,9 +396,9 @@ var ttm = new function() {
             if (args.get('table') !== null)
                 fromTable = toTable = args.get('table');
             if (args.get('fromTable') !== null)
-                fromTable = args.get('table');
+                fromTable = args.get('fromTable');
             if (args.get('toTable') !== null)
-                toTable = args.get('table');
+                toTable = args.get('toTable');
 
             if (args.get('mtTimestamp') !== null)
                 mtTimestamp = args.get('mtTimestamp');     
