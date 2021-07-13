@@ -244,7 +244,7 @@ public final class TTM implements IDatabase {
             "SELECT cpType, cpName, cpDesc, cpSex, grName, grDesc, grStage, grModus, grSize, " +
             "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
             "       mtTimeStamp, mtNr, 0 AS mtMS, mtRound, mtMatch, " +
-            "       mtTable, mtDateTime, mtBestOf, mtMatches, 0 AS mtReverse, " +
+            "       mtTable, mtDateTime, mtBestOf, mtMatches, 0 AS mtReverse, 1 AS nmType, " +
             "       up1.upNr AS up1upnr, up1.psLast AS up1psLast, up1.psFirst AS up1psFirst, up1.naName AS up1naName, up1.naDesc AS up1naDesc, up1.naRegion AS up1naRegion, " +
             "       up2.upNr AS up2upnr, up2.psLast AS up2psLast, up2.psFirst AS up2psFirst, up2.naName AS up2naName, up2.naDesc AS up2naDesc, up2.naRegion AS up2naRegion, " +
             "       mt.mtResA, mt.mtResX, " +
@@ -295,7 +295,7 @@ public final class TTM implements IDatabase {
             "SELECT cpType, cpName, cpDesc, cpSEx, grName, grDesc, grStage, grModus, grSize, " +
             "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
             "       mtTimeStamp, mtNr, 0 AS mtMS, mtRound, mtMatch, " +
-            "       mtTable, mtDateTime, mtBestOf, mtMatches, 0 AS mtReverse, " +
+            "       mtTable, mtDateTime, mtBestOf, mtMatches, 0 AS mtReverse, 2 AS nmType, " +
             "       up1.upNr AS up1upnr, up1.psLast AS up1psLast, up1.psFirst AS up1psFirst, up1.naName AS up1naName, up1.naDesc AS up1naDesc, up1.naRegion AS up1naRegion, " +
             "       up2.upNr AS up2upnr, up2.psLast AS up2psLast, up2.psFirst AS up2psFirst, up2.naName AS up2naName, up2.naDesc AS up2naDesc, up2.naRegion AS up2naRegion, " +
             "       mt.mtResA, mt.mtResX, " +
@@ -346,7 +346,7 @@ public final class TTM implements IDatabase {
             "SELECT cp.cpType, cp.cpName, cp.cpDesc, cp.cpSex, gr.grName, gr.grDesc, gr.grStage, gr.grModus, gr.grSize, " +
             "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
             "       mt.mtTimeStamp, mt.mtNr, mt.mtMS AS mtMS, mt.mtRound, mt.mtMatch, " +
-            "       mt.mtTable, mt.mtDateTime, mt.mtBestOf, mt.mtMatches, mt.mtReverse, " +
+            "       mt.mtTable, mt.mtDateTime, mt.mtBestOf, mt.mtMatches, mt.mtReverse, nmType, " +
             "       up1.upNr AS up1upnr, up1.psLast AS up1psLast, up1.psFirst AS up1psFirst, up1.naName AS up1naName, up1.naDesc AS up1naDesc, up1.naRegion AS up1naRegion, " +
             "       up2.upNr AS up2upnr, up2.psLast AS up2psLast, up2.psFirst AS up2psFirst, up2.naName AS up2naName, up2.naDesc AS up2naDesc, up2.naRegion AS up2naRegion, " +
             "       mt.mtResA, mt.mtResX, " +
@@ -455,6 +455,7 @@ public final class TTM implements IDatabase {
                         int     mtBestOf    = result.getInt(idx++);
                         int     mtMatches   = result.getInt(idx++);
                         boolean mtReverse   = result.getBoolean(idx++);
+                        int     nmType      = result.getInt(idx++);
                         
                         int     up1upNr = result.getInt(idx++);
                         String  uppsLast = getString(result, idx++);
@@ -544,6 +545,7 @@ public final class TTM implements IDatabase {
                         match.mtBestOf    = mtBestOf;
                         match.mtMatches   = mtMatches;
                         match.mtReverse   = mtReverse;
+                        match.nmType      = nmType;
                         
                         match.up1.upNr     = up1upNr;
                         match.up1.psLast   = uppsLast;

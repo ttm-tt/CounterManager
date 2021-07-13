@@ -27,6 +27,7 @@ public class Match {
     public int     mtNr;
     public int     mtMS;
     public boolean mtReverse;
+    public int     nmType;      // Type of individual team match (1 or 2)
     public int     mttmResA;
     public int     mttmResX;
     public int     mtResA;

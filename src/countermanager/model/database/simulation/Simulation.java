@@ -201,12 +201,18 @@ public final class Simulation implements IDatabase {
         if ( teamsEach > 0 && (table % teamsEach) == 0 ) {
             match.cpType = 4;
             match.mtMS = 1;
+            if (doublesEach > 0 && (table % doublesEach) == 0)
+                match.nmType = 2;
+            else
+                match.nmType = 1;
         } else if ( doublesEach > 0 && (table % doublesEach) == 0 ) {
             match.cpType = 2;
             match.mtMS = 0;
+            match.nmType = 2;
         } else {                
             match.cpType = 1;
             match.mtMS = 0;
+            match.nmType = 1;
         }
 
         match.grName = "GR-" + table;
