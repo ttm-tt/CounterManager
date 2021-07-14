@@ -16,7 +16,7 @@ function counterChanged(matchList, dataList) {
                 
             case 4 : // Team
                 if (m.nmType == 1)
-                    return "<team>" + formatTeam(m, d) + "</teeam>";
+                    return "<team>" + formatTeam(m, d) + "</team>";
                 else if (m.nmType == 2)
                     return "<teampairs>" + formatTeamPairs(m, d) + "</teampairs>";
                 else // not possible
@@ -28,8 +28,8 @@ function counterChanged(matchList, dataList) {
     
     this.formatSingle = function(m, d) {
         return "" +
-            "<P1T1Country>" + formatPlayerCountry(m.plA) + "</P1T1Country>" +
-            "<P1T2Country>" + formatPlayerCountry(m.plX) + "</P1T2Country>" +
+            "<P1T1Country>" + formatPlayerCountry(m.plA, true) + "</P1T1Country>" +
+            "<P1T2Country>" + formatPlayerCountry(m.plX, true) + "</P1T2Country>" +
             "<T1set>" + formatGameA(m, d) + "</T1set>" +
             "<T1point>" + formatPointA(m, d) + "</T1point>" +
             "<T2set>" + formatGameA(m, d) + "</T2set>" +
@@ -39,10 +39,10 @@ function counterChanged(matchList, dataList) {
         
     this.formatPair = function(m, d) {
         return "" +
-            "<P1T1Country>" + formatPlayerCountry(m.plA) + "</P1T1Country>" +
-            "<P2T1Country>" + formatPlayerCountry(m.plB) + "</P2T1Country>" +
-            "<P1T2Country>" + formatPlayerCountry(m.plX) + "</P1T2Country>" +
-            "<P2T2Country>" + formatPlayerCountry(m.plY) + "</P2T2Country>" +
+            "<P1T1Country>" + formatPlayerCountry(m.plA, false) + "</P1T1Country>" +
+            "<P2T1Country>" + formatPlayerCountry(m.plB, false) + "</P2T1Country>" +
+            "<P1T2Country>" + formatPlayerCountry(m.plX, false) + "</P1T2Country>" +
+            "<P2T2Country>" + formatPlayerCountry(m.plY. false) + "</P2T2Country>" +
             "<T1set>" + formatGameA(m, d) + "</T1set>" +
             "<T1point>" + formatPointA(m, d) + "</T1point>" +
             "<T2set>" + formatGameX(m, d) + "</T2set>" +
@@ -52,10 +52,12 @@ function counterChanged(matchList, dataList) {
         
     this.formatTeam = function(m, d) {
         return "" +
-            "<P1T1>" + formatPlayer(m.plA) + "</P1T1>" +
-            "<P1T2>" + formatPlayer(m.plX) + "</P1T2>" +
+            "<P1T1>" + formatPlayer(m.plA, true) + "</P1T1>" +
+            "<P1T2>" + formatPlayer(m.plX, true) + "</P1T2>" +
             "<T1set>" + formatGameA(m, d) + "</T1set>" +
             "<T1point>" + formatPointA(m, d) + "</T1point>" +
+            "<T2set>" + formatGameX(m, d) + "</T2set>" +
+            "<T2point>" + formatPointX(m, d) + "</T2point>" +
             "<T1name>" + (m.tmA === null ? "" : m.tmA.tmName) + "</T1name>" +
             "<T2name>" + (m.tmX === null ? "" : m.tmX.tmName) + "</T2name>" +
             "<T1score>" + formatMatchA(m, d) + "</T1score>" +
@@ -65,10 +67,10 @@ function counterChanged(matchList, dataList) {
         
     this.formatTeamPairs = function(m, d) {
         return "" +
-            "<P1T1>" + formatPlayer(m.plA) + "</P1T1>" +
-            "<P2T1>" + formatPlayer(m.plB) + "</P2T1>" +
-            "<P1T1>" + formatPlayer(m.plA) + "</P1T1>" +
-            "<P2T2>" + formatPlayer(m.plY) + "</P2T2>" +
+            "<P1T1>" + formatPlayer(m.plA, false) + "</P1T1>" +
+            "<P2T1>" + formatPlayer(m.plB, false) + "</P2T1>" +
+            "<P1T2>" + formatPlayer(m.plX, false) + "</P1T2>" +
+            "<P2T2>" + formatPlayer(m.plY, false) + "</P2T2>" +
             "<T1set>" + formatGameA(m, d) + "</T1set>" +
             "<T1point>" + formatPointA(m, d) + "</T1point>" +
             "<T2set>" + formatGameX(m, d) + "</T2set>" +
@@ -83,7 +85,7 @@ function counterChanged(matchList, dataList) {
     this.formatMatchA = function(m, d) {
         if (m === null)
             return "0";
-
+// debugger;
         return m.mttmResA;
     };
     
@@ -128,11 +130,11 @@ function counterChanged(matchList, dataList) {
         var cg = d.getSetsLeft() + d.getSetsRight();
 
         if (gameMode == 'END') {
-            return setHistory[cg - 1][swapped ? 1 : 0];
+            return ""; // setHistory[cg - 1][swapped ? 1 : 0];
         } else if (gameMode == 'RUNNING') {
             return setHistory[cg][swapped ? 1 : 0];            
         } else {
-            return "0";
+            return "";
         }
     };
     
@@ -146,30 +148,33 @@ function counterChanged(matchList, dataList) {
         var cg = d.getSetsLeft() + d.getSetsRight();
 
         if (gameMode == 'END') {
-            return setHistory[cg - 1][swapped ? 0 : 1];
+            return ""; // setHistory[cg - 1][swapped ? 0 : 1];
         } else if (gameMode == 'RUNNING') {
             return setHistory[cg][swapped ? 0 : 1];            
         } else {
-            return "0";
+            return "";
         }        
     };
     
-    this.formatPlayerCountry = function(pl) {
+    this.formatPlayerCountry = function(pl, firstname) {
         if (pl === null)
             return "";
         if (pl.psLast === null || pl.psLast === "")
             return "";
         
-        return pl.psFirst.substring(0, 1) + ". " + pl.psLast + " (" + pl.naName + ")";
+        return formatPlayer(pl, firstname) + " (" + pl.naName + ")";
     };
     
-    this.formatPlayer = function(pl) {
+    this.formatPlayer = function(pl, firstname) {
         if (pl === null)
             return "";
         if (pl.psLast === null || pl.psLast === "")
             return "";
 
-        return pl.psLast;
+        if (firstname && pl.psFirst !== null && pl.psFirst !== "")
+            return pl.psFirst.substring(0, 1) + ". " + pl.psLast;
+        else
+            return pl.psLast;
     };
         
     if (matchList.length != dataList.length)
