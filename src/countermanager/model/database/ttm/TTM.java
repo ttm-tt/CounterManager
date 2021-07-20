@@ -868,13 +868,13 @@ public final class TTM implements IDatabase {
         String whereTeam = where;
         
         if (notStarted) {
-            where += " AND mtSet1.mtResA = 0 AND mtSet1.mtResX = 0 ";
-            whereTeam += " AND mt.mtResA = 0 AND mt.mtResX = 0 ";
+            where += " AND ISNULL(mtSet1.mtResA, 0) = 0 AND ISNULL(mtSet1.mtResX, 0) = 0 ";
+            whereTeam += " AND ISNULL(mt.mtResA, 0) = 0 AND ISNULL(mt.mtResX, 0) = 0 ";
         }
         
         if (notFinished) {
-            where += " AND 2 * mt.mtResA < mtBestOf AND 2 * mt.mtResX < mtBestOf ";
-            whereTeam += " AND 2 * mt.mtResA < mtMatches AND 2 * mt.mtResX < mtMatches ";
+            where += " AND 2 * ISNULL(mt.mtResA, 0) < mt.mtBestOf AND 2 * ISNULL(mt.mtResX, 0) < mt.mtBestOf ";
+            whereTeam += " AND 2 * ISNULL(mt.mttmResA , 0)< mtMatches AND 2 * ISNULL(mt.mttmResX,0) < mtMatches ";
         }
             
 
@@ -976,13 +976,13 @@ public final class TTM implements IDatabase {
         else 
             sql += " UNION " +
                 "SELECT cpName, cpDesc, cpType, grName, grDesc, grModus, grSize, grWinner, grNofRounds, grNofMatches, " +
-                "   mtRound, mtMatch, 1 AS mtMatches, mtBestOf, mtNr, mt.mtMS AS mtMS, mtWalkOverA, mtWalkOverX, mt.mtResA, mt.mtResX, mtReverse, " +
+                "   mtRound, mtMatch, mtMatches, mtBestOf, mtNr, mt.mtMS AS mtMS, mtWalkOverA, mtWalkOverX, mt.mtResA, mt.mtResX, mtReverse, " +
                 "   plAplNr, plApsLast, plApsFirst, plAnaName, plAnaDesc, plAnaRegion, plAplExtID, " +
                 "   plBplNr, plBpsLast, plBpsFirst, plBnaName, plBnaDesc, plBnaRegion, plBplExtID, " +
                 "   plXplNr, plXpsLast, plXpsFirst, plXnaName, plXnaDesc, plXnaRegion, plXplExtID, " +
                 "   plYplNr, plYpsLast, plYpsFirst, plYnaName, plYnaDesc, plYnaRegion, plYplExtID, " +
-                "   NULL AS tmAtmName, NULL AS tmAtmDesc, NULL AS tmAnaName, NULL AS tmAnaDesc, NULL AS tmAnaRegion, " +
-                "   NULL AS tmXtmName, NULL AS tmXtmDesc, NULL AS tmXnaName, NULL AS tmXnaDesc, NULL AS tmXnaRegion, " +
+                "   tmA.tmName AS tmAtmName, tmA.tmDesc AS tmAtmDesc, tmA.naName AS tmAnaName, tmA.naDesc AS tmAnaDesc, tmA.naRegion AS tmAnaRegion, " +
+                "   tmX.tmName AS tmXtmName, tmX.tmDesc AS tmXtmDesc, tmX.naName AS tmXnaName, tmX.naDesc AS tmXnaDesc, tmX.naRegion AS tmXnaRegion, " +
                 "   mt.mttmResA, mt.mttmResX, " +
                 "   mtDateTime, mtTable, mtTimeStamp, " +
                 "   up1.upNr AS up1upnr, up1.psLast AS up1psLast, up1.psFirst AS up1psFirst, up1.naName AS up1naName, up1.naDesc AS up1naDesc, up1.naRegion AS up1naRegion, " +
@@ -994,6 +994,8 @@ public final class TTM implements IDatabase {
                 "  FROM MtIndividualList mt " +
                 "    INNER JOIN GrList gr ON mt.grID = gr.grID " +
                 "    INNER JOIN CpList cp ON gr.cpID = cp.cpID AND cp.cpType = 4 " +
+                "    LEFT OUTER JOIN TmTeamList tmA ON mt.tmAtmID = tmA.tmID " +
+                "    LEFT OUTER JOIN TmTeamList tmX ON mt.tmXtmID = tmX.tmID " +
                 "    LEFT OUTER JOIN UpList up1 ON mt.mtUmpire = up1.upNr " +
                 "    LEFT OUTER JOIN UpList up2 ON mt.mtUmpire2 = up2.upNr " +
                 "    LEFT OUTER JOIN MtSet mtSet1 ON mtSet1.mtID = mt.mtID AND mtSet1.mtSet = 1 AND mtSet1.mtMS = mt.mtMS " +
@@ -1004,8 +1006,8 @@ public final class TTM implements IDatabase {
                 "    LEFT OUTER JOIN MtSet mtSet6 ON mtSet6.mtID = mt.mtID AND mtSet6.mtSet = 6 AND mtSet6.mtMS = mt.mtMS " +
                 "    LEFT OUTER JOIN MtSet mtSet7 ON mtSet7.mtID = mt.mtID AND mtSet7.mtSet = 7 AND mtSet7.mtMS = mt.mtMS " +
                 " WHERE mtDateTime IS NOT NULL AND mtTable IS NOT NULL " +
-                "       AND plAplNr IS NOT NULL AND plXplNR IS NOT NULL " +
-                where
+                "       AND tmAtmID IS NOT NULL AND tmXtmID IS NOT NULL " +
+                where + (notFinished ? " AND 2 * ISNULL(mt.mttmResA, 0) < mtMatches AND 2 * ISNULL(mt.mttmResX, 0) < mtMatches " : "")
             ;
         
         sql += " ORDER BY mtDateTime, mtTable, mtNr, mtMS ";
