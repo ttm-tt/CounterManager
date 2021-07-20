@@ -48,6 +48,9 @@ showService = getParameterByName("showService", 1) != 0;
 minTime = getParameterByName("minTime", minTime);
 prestart = getParameterByName("prestart", prestart);
 
+if (getParameterByName('debug', 0) != 0)
+    Matches.setDebug(true);
+
 // Set configuration
 Matches.setConfig({minTime: minTime, prestart: prestart});
 
@@ -81,7 +84,7 @@ update(args);
 function update(args) {
     if (parent !== null && parent != this && parent.show !== undefined && !parent.show())
         return;
-
+    
     xmlrpc(
             "../RPC2", "ttm.listNextMatches", [args],
             function success(data) {
@@ -103,11 +106,14 @@ function show(start, mtTimestamp) {
         // Reload
         var from = undefined;
         for (var i in matches) {
-            if (matches[i] == undefined)
+            if (matches[i] == undefined || matches[i][0] == undefined)
+                continue;
+            
+            if (Matches.isFinished(matches[i][0]))
                 continue;
 
-            if (from == undefined || from > matches[i].mtDateTime)
-                from = matches[i].mtDateTime;
+            if (from == undefined || from > matches[i][0].mtDateTime)
+                from = matches[i][0].mtDateTime;
         }
 
         // Attribute zuruecksetzen
@@ -155,15 +161,20 @@ function doShow(start, mtTimestamp) {
             ++start;
             continue;
         }
-
-        // Ignore matches withouot table
-        if (matches[table][0].mtTable == 0) {
+        
+        var mt = matches[table][0];
+        
+        if (mt === null || mt === undefined) {
+            ++start;
+            continue;
+        }
+        
+        // Ignore matches without table
+        if (mt.mtTable == 0) {
             ++start;
             continue;
         }
 
-        var mt = matches[table][0];
-        
         var tr = formatMatch(mt, ((++matchCount % 2) == 0 ? 'even' : 'odd'));
         $('#table tbody').append(tr);
 
