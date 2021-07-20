@@ -142,19 +142,33 @@ export function clearResult(matches) {
  */
 export function removeFinished(matches, data, ct) {
     for (const i in matches) {
-        if (isFinished(matches[i]) && matches[i].mtTimestamp < (ct - config.minTime * 1000)) {
-            if (debug)
-                console.log("Remove inished: remove nr " + matches[i].mtNr);
-            
-            matches[i] = null;
+        if (isFinished(matches[i]))  {
+            if (matches[i].mtTimestamp < (ct - config.minTime * 1000)) {
+                if (debug)
+                    console.log("Remove finished on table " + i + ": remove nr " + matches[i].mtNr);
+
+                matches[i] = null;
+            } else {
+                if (debug) {
+                    console.log(
+                            "Remove finished on table " + i + ": keep nr " + matches[i].mtNr + 
+                            " finished = " + isFinished(matches[i]) + "," + 
+                            " timestamp = " + matches[i].mtTimestamp + "," +
+                            " ct - minTime = " + (ct - config.minTime * 1000)
+                    );
+                }
+            }
+        } else if (matches[i] !== null) {
+            if (debug) {
+                console.log(
+                    "Remove finished on table " + i + ": keep unfinished nr " + matches[i].mtNr
+                );
+            }            
         } else {
             if (debug) {
                 console.log(
-                        "Remove finished: keep nr " + matches[i].mtNr + 
-                        " finished = " + isFinished(matches[i]) + "," + 
-                        " timestamp = " + matches[i].mtTimestamp + "," +
-                        " ct - minTime = " + (ct - config.minTime * 1000)
-                );
+                    "Match on table " + i + " is null"
+                );   
             }
         }
     }
@@ -184,14 +198,20 @@ export function removeNotStarted(matches) {
  */
 export function updateUnfinished(matches, data) {
     for (const i in data) {
+        if (data[i] === null || data[i] === undefined)
+            continue;
+        
         const mtTable = data[i].mtTable;
         
         if (matches.length <= mtTable)
             matches[mtTable] = null;
         
+        if (matches[mtTable] === undefined)
+            matches[mtTable] = null;
+        
         const match = matches[mtTable];
         
-        if (matches[mtTable] === null) {
+        if (match === null) {
             if (!isFinished(data[i])) {
                 if (debug)
                     console.log("Update unfinished: insert item " + i + " (" + data[i].mtNr + ")");
@@ -290,7 +310,7 @@ export function isFinished(mt) {
     if (mt === undefined || mt === null)
         return false;
 
-    if (mt.mtMatches > 1 && (2 * mt.mttmResA > mt.mtMatches || 2 * mt.mttmResX > mt.mtMatches))
+    if (mt.mtMatches > 1 && ((2 * mt.mttmResA > mt.mtMatches) || (2 * mt.mttmResX > mt.mtMatches)))
         return true;
 
     if (mt.mtWalkOverA || mt.mtWalkOverX) {
@@ -299,7 +319,7 @@ export function isFinished(mt) {
         return true;
     }
 
-    if (2 * mt.mtResA > mt.mtBestOf || 2 * mt.mtResX > mt.mtBestOf) {
+    if ((2 * mt.mtResA > mt.mtBestOf) || (2 * mt.mtResX > mt.mtBestOf)) {
         if (debug)
             console.log('Finished: nr = ' + mt.mtNr + ', resA = ' + mt.mtResA + ', resX = ' + mt.mtResX + ', bestOf = ' + mt.mtBestOf);
         return true;
