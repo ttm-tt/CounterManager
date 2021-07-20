@@ -383,13 +383,9 @@ var ttm = new function() {
             }            
             if (args.get('from') !== null) {
                 from = Packages.java.time.LocalDateTime.parse(this.formatDateTime(args.get('from')));
-                if (to === null)
-                    to = Packages.java.time.LocalDateTime.parse('2070-12-31T23:59:59.999');
             }            
             if (args.get('to') !== null) {
                 to = Packages.java.time.LocalDateTime.parse(this.formatDateTime(args.get('to')));
-                if (from === null)
-                    from = Packages.java.time.LocalDateTime.parse('1970-01-01T00:00:00.000');
             }
             
             if (args.get('table') !== null)
@@ -415,6 +411,10 @@ var ttm = new function() {
         if (from === null && to === null) {
             from = Packages.java.time.LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
             to = Packages.java.time.LocalDateTime.now().withHour(23).withMinute(59).withSecond(59).withNano(999999);
+        } else if (from === null) {
+            from = to.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        } else if (to === null) {
+            to = from.withHour(23).withMinute(59).withSecond(59).withNano(999999);
         }
 
         var db = Packages.countermanager.model.CounterModel.getDefaultInstance().getDatabase();    
