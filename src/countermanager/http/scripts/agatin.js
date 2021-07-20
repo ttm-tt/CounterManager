@@ -32,8 +32,8 @@ function counterChanged(matchList, dataList) {
             "<P1T2Country>" + formatPlayerCountry(m.plX, true) + "</P1T2Country>" +
             "<T1set>" + formatGameA(m, d) + "</T1set>" +
             "<T1point>" + formatPointA(m, d) + "</T1point>" +
-            "<T2set>" + formatGameA(m, d) + "</T2set>" +
-            "<T2point>" + formatPointA(m, d) + "</T2point>"
+            "<T2set>" + formatGameX(m, d) + "</T2set>" +
+            "<T2point>" + formatPointX(m, d) + "</T2point>"
         ;
     };
         
@@ -42,11 +42,11 @@ function counterChanged(matchList, dataList) {
             "<P1T1Country>" + formatPlayerCountry(m.plA, false) + "</P1T1Country>" +
             "<P2T1Country>" + formatPlayerCountry(m.plB, false) + "</P2T1Country>" +
             "<P1T2Country>" + formatPlayerCountry(m.plX, false) + "</P1T2Country>" +
-            "<P2T2Country>" + formatPlayerCountry(m.plY. false) + "</P2T2Country>" +
+            "<P2T2Country>" + formatPlayerCountry(m.plY, false) + "</P2T2Country>" +
             "<T1set>" + formatGameA(m, d) + "</T1set>" +
             "<T1point>" + formatPointA(m, d) + "</T1point>" +
             "<T2set>" + formatGameX(m, d) + "</T2set>" +
-            "<T2point>" + formatPointA(m, d) + "</T2point>"
+            "<T2point>" + formatPointX(m, d) + "</T2point>"
         ;        
     };
         
@@ -121,6 +121,7 @@ function counterChanged(matchList, dataList) {
     };
     
     this.formatPointA = function(m, d) {
+        // debugger;
         if (d === null)
             return "0";
         
