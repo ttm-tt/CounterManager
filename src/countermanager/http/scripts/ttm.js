@@ -370,7 +370,6 @@ var ttm = new function() {
         var mtTimestamp = 0;
         var fromTable = Packages.countermanager.model.CounterModel.getDefaultInstance().getFromTable();
         var toTable = Packages.countermanager.model.CounterModel.getDefaultInstance().getToTable();;
-        var mtNr = 0;        
         var notStarted = false;
         var notFinished = false;
         var all = false;
@@ -407,7 +406,8 @@ var ttm = new function() {
                 all = args.get('all') != 0;                  // Accept converson
         }
         
-        // If no date was define the default is now
+        // If no date was defined the default is now
+        // If either from or to are not defined the default is end or start if that day
         if (from === null && to === null) {
             from = Packages.java.time.LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
             to = Packages.java.time.LocalDateTime.now().withHour(23).withMinute(59).withSecond(59).withNano(999999);
@@ -536,22 +536,22 @@ var ttm = new function() {
         var cpName = args.get('cpName');
         var grName = args.get('grName');
         if (cpName === null || grName === null)
-            return res;
+            return array;
 
         var flagType = args.get('flagType') || 'Name';
         
         var sql = 
                 "SELECT na" + flagType + " AS plAnaName, NULL AS plBnaName, stPos " +
                 "  FROM StSingleList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
-                " WHERE cpType = 1 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos < 4 " +
+                " WHERE cpType = 1 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= 4 " +
                 "UNION " +
                 "SELECT plna" + flagType + " AS plAnaName, bdna" + flagType + " AS plBnaName, stpos" +
                 "  FROM StDoubleList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
-                " WHERE (cpType = 2 OR cpType = 3) AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos < 4 " +
+                " WHERE (cpType = 2 OR cpType = 3) AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= 4 " +
                 "UNION " +
                 "SELECT na" + flagType + " AS plAnaName, NULL AS plBnaName, stPos " +
                 "  FROM StTeamList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
-                " WHERE cpType = 4 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos < 4 " +
+                " WHERE cpType = 4 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= 4 " +
                 " ORDER BY stPos"
         ;
         
