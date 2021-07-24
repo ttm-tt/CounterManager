@@ -105,7 +105,7 @@ public class HTTP {
         
         try {
             httpServer = HttpServer.create();
-            httpServer.bind(new InetSocketAddress(port), 5);
+            httpServer.bind(new InetSocketAddress(port), 10);
         } catch (IOException ex) {
             Logger.getLogger(HTTP.class.getName()).log(Level.SEVERE, null, ex);
             httpServer = null;
