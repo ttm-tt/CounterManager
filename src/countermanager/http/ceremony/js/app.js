@@ -8,6 +8,7 @@
  * damping: smoothing of wobbling, use 0.3 on Raspberry
  * 1, 2, 3, 4: flags to use for 1st, 2nd, ... place
  * cpName, grName: CP and GR to get the flags for 1st, 2nd, ... place
+ * duration: time to raise the flags,default 20 (seconds)
  * 
  */
 
@@ -2736,7 +2737,7 @@
       var flags = fromQuery();
       var imgWidth = getParameterByName('flagWidth', 'auto');
       var imgHeight = getParameterByName('flagHeight', 'auto');
-      var duration = parseInt(getParameterByName('duration', 30));
+      var duration = parseInt(getParameterByName('duration', 20));
       var app = new App({
         scene: buildScene(),
         camera: buildCamera(),
