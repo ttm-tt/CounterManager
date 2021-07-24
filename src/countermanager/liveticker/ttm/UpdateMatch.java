@@ -113,7 +113,10 @@ class UpdateMatch {
     }
     
     public void swapResult() {
-        int tmpInt = mtResA;
+        int tmpInt;
+        boolean tmpBool;
+        
+        tmpInt = mtResA;
         mtResA = mtResX;
         mtResX = tmpInt;
         
@@ -123,7 +126,19 @@ class UpdateMatch {
                 mtSets[i][0] = mtSets[i][1];
                 mtSets[i][1] = tmpInt;
             }
-        }                
+        }  
+        
+        tmpBool = timeoutLeft;
+        timeoutLeft = timeoutRight;
+        timeoutRight = tmpBool;
+        
+        tmpBool = timeoutLeftRunning;
+        timeoutLeftRunning = timeoutRightRunning;
+        timeoutRightRunning = tmpBool;
+
+        tmpBool = serviceLeft;
+        serviceLeft = serviceRight;
+        serviceRight = tmpBool;
     }
     
     public void reverse() {
