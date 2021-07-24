@@ -2657,7 +2657,7 @@
       flags = [];
 
       for (var i = 0; i < 4; i++) {
-        var imgURL = getParameterByName('' + (i + 1), null) || 'AUT';
+        var imgURL = getParameterByName('' + (i + 1), null) || 'ETTU';
         flags.push(imgURL);
       }
 
