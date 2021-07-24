@@ -544,11 +544,11 @@ var ttm = new function() {
                 "SELECT na" + flagType + " AS plAnaName, NULL AS plBnaName, stPos " +
                 "  FROM StSingleList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
                 " WHERE cpType = 1 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= 4 " +
-                "UNION " +
+                "UNION ALL " +
                 "SELECT plna" + flagType + " AS plAnaName, bdna" + flagType + " AS plBnaName, stpos" +
                 "  FROM StDoubleList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
                 " WHERE (cpType = 2 OR cpType = 3) AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= 4 " +
-                "UNION " +
+                "UNION ALL " +
                 "SELECT na" + flagType + " AS plAnaName, NULL AS plBnaName, stPos " +
                 "  FROM StTeamList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
                 " WHERE cpType = 4 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= 4 " +
