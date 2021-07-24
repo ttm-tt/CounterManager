@@ -447,9 +447,15 @@ public final class TTM extends Liveticker {
                 if (counterData.getGameMode() != CounterData.GameMode.END)
                     ; // Nix. Nur der folgende Code soll ausgeschalten werden
                 else if (2 * counterData.getSetsLeft() > counterData.getBestOf()) {
-                    updateMatch.tmA.mtRes++;
+                    if (counterMatch.mtReverse) 
+                        ++updateMatch.tmX.mtRes;
+                    else
+                        ++updateMatch.tmA.mtRes;
                 } else if (2 * counterData.getSetsRight() > counterData.getBestOf()) {
-                    updateMatch.tmX.mtRes++;
+                    if (counterMatch.mtReverse) 
+                        ++updateMatch.tmA.mtRes;
+                    else
+                        ++updateMatch.tmX.mtRes;
                 }
             }
         }
