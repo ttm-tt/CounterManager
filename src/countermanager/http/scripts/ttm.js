@@ -481,6 +481,21 @@ var ttm = new function() {
                 Packages.countermanager.model.CounterModel.getDefaultInstance().getServiceAX(list[idx].mtTable, list[idx].mtNr, list[idx].mtMS)
             );
             
+            row.put('mtGameRunning', 
+                Packages.countermanager.model.CounterModel.getDefaultInstance().isGameRunning(list[idx].mtTable, list[idx].mtNr, list[idx].mtMS)
+            );
+    
+            // Ensure that running matches have a result
+            if (row.get('mtGameRunning') && !row.get('mtResult')) {
+                row.put('mtResult', new Packages.java.util.Vector());
+                for (var idx = 0; idx < row.get('mtBestOf'); ++idx) {
+                    var set = new Packages.java.util.Vector();
+                    set.add(0);
+                    set.add(0);
+                    row.get('mtResult').add(set);
+                }
+            }
+            
             array.add(row);
         }
 

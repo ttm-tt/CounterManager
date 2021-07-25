@@ -393,6 +393,19 @@ import java.io.IOException;
         return counterData.getGameMode() == CounterData.GameMode.RUNNING;
     }
     
+    public boolean isGameRunning(int mtnr, int mtms) {
+        // If this is the correct match?
+        if (match == null || match.mtNr != mtnr || match.mtMS != mtms)
+            return false;
+        
+        // And do we have data?
+        if (counterData == null)
+            return false;
+        
+        // And is the state RUNNING?
+        return counterData.getTimeMode() == CounterData.TimeMode.MATCH;
+    }
+    
     // Returns who has the service: -1 for A, +1 for X, 0 for none
     public int getServiceAX(int mtnr, int mtms) {
         // Validate match

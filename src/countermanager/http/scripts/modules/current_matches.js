@@ -346,6 +346,9 @@ export function isStarted(mt, ct = new Date().getTime()) {
     if (mt.mtResult !== undefined && mt.mtResult.length > 0 && (mt.mtResult[0][0] > 0 || mt.mtResult[0][1] > 0))
         return true;
 
+    if (mt.mtGameRunning)
+        return true;
+
     if (mt.cpType == 4) {
         if ((mt.mtResA === 0 && mt.mtResX === 0) ||
                 (mt.plAplNr === undefined || mt.plAplNr === 0 || mt.plXplNr === undefined || mt.plXplNr === 0)) {
@@ -357,6 +360,6 @@ export function isStarted(mt, ct = new Date().getTime()) {
             return false;
         }
     }
-
+    
     return true;
 }

@@ -299,9 +299,7 @@ function formatMatch(mt, idx) {
                 } else if (mt.mtResult == undefined || mt.mtResult.length <= (mt.mtResA + mt.mtResX)) {
                     $('#top .points').html('0');
                     $('#bottom .points').html('0');
-                } else if (mt.mtResA + mt.mtResX > 0 &&
-                        mt.mtResult[mt.mtResA + mt.mtResX][0] == 0 &&
-                        mt.mtResult[mt.mtResA + mt.mtResX][1] == 0) {
+                } else if (!mt.mtGameRunning) {
                     $('#top .points').html(mt.mtResult[mt.mtResA + mt.mtResX - 1][0]);
                     $('#bottom .points').html(mt.mtResult[mt.mtResA + mt.mtResX - 1][1]);
                 } else {

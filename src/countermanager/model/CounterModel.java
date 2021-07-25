@@ -491,6 +491,14 @@ public class CounterModel {
         return counterList[counter].isMatchRunning(mtnr, mtms);
     }
     
+    public boolean isGameRunning(int table, int mtnr, int mtms) {
+        int counter = table - tableOffset;
+        
+        if (counter < 0 || counter >= counterList.length || counterList[counter] == null)
+            return false;
+        return counterList[counter].isGameRunning(mtnr, mtms);
+    }
+    
     public int getServiceAX(int table, int mtnr, int mtms) {
         int counter = table - tableOffset;
         

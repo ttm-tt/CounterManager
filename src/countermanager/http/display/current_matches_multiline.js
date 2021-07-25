@@ -331,9 +331,7 @@ function formatMatch(mt, clazz) {
                 --mtResA;
             if (mtResX == mt.mtBestOf)
                 --mtResX;
-        } else if (mt.mtResA + mt.mtResX > 0 && 
-                mt.mtResult[mt.mtResA + mt.mtResX][0] == 0 && 
-                mt.mtResult[mt.mtResA + mt.mtResX][1] == 0) {
+        } else if (!mt.mtGameRunning) {
             // Start of next game or match finished
             left += '<td class="points">' + mt.mtResult[mt.mtResA + mt.mtResX - 1][0] + '</td>';
             right += '<td class="points">' + mt.mtResult[mt.mtResA + mt.mtResX - 1][1] + '</td>';            
