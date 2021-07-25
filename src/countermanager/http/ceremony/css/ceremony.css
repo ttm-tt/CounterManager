@@ -1,3 +1,7 @@
+body {
+    background-color: black;
+}
+
 .bg-sky {
     background: url("../img/blue-sky.jpg") no-repeat;
     background-size: cover;

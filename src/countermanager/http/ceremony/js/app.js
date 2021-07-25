@@ -9,11 +9,12 @@
  * 1, 2, 3, 4: flags to use for 1st, 2nd, ... place
  * cpName, grName: CP and optional GR to get the flags for 1st, 2nd, ... place
  * duration: time to raise the flags,default 20 (seconds)
+ * start: How to start. Values are 'auto' (immediate start), and 'click' (start by left click)
  * 
  */
 
 /*
- * If prestart is used flags are shown on 1st click and raised on 2nd click
+ * If start 'click' is used flags are shown on 1st click and raised on 2nd click
  * Clicks can be simulated via
  *   export DISPLAY=:0
  *   xdotool click 1
@@ -21,6 +22,7 @@
  *   export DISPLAY=:0
  *   xdotool key F5
  * or
+ *   export DISPLAY=:0
  *   xdotool key Ctrl+F5
  */
 
@@ -2804,15 +2806,12 @@
 
       var app = buildApp();
       initialized = true;
-      var prestart = getParameterByName('prestart', 1);
+      var start = getParameterByName('start', 'auto');
 
-      if (prestart > 0) {
+      if (start === 'click') {
+        // set invisible
+        $('.bg-sky').css('visibility', 'hidden');
         app.raiseFlags = false;
-        setTimeout(function () {
-          // remove (in) visibility
-          $('.bg-sky').css('visibility', '');
-          app.raiseFlags = true;
-        }, prestart * 1000);
       } else {
         // remove (in) visibility
         $('.bg-sky').css('visibility', '');
