@@ -531,16 +531,55 @@ var ttm = new function() {
     
     this.listNationsForCeremony = function(args) {
         // Ergebnis muss ein Java-Typ sein
-        var array = new java.util.Vector();
+        var ret = new java.util.Vector();
 
         var cpName = args.get('cpName');
         var grName = args.get('grName');
-        if (cpName === null || grName === null)
-            return array;
+        
+        if (cpName === '')
+            cpName = null;
+        if (grName === '')
+            grName = null;
+              
+        if (cpName === null)
+            return ret;
+        
+        var connection = getConnection();
+        var statement = null;
+        var result = null;
+        
+        var sql = '';
+
+        if (grName === null) {
+            // Take the group with the highes sort order and where the winner is 1
+            sql = 
+                "SELECT a.grName " +
+                "  FROM GrList a INNER JOIN CpList cp on a.cpID = cp.cpID " +
+                "       LEFT OUTER JOIN GrList b ON a.cpID = b.cpID AND a.grSortOrder < b.grSortOrder " +
+                " WHERE b.grID IS NULL AND cp.cpName = '" + cpName + "' AND a.grWinner = 1 "
+            ;
+            
+            statement = connection.createStatement();
+            result = statement.executeQuery(sql);
+            // First result
+            if (result.next())
+                grName = result.getString(1);
+            
+            // No other result is allowed
+            if (result.next())
+                grName = null;
+            
+            result.close();
+            statement.close();
+        }
+        
+        // None or more than one group found
+        if (grName === null)
+            return ret;
 
         var flagType = args.get('flagType') || 'Name';
         
-        var sql = 
+        sql = 
                 "SELECT na" + flagType + " AS plAnaName, NULL AS plBnaName, stPos " +
                 "  FROM StSingleList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
                 " WHERE cpType = 1 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= 4 " +
@@ -555,30 +594,30 @@ var ttm = new function() {
                 " ORDER BY stPos"
         ;
         
-        var connection = getConnection();
-        var statement = connection.createStatement();
-        var result = statement.executeQuery(sql);
+        connection = getConnection();
+        statement = connection.createStatement();
+        result = statement.executeQuery(sql);
         
         while (result.next()) {
             var plAnaName = result.getString(1);
             var plBnaName = result.getString(2);
             
             if (plAnaName === null) {
-                array.clear();
+                ret.clear();
                 break;
             }
             
             if (plBnaName === null || plBnaName === plAnaName)
-                array.add(plAnaName);
+                ret.add(plAnaName);
             else
-                array.add(plAnaName + "," + plBnaName);
+                ret.add(plAnaName + "," + plBnaName);
         }
         
         result.close();
         statement.close();
                 
-        return array;
-    }
+        return ret;
+    };
     
     // Some helpers
     this.getTime = function(result, idx) {

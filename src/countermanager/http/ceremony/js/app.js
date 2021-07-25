@@ -7,7 +7,7 @@
  * Parameters:
  * damping: smoothing of wobbling, use 0.3 on Raspberry
  * 1, 2, 3, 4: flags to use for 1st, 2nd, ... place
- * cpName, grName: CP and GR to get the flags for 1st, 2nd, ... place
+ * cpName, grName: CP and optional GR to get the flags for 1st, 2nd, ... place
  * duration: time to raise the flags,default 20 (seconds)
  * 
  */
@@ -2638,7 +2638,7 @@
       var grName = getParameterByName('grName', '');
       var flagType = getParameterByName('flagType', 'Name');
       
-      if (cpName !== '' && grName !== '') {
+      if (cpName !== '') {
         xmlrpc("../RPC2", "ttm.listNationsForCeremony", [{cpName : cpName, grName : grName}], 
           function success(data) {
             if (data.length === 4) {
