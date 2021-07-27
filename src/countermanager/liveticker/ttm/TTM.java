@@ -436,9 +436,6 @@ public final class TTM extends Liveticker {
             updateMatch.copyGames(counterMatch.getMtResult());
         }
         
-        if (counterData != null && counterData.isSwapped())
-            updateMatch.swapResult();
-        
         if (counterMatch.cpType == 4) {
             if (counterData != null) {
                 // Sobald das Spiel in die DB eingetragen wurde sehe ich das
@@ -447,12 +444,15 @@ public final class TTM extends Liveticker {
                 if (counterData.getGameMode() != CounterData.GameMode.END)
                     ; // Nix. Nur der folgende Code soll ausgeschalten werden
                 else if (2 * counterData.getSetsLeft() > counterData.getBestOf()) {
-                    if (counterMatch.mtReverse) 
+                    // counterData may be the other way round than updateMath.
+                    // Just: why? It is not mtRevese, nor swapped, not an XOR of both
+                    // So I take a simple (heuristic) approach and compare plNr
+                    if (counterData.getPlayerNrLeft() == updateMatch.plX.plNr) 
                         ++updateMatch.tmX.mtRes;
                     else
                         ++updateMatch.tmA.mtRes;
                 } else if (2 * counterData.getSetsRight() > counterData.getBestOf()) {
-                    if (counterMatch.mtReverse) 
+                    if (counterData.getPlayerNrRight() == updateMatch.plA.plNr)
                         ++updateMatch.tmA.mtRes;
                     else
                         ++updateMatch.tmX.mtRes;
@@ -460,6 +460,9 @@ public final class TTM extends Liveticker {
             }
         }
 
+        if (counterData != null && counterData.isSwapped())
+            updateMatch.swapResult();
+        
         updateMatch.resultLocation = this.resultLocation;
         
         if (counterData != null) {
