@@ -25,9 +25,9 @@ public class CounterData {
     // Get info if we cannot enter expedite system
     public boolean getTimegameBlock() {return false;}
     
-    public enum GameMode  {RESET, RUNNING, WARMUP, END, INACTIVE}
+    public static enum GameMode  {RESET, RUNNING, WARMUP, END, INACTIVE}
     
-    public enum TimeMode  {NONE, PREPARE, MATCH, BREAK, TIMEOUT, INJURY}
+    public static enum TimeMode  {NONE, PREPARE, MATCH, BREAK, TIMEOUT, INJURY}
     
     private boolean   alert;
     private GameMode  gameMode;
