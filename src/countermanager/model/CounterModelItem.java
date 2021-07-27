@@ -402,8 +402,12 @@ import java.io.IOException;
         if (counterData == null)
             return false;
         
-        // And is the state RUNNING?
-        return counterData.getTimeMode() == CounterData.TimeMode.MATCH;
+        // Is game mode  RUNNING?
+        if (counterData.getGameMode() != CounterData.GameMode.RUNNING)
+            return false;
+        
+        // And is not BREAK (INJURY etc is like a running game)
+        return counterData.getTimeMode() != CounterData.TimeMode.BREAK;
     }
     
     // Returns who has the service: -1 for A, +1 for X, 0 for none
