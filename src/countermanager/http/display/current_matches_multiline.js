@@ -332,9 +332,14 @@ function formatMatch(mt, clazz) {
             if (mtResX == mt.mtBestOf)
                 --mtResX;
         } else if (!mt.mtGameRunning) {
-            // Start of next game or match finished
-            left += '<td class="points">' + mt.mtResult[mt.mtResA + mt.mtResX - 1][0] + '</td>';
-            right += '<td class="points">' + mt.mtResult[mt.mtResA + mt.mtResX - 1][1] + '</td>';            
+            if (mt.mtResA == 0 && mt.mtResX == 0) {
+                left += '<td class="points"></td>';
+                right += '<td class="points"></td>';                 
+            } else {
+                // Start of next game or match finished
+                left += '<td class="points">' + mt.mtResult[mt.mtResA + mt.mtResX - 1][0] + '</td>';
+                right += '<td class="points">' + mt.mtResult[mt.mtResA + mt.mtResX - 1][1] + '</td>'; 
+            }
 
             // If the match has just finished show games as if we are still in the last game
             if (mtResA == mt.mtBestOf)
