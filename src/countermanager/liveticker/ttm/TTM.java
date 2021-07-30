@@ -444,16 +444,16 @@ public final class TTM extends Liveticker {
                 if (counterData.getGameMode() != CounterData.GameMode.END)
                     ; // Nix. Nur der folgende Code soll ausgeschalten werden
                 else if (2 * counterData.getSetsLeft() > counterData.getBestOf()) {
-                    if (counterData.isSwapped() != (counterData.getPlayerNrLeft() == updateMatch.plX.plNr))
-                      System.out.println(json.toJson(new Object[] {"Left", counterData, counterMatch, updateMatch}));
+                    // if (counterData.isSwapped() != (counterData.getPlayerNrLeft() == updateMatch.plX.plNr))
+                    //   System.out.println(json.toJson(new Object[] {"Left", counterData, counterMatch, updateMatch}));
                     // If counterData is swapped, it is the other way round
                     if (counterData.isSwapped()) 
                         ++updateMatch.tmX.mtRes;
                     else
                         ++updateMatch.tmA.mtRes;
                 } else if (2 * counterData.getSetsRight() > counterData.getBestOf()) {
-                    if (counterData.isSwapped() != (counterData.getPlayerNrRight() == updateMatch.plA.plNr))
-                      System.out.println(json.toJson(new Object[] {"Left", counterData, counterMatch, updateMatch}));
+                    // if (counterData.isSwapped() != (counterData.getPlayerNrRight() == updateMatch.plA.plNr))
+                    //   System.out.println(json.toJson(new Object[] {"Left", counterData, counterMatch, updateMatch}));
                     if (counterData.isSwapped())
                         ++updateMatch.tmA.mtRes;
                     else
