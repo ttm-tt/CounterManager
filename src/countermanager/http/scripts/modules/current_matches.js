@@ -43,7 +43,7 @@ export function rebuild(matches, data, ct = ((new Date()).getTime())) {
     initialize(matches);
     removeNotStarted(matches);
     removeFinished(matches, data, ct);
-    updateUnfinished(matches, data);
+    updateUnfinished(matches, data, ct);
     finalize(matches, data, ct);
 
     updateMtTimestamp(data);
@@ -196,9 +196,13 @@ export function removeNotStarted(matches) {
  * @param {Array} matches the current list of matches
  * @param {Object} data
  */
-export function updateUnfinished(matches, data) {
+export function updateUnfinished(matches, data, ct) {
     for (const i in data) {
         if (data[i] === null || data[i] === undefined)
+            continue;
+        
+        // Match is too far in the future and should not be shown yet
+        if (data[i].mtDateTime > ct + (config.prestart * 1000))
             continue;
         
         const mtTable = data[i].mtTable;
@@ -291,6 +295,9 @@ export function updateResult(matches, data) {
         return;
 
     for (const i in data) {
+        if (matches[data[i].mtTable] === undefined)
+            continue;
+        
         if (matches[data[i].mtTable] !== null && matches[data[i].mtTable][0] !== null) {
             // We check the first match per table only, the other ones can't have started    
             // No resceduled matches, only updates of results
