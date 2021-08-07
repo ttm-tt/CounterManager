@@ -335,7 +335,15 @@ public final class TTM extends Liveticker {
 
     @Override
     public void counterRemoved(int counter) {
-        
+        synchronized(expires) {
+            if (expires.get(counter) != null)
+                expires.remove(counter);
+        }
+
+        synchronized(updates) {
+            if (updates.get(counter) != null)
+                updates.remove(counter);
+        }
     }
 
     @Override
