@@ -78,13 +78,15 @@ if (getParameterByName('fromTable', 0) != 0)
 if (getParameterByName('toTable', 0) != 0)
     args['toTable'] = getParameterByName('toTable', 0);
 
-// TODO: Nur bis jetzt, also 'to' : date anhaengen.
 update(args);
 
 function update(args) {
     if (parent !== null && parent != this && parent.show !== undefined && !parent.show())
         return;
     
+    // Not beyond prestart seconds in the future
+    args['to'] = (new Date()).getTime() + prestart * 1000;
+
     xmlrpc(
             "../RPC2", "ttm.listNextMatches", [args],
             function success(data) {
@@ -125,7 +127,9 @@ function show(start, mtTimestamp) {
         else
             delete args['from'];
         
-        // TODO: to berechnen
+        // But not beyond prestart seconds in the future
+        args['to'] = (new Date()).getTime() + prestart * 1000;
+
         update(args);
 
         return;
