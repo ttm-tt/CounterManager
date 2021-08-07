@@ -373,6 +373,7 @@ var ttm = new function() {
         var notStarted = false;
         var notFinished = false;
         var all = false;
+        var individual = true;
         
         if (arguments.length > 0 && args.size() > 0) {
             if (args.get('date') !== null) {                
@@ -404,6 +405,9 @@ var ttm = new function() {
             
             if (args.get('all') !== null)
                 all = args.get('all') != 0;                  // Accept converson
+            
+            if(args.get('individual') !== null)
+                individual = args.get('individual') != 0;
         }
         
         // If no date was defined the default is now
@@ -421,7 +425,7 @@ var ttm = new function() {
         if (db === null)
             return new Packages.java.util.Vector();
         
-        var list = db.listMatches(mtTimestamp, from, to, fromTable, toTable, true, notStarted, notFinished);
+        var list = db.listMatches(mtTimestamp, from, to, fromTable, toTable, individual, notStarted, notFinished);
         
         // Ergebnis muss ein Java-Typ sein
         var array = new Packages.java.util.Vector();
@@ -448,7 +452,7 @@ var ttm = new function() {
                 var tm = list[idx].tmA;
                 list[idx].tmA = list[idx].tmX;
                 list[idx].tmX = tm;
-                
+
                 for (i = 0; i < list[idx].mtResult.length; ++i) {
                     var r = list[idx].mtResult[i][0];
                     list[idx].mtResult[i][0] = list[idx].mtResult[i][1];

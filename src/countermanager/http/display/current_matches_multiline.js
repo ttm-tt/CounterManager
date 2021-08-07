@@ -16,9 +16,9 @@
  *      firstNameLength:    default -1          Max. Laenge der Voramen (default: alles)
  *      lastNameLength:     default -1          Max. Laenge der Nachnamen (default: alles)
  *      teamNameLength:     default -1          Max. Laenge der Teamnamen (default: alles)
- *      showTeams:          default 0           Mannschaften statt Spieler anzeigen
  *      flag:               default 'nation'    Choose either 'none', 'nation' or 'region' to show the flag
  *      showService:        default 1           Show who has the srevice
+ *      individual:         default 1           Show individual matches for team events
  */
 
 var args = {};
@@ -32,6 +32,7 @@ var flag = 'nation';
 var showService = false;
 var minTime = 60;    // [s]
 var prestart = 3600; // [s]
+var individual = true;
 
 var matches = [];
 var mtTimestamp = 0;
@@ -47,6 +48,7 @@ flag = getParameterByName("flag", "nation");
 showService = getParameterByName("showService", 1) != 0;
 minTime = getParameterByName("minTime", minTime);
 prestart = getParameterByName("prestart", prestart);
+individual = getParameterByName("individual", 1);
 
 if (getParameterByName('debug', 0) != 0)
     Matches.setDebug(true);
@@ -66,7 +68,8 @@ if (parent != undefined && parent.loadFromCache != undefined) {
 args = {
     'all': getParameterByName('all', 1),
     'notFinished': 1,
-    'notStarted': 0
+    'notStarted': 0,
+    'individual' : individual
 };
 
 if (getParameterByName('date', '') != '')
@@ -284,9 +287,24 @@ function formatMatch(mt, clazz) {
     left += '<td colspan="2" class="names">';
     right += '<td colspan="2" class="names">';
     
-    if (mt.cpType == 4 && getParameterByName('showTeams', 0) == 1) {
-        left += formatTeam(mt.tmAtmDesc);
-        right += formatTeam(mt.tmXtmDesc);
+    if (mt.cpType == 4) {
+        if (individual || mt.plAplNr == 0)
+            left += formatTeam(mt.tmAtmDesc);
+        else {
+            left += formatPlayer(mt.plApsLast, mt.plApsFirst);
+
+            if (mt.plBplNr != undefined)
+                left += '<br>' + formatPlayer(mt.plBpsLast, mt.plBpsFirst);            
+        } 
+            
+        if (individual || mt.plXplNr == 0)
+            right += formatTeam(mt.tmAtmDesc);
+        else {
+            right += formatPlayer(mt.plXpsLast, mt.plXpsFirst);
+
+            if (mt.plYplNr != undefined)
+                right += '<br>' + formatPlayer(mt.plYpsLast, mt.plYpsFirst);            
+        } 
     } else {
         if (mt.plAplNr != 0) {
             left += formatPlayer(mt.plApsLast, mt.plApsFirst);

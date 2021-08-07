@@ -874,7 +874,7 @@ public final class TTM implements IDatabase {
         
         if (notFinished) {
             where += " AND 2 * ISNULL(mt.mtResA, 0) < mt.mtBestOf AND 2 * ISNULL(mt.mtResX, 0) < mt.mtBestOf ";
-            whereTeam += " AND 2 * ISNULL(mt.mttmResA , 0)< mtMatches AND 2 * ISNULL(mt.mttmResX,0) < mtMatches ";
+            whereTeam += " AND 2 * ISNULL(mt.mtResA , 0)< mtMatches AND 2 * ISNULL(mt.mtResX,0) < mtMatches ";
         }
             
 
