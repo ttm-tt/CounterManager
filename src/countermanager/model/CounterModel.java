@@ -633,6 +633,12 @@ public class CounterModel {
     public void setTableRange(int fromTable, int toTable) {
         this.fromTable = fromTable;
         this.toTable = toTable;
+        
+        for (int i = 0; i < counterList.length; i++) {
+            if (i + tableOffset < fromTable || i + tableOffset > toTable) {
+                removeCounter(i);
+            }
+        }
     }
     
     
