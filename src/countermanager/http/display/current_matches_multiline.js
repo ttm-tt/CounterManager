@@ -17,8 +17,9 @@
  *      lastNameLength:     default -1          Max. Laenge der Nachnamen (default: alles)
  *      teamNameLength:     default -1          Max. Laenge der Teamnamen (default: alles)
  *      flag:               default 'nation'    Choose either 'none', 'nation' or 'region' to show the flag
- *      showService:        default 1           Show who has the srevice
+ *      showService:        default 1           Show who has the service
  *      individual:         default 1           Show individual matches for team events
+ *      group:              default 'desc'      Show grName or grDesc for groups
  */
 
 var args = {};
@@ -33,6 +34,7 @@ var showService = false;
 var minTime = 60;    // [s]
 var prestart = 3600; // [s]
 var individual = true;
+var group = 'desc';
 
 var matches = [];
 var mtTimestamp = 0;
@@ -49,6 +51,10 @@ showService = getParameterByName("showService", 1) != 0;
 minTime = getParameterByName("minTime", minTime);
 prestart = getParameterByName("prestart", prestart);
 individual = getParameterByName("individual", 1);
+group = getParameterByName("group", "desc");
+
+if (group !== 'desc' && group !== 'name')
+    group = 'desc';
 
 if (getParameterByName('debug', 0) != 0)
     Matches.setDebug(true);
@@ -220,7 +226,7 @@ function formatMatch(mt, clazz) {
         caption += '<td class="playerservice"></td>';
     }
     caption += '<td class="time">' + formatTime(mt.mtDateTime) + '</td>';
-    caption += '<td class="event">' + mt.cpName + '&nbsp;' + mt.grDesc + '&nbsp;' + formatRound(mt) + '</td>';
+    caption += '<td class="event">' + mt.cpName + '&nbsp;' + (group === 'name' ? mt.grName : mt.grDesc) + '&nbsp;' + formatRound(mt) + '</td>';
     caption += '<td class="points">' + 'Pts' + '</td>';
     caption += '<td class="games">' + 'Gms' + '</td>';
     if (mt.cpType == 4)
