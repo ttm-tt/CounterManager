@@ -165,7 +165,7 @@ function formatRound(match) {
     var chunksize = match.grSize >> match.mtRound;
     var chunkno = Math.floor((match.mtMatch - 1) / chunksize);
     
-    return 'Pos&nbsp;' + (1 + 2 * chunkno * chunksize) + '&mdash;' + (1 + 2 * (chunkno + 1) * chunksize - 1);    
+    return 'Pos&nbsp;' + (1 + 2 * chunkno * chunksize) + '&ndash;' + (1 + 2 * (chunkno + 1) * chunksize - 1);    
 }
 
 function beep(duration) {
