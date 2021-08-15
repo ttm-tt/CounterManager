@@ -1,3 +1,4 @@
+//@ sourceURL=F:\user\cht\CounterManager\src\countermanager\http\scripts\ttm.js
 /* Copyright (C) 2020 Christoph Theis */
 
 /* global java, Packages */
@@ -554,6 +555,7 @@ var ttm = new function() {
 
         var cpName = args.get('cpName');
         var grName = args.get('grName');
+        var numPoles = args.get('numFlagPoles');
         
         if (cpName === '')
             cpName = null;
@@ -563,6 +565,9 @@ var ttm = new function() {
         if (cpName === null)
             return ret;
         
+        if (numPoles === null)
+            numPoles = 4;
+
         var connection = getConnection();
         var statement = null;
         var result = null;
@@ -597,19 +602,19 @@ var ttm = new function() {
             return ret;
 
         var flagType = args.get('flagType') || 'Name';
-        
+
         sql = 
                 "SELECT na" + flagType + " AS plAnaName, NULL AS plBnaName, stPos " +
                 "  FROM StSingleList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
-                " WHERE cpType = 1 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= 4 " +
+                " WHERE cpType = 1 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= " + numPoles + " " +
                 "UNION ALL " +
                 "SELECT plna" + flagType + " AS plAnaName, bdna" + flagType + " AS plBnaName, stpos" +
                 "  FROM StDoubleList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
-                " WHERE (cpType = 2 OR cpType = 3) AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= 4 " +
+                " WHERE (cpType = 2 OR cpType = 3) AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= " + numPoles + " " +
                 "UNION ALL " +
                 "SELECT na" + flagType + " AS plAnaName, NULL AS plBnaName, stPos " +
                 "  FROM StTeamList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
-                " WHERE cpType = 4 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= 4 " +
+                " WHERE cpType = 4 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= " + numPoles + " " +
                 " ORDER BY stPos"
         ;
         

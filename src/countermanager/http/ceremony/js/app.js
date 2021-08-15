@@ -8,6 +8,7 @@
  * damping: smoothing of wobbling, use 0.3 on Raspberry
  * 1, 2, 3, 4: flags to use for 1st, 2nd, ... place
  * cpName, grName: CP and optional GR to get the flags for 1st, 2nd, ... place
+ * numFlagPoles: number of flag poles, i.e. up to which place are awards given
  * duration: time to raise the flags,default 20 (seconds)
  * start: How to start. Values are 'auto' (immediate start), and 'click' (start by left click)
  * 
@@ -49,6 +50,9 @@
     // Max dimensions for flags
     var maxFlagWidth = innerWidth * 0.21;
     var maxFlagHeight = innerHeight * 0.21;
+    
+    // Number of flag poles
+    var numFlagPoles = 4;
 
     /**
      * Enum for flag hoisting side.
@@ -2641,10 +2645,10 @@
       var flagType = getParameterByName('flagType', 'Name');
       
       if (cpName !== '') {
-        xmlrpc("../RPC2", "ttm.listNationsForCeremony", [{cpName : cpName, grName : grName}], 
+        xmlrpc("../RPC2", "ttm.listNationsForCeremony", [{cpName : cpName, grName : grName, flagType : flagType, numFlagPoles : numFlagPoles}], 
           function success(data) {
-            if (data.length === 4) {
-              for (var i = 0; i < 4; i++)
+            if (data.length === numFlagPoles) {
+              for (var i = 0; i < numFlagPoles; i++)
                 flags.push(data[i]);
             }
           },
@@ -2654,12 +2658,12 @@
         );
       }
       
-      if (flags.length === 4)
+      if (flags.length === numFlagPoles)
           return flags;
       
       flags = [];
 
-      for (var i = 0; i < 4; i++) {
+      for (var i = 0; i < numFlagPoles; i++) {
         var imgURL = getParameterByName('' + (i + 1), null) || 'ETTU';
         flags.push(imgURL);
       }
@@ -2736,6 +2740,9 @@
     function buildApp() {
       // Initialized location for flags from query parameter
       window.imageLocation = getParameterByName('flagLocation', window.imageLocation);
+      numFlagPoles = parseInt(getParameterByName('numFlagPoles', 4));
+      if (numFlagPoles < 2 || numFlagPoles > 4)
+        numFlagPoles = 4;
       var flags = fromQuery();
       var imgWidth = getParameterByName('flagWidth', 'auto');
       var imgHeight = getParameterByName('flagHeight', 'auto');
@@ -2752,30 +2759,37 @@
         speed: getParameterByName('windSpeed', 100)
       })); // ChT: Add flagpoles for 2nd, 1st, and 3rd / 4th place
 
-      app.add(new FlagGroupModule({
-        imgSrc: flags[1],
-        width: imgWidth,
-        height: imgHeight,
-        duration: duration
-      }));
-      app.add(new FlagGroupModule({
-        imgSrc: flags[0],
-        width: imgWidth,
-        height: imgHeight,
-        duration: duration
-      }));
-      app.add(new FlagGroupModule({
-        imgSrc: flags[2],
-        width: imgWidth,
-        height: imgHeight,
-        duration: duration
-      }));
-      app.add(new FlagGroupModule({
-        imgSrc: flags[3],
-        width: imgWidth,
-        height: imgHeight,
-        duration: duration
-      })); // ChT: And put them in an orderly way, 2nd, 1st, 3rd and 4th
+      if (numFlagPoles > 1)
+        app.add(new FlagGroupModule({
+          imgSrc: flags[1],
+          width: imgWidth,
+          height: imgHeight,
+          duration: duration
+        }));
+    
+      if (numFlagPoles > 0)
+        app.add(new FlagGroupModule({
+          imgSrc: flags[0],
+          width: imgWidth,
+          height: imgHeight,
+          duration: duration
+        }));
+    
+      if (numFlagPoles > 2)
+        app.add(new FlagGroupModule({
+          imgSrc: flags[2],
+          width: imgWidth,
+          height: imgHeight,
+          duration: duration
+        }));
+    
+      if (numFlagPoles > 3)
+        app.add(new FlagGroupModule({
+          imgSrc: flags[3],
+          width: imgWidth,
+          height: imgHeight,
+          duration: duration
+        })); // ChT: And put them in an orderly way, 2nd, 1st, 3rd and 4th
 
       // Distance between poles is 0.24 x innerWidth, flag width is 0.21 x innerWidth
       // Calculate offset of flag from bottom to give room for 2 flags
@@ -2785,16 +2799,32 @@
       if (Number.isInteger(getParameterByName('flagHeight', 'auto'))) 
           flagDistance = parseInt(getParameterByName('flagHeight', 'auto')) * 1.1;
       var flagStart = flagDistance * 2.2;
-      app.module(FlagGroupModule.displayName, 0).subject.object.position.set(-(window.innerWidth * 0.45), window.innerHeight * 0.6 / 2, 0);
-      app.module(FlagGroupModule.displayName, 0).moveFlags(-(window.innerHeight + window.innerHeight * 0.6) / 2 + flagStart, flagDistance);
-      app.module(FlagGroupModule.displayName, 1).subject.object.position.set(-(window.innerWidth * 0.21), window.innerHeight * 0.8 / 2, 0);
-      app.module(FlagGroupModule.displayName, 1).moveFlags(-(window.innerHeight + window.innerHeight * 0.8) / 2 + flagStart, flagDistance);
-      app.module(FlagGroupModule.displayName, 2).subject.object.position.set(+(window.innerWidth * 0.03), window.innerHeight * 0.4 / 2, 0);
-      app.module(FlagGroupModule.displayName, 2).moveFlags(-(window.innerHeight + window.innerHeight * 0.4) / 2 + flagStart, flagDistance);
-      app.module(FlagGroupModule.displayName, 3).subject.object.position.set(+(window.innerWidth * 0.27), window.innerHeight * 0.4 / 2, 0);
-      app.module(FlagGroupModule.displayName, 3).moveFlags(-(window.innerHeight + window.innerHeight * 0.4) / 2 + flagStart, flagDistance);
+      var flagPoleStart = -0.45;
+      var flagPoleDistance = 0.24 * 4 / numFlagPoles;
+      
+      if (numFlagPoles > 1) {
+        app.module(FlagGroupModule.displayName, 0).subject.object.position.set(window.innerWidth * flagPoleStart, window.innerHeight * 0.6 / 2, 0);
+        app.module(FlagGroupModule.displayName, 0).moveFlags(-(window.innerHeight + window.innerHeight * 0.6) / 2 + flagStart, flagDistance);
+      }
+      
+      if (numFlagPoles > 0) {
+        app.module(FlagGroupModule.displayName, 1).subject.object.position.set(window.innerWidth * (flagPoleStart + 1 * flagPoleDistance), window.innerHeight * 0.8 / 2, 0);
+        app.module(FlagGroupModule.displayName, 1).moveFlags(-(window.innerHeight + window.innerHeight * 0.8) / 2 + flagStart, flagDistance);
+      }
+      
+      if (numFlagPoles > 2) {
+        app.module(FlagGroupModule.displayName, 2).subject.object.position.set(window.innerWidth * (flagPoleStart + 2 * flagPoleDistance), window.innerHeight * 0.4 / 2, 0);
+        app.module(FlagGroupModule.displayName, 2).moveFlags(-(window.innerHeight + window.innerHeight * 0.4) / 2 + flagStart, flagDistance);
+      }
+      
+      if (numFlagPoles > 3) {
+        app.module(FlagGroupModule.displayName, 3).subject.object.position.set(window.innerWidth * (flagPoleStart + 3 * flagPoleDistance), window.innerHeight * 0.4 / 2, 0);
+        app.module(FlagGroupModule.displayName, 3).moveFlags(-(window.innerHeight + window.innerHeight * 0.4) / 2 + flagStart, flagDistance);
+      }
+      
       app.add(new GravityModule(['flagModule']));
       app.add(new WindForceModule(['flagModule'], ['windModule']));
+      
       return app;
     }
 
