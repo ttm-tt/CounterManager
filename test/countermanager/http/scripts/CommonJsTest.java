@@ -47,12 +47,12 @@ public class CommonJsTest extends BaseJsTest{
             // Play-Off
             { "var mt = {grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 1}; return formatRound(mt);", "SF" },
             { "var mt = {grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 2}; return formatRound(mt);", "SF" },
-            { "var mt = {grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 3}; return formatRound(mt);", "Pos&nbsp;5&mdash;8" },
-            { "var mt = {grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 4}; return formatRound(mt);", "Pos&nbsp;5&mdash;8" },
-            { "var mt = {grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 5}; return formatRound(mt);", "Pos&nbsp;9&mdash;12" },
-            { "var mt = {grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 6}; return formatRound(mt);", "Pos&nbsp;9&mdash;12" },
-            { "var mt = {grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 7}; return formatRound(mt);", "Pos&nbsp;13&mdash;16" },
-            { "var mt = {grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 8}; return formatRound(mt);", "Pos&nbsp;13&mdash;16" },
+            { "var mt = {grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 3}; return formatRound(mt);", "Pos&nbsp;5&ndash;8" },
+            { "var mt = {grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 4}; return formatRound(mt);", "Pos&nbsp;5&ndash;8" },
+            { "var mt = {grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 5}; return formatRound(mt);", "Pos&nbsp;9&ndash;12" },
+            { "var mt = {grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 6}; return formatRound(mt);", "Pos&nbsp;9&ndash;12" },
+            { "var mt = {grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 7}; return formatRound(mt);", "Pos&nbsp;13&ndash;16" },
+            { "var mt = {grModus: 4, grSize: 16, grWinner: 1, mtRound: 3, mtMatch: 8}; return formatRound(mt);", "Pos&nbsp;13&ndash;16" },
             // Not finals
             { "var mt = {grModus: 2, grSize: 16, grWinner: 17, mtRound: 3, mtMatch: 1}; return formatRound(mt);", "Rd.&nbsp;3" },
             { "var mt = {grModus: 2, grSize: 16, grWinner: 1, grNofRounds: 3, mtRound: 3, mtMatch: 1}; return formatRound(mt);", "Rd.&nbsp;3" },

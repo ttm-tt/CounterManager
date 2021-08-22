@@ -11,15 +11,15 @@
 
     <dependencies defaultconf="compile->default;sources->sources;javadoc->javadoc">
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
-        <dependency org="com.google.code.gson" name="gson" rev="2.8.6"/>
+        <dependency org="com.google.code.gson" name="gson" rev="2.8.8"/>
         <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
         <dependency org="javax.xml.bind" name="jaxb-api" rev="2.3.1"/>
         <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
         <dependency org="org.glassfish.jaxb" name="jaxb-runtime" rev="2.3.1"/>
         <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
-        <dependency org="com.microsoft.sqlserver" name="mssql-jdbc" rev="9.2.0.jre11"/>
+        <dependency org="com.microsoft.sqlserver" name="mssql-jdbc" rev="9.4.0.jre11"/>
         <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc_auth -->
-        <dependency org="com.microsoft.sqlserver" name="mssql-jdbc_auth" rev="9.2.0.x64" conf="runtime->default"/>
+        <dependency org="com.microsoft.sqlserver" name="mssql-jdbc_auth" rev="9.4.0.x64" conf="runtime->default"/>
         <!-- https://mvnrepository.com/artifact/com.shinyhut/vernacular -->
         <dependency org="com.shinyhut" name="vernacular" rev="1.11" conf="compile->default"/>
         <!-- https://mvnrepository.com/artifact/org.ini4j/ini4j -->
@@ -29,13 +29,13 @@
         <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
         <dependency org="org.seleniumhq.selenium" name="selenium-java" rev="3.141.59" conf="test->default;sources->sources;javadoc->javadoc"/>        
         <!-- https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
-        <dependency org="io.github.bonigarcia" name="webdrivermanager" rev="4.0.0" conf="test->default;sources->sources;javadoc->javadoc"/>        
+        <dependency org="io.github.bonigarcia" name="webdrivermanager" rev="4.4.3" conf="test->default;sources->sources;javadoc->javadoc"/>        
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
         <dependency org="org.slf4j" name="slf4j-simple" rev="1.7.30"/>        
         <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency org="junit" name="junit" rev="4.13" conf="test->default;sources->sources;javadoc->javadoc" />
         <!-- https://mvnrepository.com/artifact/com.github.tntim96/JSCover -->
-        <dependency org="com.github.tntim96" name="JSCover" rev="2.0.10" conf="test->default;sources->sources;javadoc->javadoc" />
+        <dependency org="com.github.tntim96" name="JSCover" rev="2.0.12" conf="test->default;sources->sources;javadoc->javadoc" />
         
         <!-- Avoid evicting modules when resolving dependencies -->
         <conflict manager="all" />
