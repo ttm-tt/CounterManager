@@ -659,8 +659,9 @@ function updateScreen() {
     // Command buttons
     let gameRunning = 
             counterData.timeMode == CounterData.TimeMode.MATCH ||
-            ((counterData.setHistory[cg][0] + counterData.setHistory[cg][1]) >= 18 && 
-                counterData.timeMode === CounterData.TimeMode.NONE)
+            (counterData.setHistory.length > cg && 
+             (counterData.setHistory[cg][0] + counterData.setHistory[cg][1]) >= 18 && 
+              counterData.timeMode === CounterData.TimeMode.NONE)
     ;
     
     $('#startGame').attr('checked', gameRunning);
