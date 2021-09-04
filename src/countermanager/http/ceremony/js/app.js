@@ -2642,10 +2642,10 @@
       
       var cpName = getParameterByName('cpName', '');
       var grName = getParameterByName('grName', '');
-      var flagType = getParameterByName('flagType', 'Name');
+      var flag   = getParameterByName('flag', 'Name');
       
       if (cpName !== '') {
-        xmlrpc("../RPC2", "ttm.listNationsForCeremony", [{cpName : cpName, grName : grName, flagType : flagType, numFlagPoles : numFlagPoles}], 
+        xmlrpc("../RPC2", "ttm.listNationsForCeremony", [{cpName : cpName, grName : grName, flag : flag, numFlagPoles : numFlagPoles}], 
           function success(data) {
             if (data.length === numFlagPoles) {
               for (var i = 0; i < numFlagPoles; i++)
