@@ -51,6 +51,7 @@ body#current_matches_multiline {
 
 .playerservice {
     width: 0.5em;
+    min-width: 0.5em;
     height: 1.0em;
     padding-right: 10px;
 }
