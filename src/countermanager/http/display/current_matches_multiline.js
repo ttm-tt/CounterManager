@@ -53,7 +53,7 @@ prestart = getParameterByName("prestart", prestart);
 individual = getParameterByName("individual", 1);
 group = getParameterByName("group", "desc");
 
-if (group !== 'desc' && group !== 'name')
+if (group !== 'desc' && group !== 'name' && group !== 'none')
     group = 'desc';
 
 if (getParameterByName('debug', 0) != 0)
@@ -226,7 +226,10 @@ function formatMatch(mt, clazz) {
         caption += '<td class="playerservice"></td>';
     }
     caption += '<td class="time">' + formatTime(mt.mtDateTime) + '</td>';
-    caption += '<td class="event">' + mt.cpName + '&nbsp;' + (group === 'name' ? mt.grName : mt.grDesc) + '&nbsp;' + formatRound(mt) + '</td>';
+    caption += '<td class="event">' + mt.cpName + '&nbsp;';
+    if (group !== 'none')
+        caption += (group === 'name' ? mt.grName : mt.grDesc) + '&nbsp;';
+    caption += formatRound(mt) + '</td>';
     caption += '<td class="points">' + 'Pts' + '</td>';
     caption += '<td class="games">' + 'Gms' + '</td>';
     if (mt.cpType == 4)

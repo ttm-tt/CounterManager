@@ -13,6 +13,7 @@
  * table:     Nur Tisch
  * tableList: Liste von Tichen
  * flag: Choose either 'none', 'nation' or 'region' to show the flag
+ * group: Choose either 'none', 'name' or 'desc' to show the group in the header
  * noUpdate: Anzeige stehen lassen
  * nameLength: Max. Laenge der Namen (default: alles)
  * firstNameLength: Max. Laenge der Voramen (default: alles)
@@ -27,6 +28,7 @@ var lastNameLength = -1;
 var firstNameLength = -1;
 var teamNameLength = -1;
 var flag = 'nation';
+var group = 'desc';
 var minTime = 60;
 var prestart = 3600;
 var noUpdate = false;
@@ -41,7 +43,8 @@ nameLength = getParameterByName("nameLength", nameLength);
 lastNameLength = getParameterByName("lastNameLength", nameLength);
 firstNameLength = getParameterByName("firstNameLength", nameLength);
 teamNameLength = getParameterByName("teamNameLength", nameLength);
-flag = getParameterByName("flag", "nation");
+flag = getParameterByName("flag", flag);
+group = getParameterByName("group", group);
 minTime = getParameterByName("minTime", minTime);
 prestart = getParameterByName("prestart", prestart);
 
@@ -300,8 +303,13 @@ function formatMatch(mt, idx) {
                     $('#top .points').html('0');
                     $('#bottom .points').html('0');
                 } else if (!mt.mtGameRunning) {
-                    $('#top .points').html(mt.mtResult[mt.mtResA + mt.mtResX - 1][0]);
-                    $('#bottom .points').html(mt.mtResult[mt.mtResA + mt.mtResX - 1][1]);
+                    if (mt.mtResA == 0 && mt.mtResX == 0) {
+                        $('#top .points').html('');
+                        $('#bottom .points').html('');
+                    } else {
+                        $('#top .points').html(mt.mtResult[mt.mtResA + mt.mtResX - 1][0]);
+                        $('#bottom .points').html(mt.mtResult[mt.mtResA + mt.mtResX - 1][1]);
+                    }
                 } else {
                     $('#top .points').html(mt.mtResult[mt.mtResA + mt.mtResX][0]);
                     $('#bottom .points').html(mt.mtResult[mt.mtResA + mt.mtResX][1]);
@@ -330,14 +338,16 @@ function formatMatch(mt, idx) {
 
     $('#history td.history').html(history);
 
-    if (idx > 0 || !Matches.isStarted(mt) && mt.mtDateTime > ct)
-        $('#what td').html(
-                'Start:&nbsp;' + formatTime(mt.mtDateTime) + '<br>' +
-                mt.cpName + '&nbsp;&dash;&nbsp;' + mt.grDesc + (mt.grNofRounds === 1 ? '' : '&nbsp;&dash;&nbsp;' + formatRound(mt)));
-    else
-        $('#what td').html(
-                mt.cpName + '&nbsp;&dash;&nbsp;' + mt.grDesc + (mt.grNofRounds === 1 ? '' : '&nbsp;&dash;&nbsp;' + formatRound(mt)));
+    var caption = mt.cpName;
+        if (group !== 'none')
+            caption += '&nbsp;&dash;&nbsp;' + (group === 'name' ? mt.grName : mt.grDesc);
+        caption += (mt.grNofRounds === 1 ? '' : '&nbsp;&dash;&nbsp;' + formatRound(mt));
 
+    if (idx > 0 || !Matches.isStarted(mt) && mt.mtDateTime > ct)
+        $('#what td').html('Start:&nbsp;' + formatTime(mt.mtDateTime) + '<br>' + caption);
+    else
+        $('#what td').html(caption);
+    
     var prop = flag === 'region' ? 'naRegion' : 'naName';
         
     if (mt.cpType == 4) {
