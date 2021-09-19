@@ -114,7 +114,7 @@
         <copy file="lib/mssql-jdbc_auth-9.4.0.x64.dll" todir="${dist.dir}"/>
         <copy file="lib/rxtxSerial.dll" todir="${dist.dir}"/>
         <copy todir="${dist.dir}/http">
-            <fileset dir="${src.dir}/countermanager/http" includes="**/*.js **/*.css **/*.html **/*.gif **/*.png **/*.svg"/>
+            <fileset dir="${src.dir}/countermanager/http" includes="**/*.js **/*.css **/*.html **/*.gif **/*.png **/*.svg **/*.jpg"/>
         </copy>
         <copy file="CounterManager.ico" todir="${dist.dir}"/>
     </target>

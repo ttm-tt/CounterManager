@@ -55,6 +55,7 @@ Source: ".\dist\http\scripts\*"; DestDir: "{code:GetIniDir}\http\scripts"; Flags
 Source: ".\dist\http\display\*"; DestDir: "{code:GetIniDir}\http\display"; Excludes: ".\dist\http\display\scenes\*"; Flags: ignoreversion recursesubdirs
 Source: ".\dist\http\monitor\*"; DestDir: "{code:GetIniDir}\http\monitor"; Flags: ignoreversion recursesubdirs
 Source: ".\dist\http\counter\*"; DestDir: "{code:GetIniDir}\http\counter"; Flags: ignoreversion recursesubdirs
+Source: ".\dist\http\ceremony\*"; DestDir: "{code:GetIniDir}\http\ceremony"; Flags: ignoreversion recursesubdirs
 Source: ".\dist\http\flags\*"; DestDir: "{code:GetIniDir}\http\flags"; Flags: ignoreversion
 ; Source: ".\dist\http\fonts\*"; DestDir: "{code:GetIniDir}\http\fonts"; Flags: ignoreversion
 Source: ".\dist\CounterManager.ico"; DestDir: "{app}"; Flags: ignoreversion
