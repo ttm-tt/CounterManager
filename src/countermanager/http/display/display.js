@@ -142,6 +142,15 @@ function doComplete() {
             else
                 url += '&_=' + (new Date()).getTime();
 
+            let parentSearch = new URLSearchParams(window.location.search);
+            let clientSearch = new URLSearchParams(url.substr(url.indexOf('?')));
+            
+            for (const [key, value] of parentSearch) {
+                if (!clientSearch.has(key))
+                    clientSearch.append(key, value);
+            }
+            
+            url = url.substr(0, url.indexOf('?')) + '?' + clientSearch.toString();
             $('#if').attr('src', url);
         }
     }            

@@ -1,32 +1,11 @@
 /* Copyright (C) 2020 Christoph Theis */
 
 function getParameterByName(name, def) {
-    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-    var regexS = "[\\?&]" + name + "=([^&#]*)";
-    var regex = new RegExp(regexS, "i");
-    var results = regex.exec(window.location.search);
-    if(results == null && parent != undefined) {
-        // If parent defines getParameterByName, use it.
-        if (false && parent.getParameterByName !== undefined)
-            return parent.getParameterByName(name, def);
-         
-         // Else try with parents location search
-        results = regex.exec(parent.window.location.search);
-    }
+    var params = new URLSearchParams(window.location.search);
+    if (!params.has(name))
+        return def;
     
-    // Check possible unwanted values of results and return def in these cases
-    if(results === null)
-        return def;
-    else if (!Array.isArray(results))
-        return def;
-    else if (results.length < 2)
-        return def;
-    else if (typeof results[1] !== 'string')
-        return def;
-    else if (results[1].length === 0)
-        return def;
-    else
-        return decodeURIComponent(results[1].replace(/\+/g, " "));
+    return params.get(name);
 }
 
 function formatString(s, len, appdx) {

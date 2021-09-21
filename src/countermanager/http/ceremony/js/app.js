@@ -2620,20 +2620,11 @@
 
     if (window.getParameterByName === undefined) {
       window.getParameterByName = function (name, def) {
-        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-        var regexS = "[\\?&]" + name + "=([^&#]*)";
-        var regex = new RegExp(regexS, "i");
-        var results = regex.exec(window.location.search);
-
-        if (results == null && parent != undefined) {
-
-          results = regex.exec(parent.window.location.search);
-        }
-
-        if (results == null) 
+        var params = new URLSearchParams(window.location.search);
+        if (!params.has(name))
             return def;
-        else 
-            return decodeURIComponent(results[1].replace(/\+/g, " "));
+    
+        return decodeURIComponent(params.get(name).replace(/\+/g, " "));
       };
     }
 
