@@ -297,7 +297,7 @@ function formatMatch(mt, clazz) {
     right += '<td colspan="2" class="names">';
     
     if (mt.cpType == 4) {
-        if (individual || mt.plAplNr == 0)
+        if (!individual || mt.plAplNr == 0)
             left += formatTeam(mt.tmAtmDesc);
         else {
             left += formatPlayer(mt.plApsLast, mt.plApsFirst);
@@ -306,8 +306,8 @@ function formatMatch(mt, clazz) {
                 left += '<br>' + formatPlayer(mt.plBpsLast, mt.plBpsFirst);            
         } 
             
-        if (individual || mt.plXplNr == 0)
-            right += formatTeam(mt.tmAtmDesc);
+        if (!individual || mt.plXplNr == 0)
+            right += formatTeam(mt.tmXtmDesc);
         else {
             right += formatPlayer(mt.plXpsLast, mt.plXpsFirst);
 
