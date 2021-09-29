@@ -20,6 +20,7 @@ import java.io.File;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,8 @@ import org.ini4j.MultiMap;
 public class HTTP {
 
     final private static Gson json = new GsonBuilder().create();
+    
+    final static Charset UTF8 = Charset.forName("UTF-8");
     
     private static HTTP http;
 
@@ -58,7 +61,7 @@ public class HTTP {
         }
         
         he.sendResponseHeaders(code, message.getBytes().length);
-        he.getResponseBody().write(message.getBytes());
+        he.getResponseBody().write(message.getBytes(UTF8));
         he.getResponseBody().close();        
     }
     
@@ -152,7 +155,7 @@ public class HTTP {
                             list.add(match);
                     }
                 
-                    byte[] response = json.toJson(list).getBytes();
+                    byte[] response = json.toJson(list).getBytes(UTF8);
                     he.getResponseHeaders().set("Content-Type", "application/json");
                     he.sendResponseHeaders(200, response.length);
                     he.getResponseBody().write(response,0, response.length);
@@ -177,7 +180,7 @@ public class HTTP {
                     if (match == null)
                         he.sendResponseHeaders(404, 0);
                     else {
-                        byte[] response = json.toJson(match).getBytes();
+                        byte[] response = json.toJson(match).getBytes(UTF8);
                         he.getResponseHeaders().set("Content-Type", "application/json");
                         he.sendResponseHeaders(200, response.length);
                         he.getResponseBody().write(response,0, response.length);
@@ -202,7 +205,7 @@ public class HTTP {
                     if (data == null)
                         he.sendResponseHeaders(404, 0);
                     else {
-                        byte[] response = json.toJson(data).getBytes();
+                        byte[] response = json.toJson(data).getBytes(UTF8);
                         he.getResponseHeaders().set("Content-Type", "application/json");
                         he.sendResponseHeaders(200, response.length);
                         he.getResponseBody().write(response, 0, response.length);

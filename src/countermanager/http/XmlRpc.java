@@ -33,7 +33,6 @@ import redstone.xmlrpc.XmlRpcServer;
  * @author chtheis
  */
 public class XmlRpc implements HttpHandler {
-
     public XmlRpc() {
 
     }
@@ -46,7 +45,7 @@ public class XmlRpc implements HttpHandler {
             
             xmlrpcServer.execute(is, writer);
             
-            byte[] response = writer.toString().getBytes();
+            byte[] response = writer.toString().getBytes(HTTP.UTF8);
             he.getResponseHeaders().set("Content-Type", "text/xml");
             he.sendResponseHeaders(200, response.length);
             he.getResponseBody().write(response, 0, response.length);

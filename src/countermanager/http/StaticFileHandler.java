@@ -144,7 +144,7 @@ class StaticFileHandler implements HttpHandler {
         
         he.getResponseHeaders().add("Content-Type", "application/json");
         he.sendResponseHeaders(200, resp.getBytes().length);
-        he.getResponseBody().write(resp.getBytes());
+        he.getResponseBody().write(resp.getBytes(HTTP.UTF8));
         he.getResponseBody().close();
     }
     

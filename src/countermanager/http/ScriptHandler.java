@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Arrays;
 import java.util.Collections;
@@ -114,13 +113,13 @@ public class ScriptHandler implements HttpHandler {
                 // Should be done by caller
             } else if (ret instanceof String) { 
                 he.getResponseHeaders().add("Content-Type", "text/html");
-                byte[] b = ret.toString().getBytes(Charset.forName("UTF-8"));
+                byte[] b = ret.toString().getBytes(HTTP.UTF8);
                 he.sendResponseHeaders(200, b.length);
                 he.getResponseBody().write(b);                
             } else {
                 he.getResponseHeaders().add("Content-Type", "application/json");
                 String json = new Gson().toJson(ret);
-                byte[] b = json.getBytes(Charset.forName("UTF-8"));
+                byte[] b = json.getBytes(HTTP.UTF8);
                 he.sendResponseHeaders(200, b.length);
                 he.getResponseBody().write(b);                
             }
