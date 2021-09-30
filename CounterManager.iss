@@ -3,8 +3,8 @@
 
 [Setup]
 AppName=ScoreBoardManager
-AppVerName=ScoreBoardManager 21.09.01
-AppPublisher=Christoph Theis
+AppVerName=ScoreBoardManager 21.09.02
+; AppPublisher=Christoph Theis
 DefaultDirName={pf}\TTM\CounterManager
 DefaultGroupName=TTM
 OutputDir=.\Output
@@ -74,8 +74,8 @@ Filename: {code:GetIniDir}\countermanager.ini; Section: Settings; Key: Language;
 Root: HKLM; Subkey: "Software\JavaSoft\Prefs"; Flags: noerror
 
 [Icons]
-Name: "{group}\ScoreBoardManager"; Filename: "{app}\lib\CounterManager.jar"; WorkingDir: "{app}";
-Name: "{userdesktop}\ScoreBoardManager"; Filename: "{app}\CounterManager.jar"; WorkingDir: "{app}"; Tasks: desktopicon; IconFilename: "{app}\CounterManager.ico";
+Name: "{group}\ScoreBoardManager"; Filename: "{app}\lib\CounterManager.jar"; WorkingDir: "{autoappdata}";
+Name: "{userdesktop}\ScoreBoardManager"; Filename: "{app}\CounterManager.jar"; WorkingDir: "{autoappdata}"; Tasks: desktopicon; IconFilename: "{app}\CounterManager.ico";
 
 
 [Code]
