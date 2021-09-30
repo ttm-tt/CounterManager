@@ -19,23 +19,60 @@ import org.ini4j.Profile;
 public class Properties extends java.util.Properties {
     
     private static File findPath(String what) {
-        // 1) C:\ProgramData (unter Win 7) oder entsprechend unter Win XP
-        File file = new File(System.getenv("ALLUSERSPROFILE") + File.separator + "TTM", what);
+        File file = null;
 
-        // 2) Roaming profile vom Benutzer: C:\Users\<user>\AppData\Roaming
+        // 1) cwd
+        try {
+            file = new File(System.getProperty("user.dir") + File.separator + what);
+
+            if (!file.exists())
+                file = null;
+        } catch (Exception ex) {
+            // Logger.getLogger(Properties.class.getName()).log(Level.SEVERE, null, ex);   
+            file = null;
+        }
+        
+        // 2) C:\ProgramData (unter Win 7) oder entsprechend unter Win XP
+        if (file == null) {
+            try {
+                file = new File(System.getenv("ALLUSERSPROFILE") + File.separator + "TTM" + File.separator + what);
+                
+                if (!file.exists())
+                    file = null;
+            } catch (Exception ex) {
+                // Logger.getLogger(Properties.class.getName()).log(Level.SEVERE, null, ex);   
+                file = null;
+            }
+        }
+
+        // 3) Roaming profile vom Benutzer: C:\Users\<user>\AppData\Roaming
         //    Eigentlich nur ein Versehen vom TTM Installer
-        if (!file.exists())
-            file = new File(System.getenv("APPDATA") + File.separator + "TTM", what);
+        if (file == null) {
+            try {
+                file = new File(System.getenv("APPDATA") + File.separator + "TTM" + File.separator + what);
+                
+                if (!file.exists())
+                    file = null;
+            } catch (Exception ex) {
+                // Logger.getLogger(Properties.class.getName()).log(Level.SEVERE, null, ex);   
+                file = null;
+            }
+        }
 
-        // 3) Local profile vom Benutzer: C:\Users\<user>\AppData\Local
-        if (!file.exists())
-            file = new File(System.getenv("LOCALAPPDATA") + File.separator + "TTM", what);
+        // 4) Local profile vom Benutzer: C:\Users\<user>\AppData\Local
+        if (file == null) {
+            try {
+                file = new File(System.getenv("LOCALAPPDATA") + File.separator + "TTM" + File.separator + what);
+                
+                if (!file.exists())
+                    file = null;
+            } catch (Exception ex) {
+                // Logger.getLogger(Properties.class.getName()).log(Level.SEVERE, null, ex);   
+                file = null;
+            }
+        }
 
-        // 4) null, wenn file nicht gefunden wurde
-        if (!file.exists())
-            return null;
-
-        return file;
+    return file;
     }
 
     
