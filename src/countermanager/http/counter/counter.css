@@ -1,5 +1,9 @@
 /* Copyright (C) 2020 Christoph Theis */
 
+html {
+    font-size: 100%;
+}
+
 /* Debug settings */
 #debug {
     display: none;
@@ -26,7 +30,7 @@
 /* Position commands */
 #commands {
     position: relative;
-    height: 40pt;
+    height: 2.4rem;;
 }
 
 
@@ -53,8 +57,8 @@
 }
 
 button {
-    font-size : 16pt;
-    height: 40pt;
+    font-size : 1.0rem;
+    height: 2.5rem;
 }
 
 
@@ -109,12 +113,12 @@ button {
 #counter .names, #counter .teams {
     /* Players names at the top */
     text-align: center;
-    font-size: 20pt;
+    font-size: 1.25rem;
     font-weight: bold;
 }
 
 #counter .names #games {
-    font-size: 25pt;
+    font-size: 1.5rem;
 }
 
 #counter .center {
@@ -126,8 +130,8 @@ button {
 #counter .flags .center button {    
     /* The button between the names */
     /* height of the buttons is 40pt, we stretch over 2 rows */
-    width: 60pt;
-    height: 60pt;
+    width: 3.75rem;
+    height: 3.75rem;
     vertical-align: middle;
 }
 
@@ -150,7 +154,7 @@ button {
 
 #counter .game .points {
     /* The points of a game */
-    font-size: 20pt;
+    font-size: 1.25rem;
     font-weight: bold;
 }
 
@@ -172,22 +176,22 @@ button {
 #counter .action button {
     /* The actual button */
     font-family: "Courier New", "Liberation Mono", monospace;
-    font-size: 30pt;
+    font-size: 2rem;
     font-weight: bold;
-    margin-left : 10pt;
-    margin-right: 10pt;
+    margin-left : 0.5rem;
+    margin-right: 0.5rem;
 }
 
 #counter .action button.plus {
-    width: 40pt;
-    height: 40pt;    
+    width: 2.5rem;
+    height: 2.5rem;    
     
     color: darkgreen;
 }
 
 #counter .action button.minus {
-    width: 40pt;
-    height: 40pt;    
+    width: 2.5rem;
+    height: 2.5rem;    
     
     color: red;
 }
@@ -202,7 +206,7 @@ button {
     width: 32%;    
     padding: 2px;
     text-align: center;
-    height: 40pt;
+    height: 2.5rem;
 }
 
 #counter .cards .left, #counter .cards .right {
@@ -210,7 +214,7 @@ button {
     width: 32%;    
     padding: 2px;
     text-align: center;
-    height: 40pt;
+    height: 2.5rem;
 }
 
 #results {
@@ -219,7 +223,7 @@ button {
 }
 
 #results .result {
-    font-size: 20pt;
+    font-size: 1.25rem;
     text-align: center;
     width: 14%;
     float: left;
@@ -241,19 +245,19 @@ body {
     /* Start, Table, Number and Time of the match */
     font-weight: bold;
     background-color: inherit;
-    padding: 10px;
+    padding: 0.5rem;
 }
 
 #counter {
     background-color: inherit;
     border-bottom: 1px solid black;
-    padding: 10px;
+    padding: 0.5rem;
 }
 
 #commands {
     background-color: inherit;
     border-bottom: 1px solid black;
-    padding: 10px;
+    padding: 0.4rem;
 }
 
 #results {
@@ -264,7 +268,7 @@ body {
 
 #status {
     background-color: inherit;
-    padding: 10px;    
+    padding: 0.5rem;    
 }
 
 #status .alert {
@@ -344,7 +348,7 @@ tr.game.inactive td.action{
 }
 
 .spacer {
-    
+    font-size: 0.2rem;
 }
 
 .service {
@@ -428,8 +432,8 @@ body.locked div#lock{
     #counter .flags .center button {    
         /* The button between the names */
         /* We set to same size as the plus-button */
-        width: 70pt;
-        height: 70pt;
+        width: 4rem;
+        height: 4rem;
     }
 
     /* Games which cannot be counted are inactive. I.e. don't show the +/- buttons */
@@ -438,12 +442,12 @@ body.locked div#lock{
     }
         
     #counter .names #games {
-        font-size: 35pt;
+        font-size: 2rem;
     }
 
     #counter .game .points {
         /* The points of a game */
-        font-size: 30pt;
+        font-size: 2rem;
     }
     
     #counter #cards {
@@ -451,27 +455,27 @@ body.locked div#lock{
     }
     
     #counter .action button {
-        font-size: 40pt;
+        font-size: 2.5rem;
     }
     
     /* In landscape mode make plus larger */
     #counter .action button.plus {
-        width: 70pt;
-        height: 70pt;    
+        width: 4rem;
+        height: 4rem;    
     }
 
     #counter .action button.minus {
-        width: 50pt;
-        height: 50pt;    
+        width: 3rem;
+        height: 3rem;    
     }
 
     #results {
         display: block;
-        min-height: 24pt;
+        min-height: 1.1rem;
     }
 
     #results .result {
-        font-size: 22pt;
+        font-size: 1.1rem;
         font-weight: bold;
     }
 }
@@ -482,4 +486,20 @@ body.locked div#lock{
     .teams {
         display: none;
     }    
+}
+
+@media only screen and (max-height: 360px) {
+    html {
+        font-size: 95%;
+    }
+    
+    /* No help */
+    #setAlert {
+        display: none;
+    }
+    
+    /* And no status (help response) */
+    #status {
+        display: none;
+    }
 }
