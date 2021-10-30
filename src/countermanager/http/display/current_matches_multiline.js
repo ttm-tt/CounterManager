@@ -289,8 +289,8 @@ function formatMatch(mt, clazz) {
     
     // Show service
     if (showService) {
-        left += '<td class="playerservice ' + (showService && mt.mtService < 0 ? 'service' : '') + '"><div></div></td>';
-        right += '<td class="playerservice '  + (showService && mt.mtService > 0 ? 'service' : '') + '"><div></div></td>';
+        left += '<td class="playerservice ' + (showService && (mt.mtReverse ? -1 : +1) * mt.mtService < 0 ? 'service' : '') + '"><div></div></td>';
+        right += '<td class="playerservice '  + (showService && (mt.mtReverse ? -1 : +1) * mt.mtService > 0 ? 'service' : '') + '"><div></div></td>';
     }
     
     left += '<td colspan="2" class="names">';
