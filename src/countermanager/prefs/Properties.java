@@ -72,7 +72,7 @@ public class Properties extends java.util.Properties {
             }
         }
 
-    return file;
+        return file;
     }
 
     
@@ -81,7 +81,7 @@ public class Properties extends java.util.Properties {
     }
     
     
-    public static File getIniFile(String fileName) {
+    private static File getIniFile(String fileName) {
         File ini = null;
         
         // 1) Im aktuellen Verzeichnis nach countermanger.ini suchen

@@ -2,6 +2,7 @@
 
 import * as Counter from '../scripts/modules/counter.js';
 import * as CounterData from '../scripts/modules/counter_data.js';
+import CounterSettings from '/counter/counter_settings.js';
 
 var counterMatch = null;
 var counterData = CounterData.create();
@@ -110,7 +111,7 @@ function doInitialize() {
 
 
 function connectHttp() {
-    var timeout = 150; // 150ms, slightly larger than the timeout of the ajax call    
+    var timeout = CounterSettings.ajaxTimeout + 50; // slightly larger than the timeout of the ajax call    
     var ct = (new Date()).getTime();
     
     if (lastUpdateTime > lastSentTime || lastSentTime < ct - 2000) {
@@ -245,7 +246,7 @@ function send(command, body) {
         type : 'POST',
         data : JSON.stringify(data),
         dataType: 'json',
-        timeout: 100, // 100 ms
+        timeout: CounterSettings.ajaxTimeout, // 200 ms
         success: function(data) {
             lastSentTime = (new Date()).getTime();
             

@@ -381,7 +381,7 @@ public class Scripting extends Liveticker {
     // Resolve path for scripts: sources, dist, cwd
     private static File[] scriptPathes = new File[] {
             new File("../src/countermanager/http/scripts"),
-            new File(Properties.getIniFile().getParent() + File.separator + "http/scripts"),
+            new File(Properties.getIniFile().getParent(), "http/scripts"),
             new File(".")
     };
 

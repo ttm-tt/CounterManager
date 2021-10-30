@@ -10,6 +10,7 @@ DefaultGroupName=TTM
 OutputDir=.\Output
 MinVersion= 0,6.0
 OutputBaseFilename=setup
+ArchitecturesInstallIn64BitMode=x64
 
 ; Sign installer
 ; SignTool=MS /d $qTTM Installer$q $f
@@ -74,8 +75,8 @@ Filename: {code:GetIniDir}\countermanager.ini; Section: Settings; Key: Language;
 Root: HKLM; Subkey: "Software\JavaSoft\Prefs"; Flags: noerror
 
 [Icons]
-Name: "{group}\ScoreBoardManager"; Filename: "{app}\lib\CounterManager.jar"; WorkingDir: "{autoappdata}";
-Name: "{userdesktop}\ScoreBoardManager"; Filename: "{app}\CounterManager.jar"; WorkingDir: "{autoappdata}"; Tasks: desktopicon; IconFilename: "{app}\CounterManager.ico";
+Name: "{group}\ScoreBoardManager"; Filename: "{app}\lib\CounterManager.jar"; WorkingDir: "{app}";
+Name: "{userdesktop}\ScoreBoardManager"; Filename: "{app}\CounterManager.jar"; WorkingDir: "{app}"; Tasks: desktopicon; IconFilename: "{app}\CounterManager.ico";
 
 
 [Code]

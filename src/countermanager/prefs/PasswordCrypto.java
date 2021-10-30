@@ -36,7 +36,7 @@ public final class PasswordCrypto {
         else if (pwd.isEmpty())
             return "";
         
-        File keyFile = Properties.getIniFile("private.key");
+        File keyFile = new File(Properties.getIniFile().getParent(), "private.key");
         if (!keyFile.exists() || keyFile.length() == 0) {
             try {
                 // Plain AES is good enough for passwords
@@ -119,7 +119,7 @@ public final class PasswordCrypto {
         else if (pwd.isEmpty())
             return "";
         
-        File keyFile = Properties.getIniFile("private.key");
+        File keyFile = new File(Properties.getIniFile().getParent(), "private.key");
         if (!keyFile.exists() || keyFile.length() == 0)
             return pwd;
 

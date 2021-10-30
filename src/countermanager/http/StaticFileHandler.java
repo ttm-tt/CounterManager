@@ -140,12 +140,11 @@ class StaticFileHandler implements HttpHandler {
             array.add(f.getName());
         }
         
-        String resp = new GsonBuilder().create().toJson(array);
+        byte[] resp = new GsonBuilder().create().toJson(array).getBytes(HTTP.UTF8);
         
         he.getResponseHeaders().add("Content-Type", "application/json");
-        he.sendResponseHeaders(200, resp.getBytes().length);
-        he.getResponseBody().write(resp.getBytes(HTTP.UTF8));
+        he.sendResponseHeaders(200, resp.length);
+        he.getResponseBody().write(resp);
         he.getResponseBody().close();
     }
-    
 }

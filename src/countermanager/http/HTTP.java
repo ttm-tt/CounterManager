@@ -60,8 +60,9 @@ public class HTTP {
                 break;
         }
         
-        he.sendResponseHeaders(code, message.getBytes().length);
-        he.getResponseBody().write(message.getBytes(UTF8));
+        byte[] response = message.getBytes(UTF8);
+        he.sendResponseHeaders(code, response.length);
+        he.getResponseBody().write(response);
         he.getResponseBody().close();        
     }
     
@@ -158,7 +159,7 @@ public class HTTP {
                     byte[] response = json.toJson(list).getBytes(UTF8);
                     he.getResponseHeaders().set("Content-Type", "application/json");
                     he.sendResponseHeaders(200, response.length);
-                    he.getResponseBody().write(response,0, response.length);
+                    he.getResponseBody().write(response);
                 } catch (Exception e) {
                     HTTP.sendErrorResponse(he, 500);
                 }
@@ -183,7 +184,7 @@ public class HTTP {
                         byte[] response = json.toJson(match).getBytes(UTF8);
                         he.getResponseHeaders().set("Content-Type", "application/json");
                         he.sendResponseHeaders(200, response.length);
-                        he.getResponseBody().write(response,0, response.length);
+                        he.getResponseBody().write(response);
                     }
                 } catch (Exception e) {
                     he.sendResponseHeaders(500, 0);
@@ -208,7 +209,7 @@ public class HTTP {
                         byte[] response = json.toJson(data).getBytes(UTF8);
                         he.getResponseHeaders().set("Content-Type", "application/json");
                         he.sendResponseHeaders(200, response.length);
-                        he.getResponseBody().write(response, 0, response.length);
+                        he.getResponseBody().write(response);
                     }
                 } catch (Exception e) {
                     he.sendResponseHeaders(500, 0);
@@ -270,7 +271,7 @@ public class HTTP {
         // Zum debuggen haben die Files aus dem src-Zweig Vorrang
         httpServer.createContext("/", new StaticFileHandler(new File[] {
             new File("../src/countermanager/http/"),
-            new File(Properties.getIniFile().getParent() + File.separator + "http"),
+            new File(Properties.getIniFile().getParent(), "http"),
             new File("../test/countermanager/http/"),
         }, null));
 

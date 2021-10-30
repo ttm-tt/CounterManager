@@ -18,6 +18,7 @@ import countermanager.driver.ICounterProperties;
 import countermanager.prefs.Preferences;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -56,19 +57,22 @@ public class CounterDriverTTM implements countermanager.driver.ICounterDriver {
     
     public static class CounterPropertiesTTM implements ICounterProperties {
         private long aliveTimeout;
+        private long ajaxTimeout = 200;
 
-        /**
-         * @return the aliveTimeout
-         */
         public long getAliveTimeout() {
             return aliveTimeout;
         }
 
-        /**
-         * @param aliveTimeout the aliveTimeout to set
-         */
         public void setAliveTimeout(long aliveTimeout) {
             this.aliveTimeout = aliveTimeout;
+        }
+
+        public long getAjaxTimeout() {
+            return ajaxTimeout;
+        }
+
+        public void setAjaxTimeout(long ajaxTimeout) {
+            this.ajaxTimeout = ajaxTimeout;
         }
     }
     
@@ -108,8 +112,42 @@ public class CounterDriverTTM implements countermanager.driver.ICounterDriver {
     private int lastTable = 24;    
     private Map<Integer, Long> aliveMap = new java.util.HashMap<>();
     private Map<Integer, String> addressMap = new java.util.HashMap<>();
-    
-    public CounterDriverTTM() {
+
+    public CounterDriverTTM() {        
+        countermanager.http.HTTP.getDefaultInstance().addHandler("/counter/counter_settings.js", new HttpHandler() {
+            
+            @Override
+            public void handle(HttpExchange he) throws IOException {
+                try {
+                    StringBuilder sb = new StringBuilder();
+                    sb
+                        .append("const CounterSettings = {")
+                        .append("  pointsToPlay : 11")
+                        .append(", pointsToPlayLastGame : 11")
+                        .append(", leadToWin : 2")
+                        .append(", leadToWinLastGame : 2")
+                        .append(", serviceChange : 2")
+                        .append(", serviceChangeLastGame : 2")
+                        .append(", sideChange: true")
+                        .append(", sideChangeLastGame: true")
+                        .append(", ajaxTimeout: ").append(((CounterPropertiesTTM) getCounterProperties()).ajaxTimeout)
+                        .append("};")
+                    ;
+                    
+                    sb.append("export default CounterSettings;");
+
+                    byte[] response = sb.toString().getBytes(Charset.forName("UTF-8"));
+                    he.getResponseHeaders().set("Content-Type", "text/javascript");
+                    he.sendResponseHeaders(200, response.length);
+                    he.getResponseBody().write(response, 0, response.length);
+                } catch (Exception e) {
+                    he.sendResponseHeaders(500, 0);
+                } finally {
+                    he.getResponseBody().close();
+                }
+            }
+        });
+
         countermanager.http.HTTP.getDefaultInstance().addHandler("/counter/command", new HttpHandler() {
 
             @Override

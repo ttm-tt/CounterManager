@@ -5,7 +5,7 @@
  */
 
 import * as CounterData from './counter_data.js';
-import CounterSettings from './counter_settings.js';
+import CounterSettings from '/counter/counter_settings.js';
 
 /**
  * 
