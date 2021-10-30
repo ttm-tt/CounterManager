@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=ScoreBoardManager
-AppVerName=ScoreBoardManager 21.09.02
+AppVerName=ScoreBoardManager 21.10
 ; AppPublisher=Christoph Theis
 DefaultDirName={pf}\TTM\CounterManager
 DefaultGroupName=TTM
