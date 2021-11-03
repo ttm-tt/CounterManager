@@ -120,11 +120,18 @@ function show(start, mtTimestamp) {
             if (matches[i] == undefined || matches[i][0] == undefined)
                 continue;
             
-            if (Matches.isFinished(matches[i][0]))
-                continue;
+            for (var j in matches[i]) {
+                if (matches[i][j] == undefined)
+                    continue;
+                
+                if (Matches.isFinished(matches[i][j]))
+                    continue;
 
-            if (from == undefined || from > matches[i][0].mtDateTime)
-                from = matches[i][0].mtDateTime;
+                if (from == undefined || from > matches[i][j].mtDateTime) {
+                    from = matches[i][j].mtDateTime;
+                    break;
+                }
+            }
         }
 
         // Attribute zuruecksetzen
