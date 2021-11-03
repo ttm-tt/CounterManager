@@ -56,8 +56,128 @@ public class CounterDriverTTM implements countermanager.driver.ICounterDriver {
     }
     
     public static class CounterPropertiesTTM implements ICounterProperties {
+
+        /**
+         * @return the pointsToPlay
+         */
+        public int getPointsToPlay() {
+            return pointsToPlay;
+        }
+
+        /**
+         * @param pointsToPlay the pointsToPlay to set
+         */
+        public void setPointsToPlay(int pointsToPlay) {
+            this.pointsToPlay = pointsToPlay;
+        }
+
+        /**
+         * @return the pointsToPlayLastGame
+         */
+        public int getPointsToPlayLastGame() {
+            return pointsToPlayLastGame;
+        }
+
+        /**
+         * @param pointsToPlayLastGame the pointsToPlayLastGame to set
+         */
+        public void setPointsToPlayLastGame(int pointsToPlayLastGame) {
+            this.pointsToPlayLastGame = pointsToPlayLastGame;
+        }
+
+        /**
+         * @return the leadToWin
+         */
+        public int getLeadToWin() {
+            return leadToWin;
+        }
+
+        /**
+         * @param leadToWin the leadToWin to set
+         */
+        public void setLeadToWin(int leadToWin) {
+            this.leadToWin = leadToWin;
+        }
+
+        /**
+         * @return the leadToWinLastGame
+         */
+        public int getLeadToWinLastGame() {
+            return leadToWinLastGame;
+        }
+
+        /**
+         * @param leadToWinLastGame the leadToWinLastGame to set
+         */
+        public void setLeadToWinLastGame(int leadToWinLastGame) {
+            this.leadToWinLastGame = leadToWinLastGame;
+        }
+
+        /**
+         * @return the serviceChange
+         */
+        public int getServiceChange() {
+            return serviceChange;
+        }
+
+        /**
+         * @param serviceChange the serviceChange to set
+         */
+        public void setServiceChange(int serviceChange) {
+            this.serviceChange = serviceChange;
+        }
+
+        /**
+         * @return the serviceChangeLastGame
+         */
+        public int getServiceChangeLastGame() {
+            return serviceChangeLastGame;
+        }
+
+        /**
+         * @param serviceChangeLastGame the serviceChangeLastGame to set
+         */
+        public void setServiceChangeLastGame(int serviceChangeLastGame) {
+            this.serviceChangeLastGame = serviceChangeLastGame;
+        }
+
+        /**
+         * @return the sideChange
+         */
+        public boolean isSideChange() {
+            return sideChange;
+        }
+
+        /**
+         * @param sideChange the sideChange to set
+         */
+        public void setSideChange(boolean sideChange) {
+            this.sideChange = sideChange;
+        }
+
+        /**
+         * @return the sideChangeLastGame
+         */
+        public boolean isSideChangeLastGame() {
+            return sideChangeLastGame;
+        }
+
+        /**
+         * @param sideChangeLastGame the sideChangeLastGame to set
+         */
+        public void setSideChangeLastGame(boolean sideChangeLastGame) {
+            this.sideChangeLastGame = sideChangeLastGame;
+        }
         private long aliveTimeout;
         private long ajaxTimeout = 200;
+        private int  pointsToPlay = 11;
+        private int  pointsToPlayLastGame = 11;
+        private int  leadToWin = 2;
+        private int  leadToWinLastGame =2;
+        private int  serviceChange = 2;
+        private int  serviceChangeLastGame = 2;
+        private boolean sideChange = true;
+        private boolean sideChangeLastGame = true;
 
         public long getAliveTimeout() {
             return aliveTimeout;
@@ -122,14 +242,14 @@ public class CounterDriverTTM implements countermanager.driver.ICounterDriver {
                     StringBuilder sb = new StringBuilder();
                     sb
                         .append("const CounterSettings = {")
-                        .append("  pointsToPlay : 11")
-                        .append(", pointsToPlayLastGame : 11")
-                        .append(", leadToWin : 2")
-                        .append(", leadToWinLastGame : 2")
-                        .append(", serviceChange : 2")
-                        .append(", serviceChangeLastGame : 2")
-                        .append(", sideChange: true")
-                        .append(", sideChangeLastGame: true")
+                        .append("  pointsToPlay : ").append(((CounterPropertiesTTM) getCounterProperties()).pointsToPlay)
+                        .append(", pointsToPlayLastGame : ").append(((CounterPropertiesTTM) getCounterProperties()).pointsToPlayLastGame)
+                        .append(", leadToWin : ").append(((CounterPropertiesTTM) getCounterProperties()).leadToWin)
+                        .append(", leadToWinLastGame : ").append(((CounterPropertiesTTM) getCounterProperties()).leadToWinLastGame)
+                        .append(", serviceChange : ").append(((CounterPropertiesTTM) getCounterProperties()).serviceChange)
+                        .append(", serviceChangeLastGame: ").append(((CounterPropertiesTTM) getCounterProperties()).serviceChangeLastGame)
+                        .append(", sideChange: ").append(((CounterPropertiesTTM) getCounterProperties()).sideChange ? "true" : "false")
+                        .append(", sideChangeLastGame: ").append(((CounterPropertiesTTM) getCounterProperties()).sideChangeLastGame ? "true" : "false")
                         .append(", ajaxTimeout: ").append(((CounterPropertiesTTM) getCounterProperties()).ajaxTimeout)
                         .append("};")
                     ;
