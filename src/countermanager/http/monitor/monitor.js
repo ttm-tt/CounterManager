@@ -49,11 +49,11 @@ $(document).ready(function() {
     timeToBlank = parseInt(getParameterByName("timeToBlank", timeToBlank));
     errorTimeout = parseInt(getParameterByName('errorTimeout', errorTimeout));
     flag = getParameterByName('flag', flag);
-    table = parseInt(getParameterByName('table', 1));
+    table = parseInt(getParameterByName('table', table));
     noUpdate = parseInt(getParameterByName("timeout", 1)) === 0;
     showService = parseInt(getParameterByName('showService', 1)) !== 0;
-    showRunningTimeout = parseInt(getParameterByName('showRunningTimeout',1)) !== 0;
-    prestart = parseInt(getParameterByName('prestart', 600));
+    showRunningTimeout = parseInt(getParameterByName('showRunningTimeout', 1)) !== 0;
+    prestart = parseInt(getParameterByName('prestart', prestart));
     nameLength = getParameterByName("nameLength", nameLength);
     lastNameLength = getParameterByName("lastNameLength", nameLength);
     firstNameLength = getParameterByName("firstNameLength", nameLength);
