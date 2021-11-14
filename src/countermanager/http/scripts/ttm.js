@@ -615,7 +615,7 @@ var ttm = new function() {
                 "SELECT na" + flag + " AS plAnaName, NULL AS plBnaName, stPos " +
                 "  FROM StTeamList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
                 " WHERE cpType = 4 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= " + numPoles + " " +
-                " ORDER BY stPos"
+                "ORDER BY stPos, stNr "
         ;
         
         connection = getConnection();
