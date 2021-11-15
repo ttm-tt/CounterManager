@@ -604,15 +604,15 @@ var ttm = new function() {
         var flag = args.get('flag') || 'Name';
 
         sql = 
-                "SELECT na" + flag + " AS plAnaName, NULL AS plBnaName, stPos " +
+                "SELECT na" + flag + " AS plAnaName, NULL AS plBnaName, stPos, stNr " +
                 "  FROM StSingleList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
                 " WHERE cpType = 1 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= " + numPoles + " " +
                 "UNION ALL " +
-                "SELECT plna" + flag + " AS plAnaName, bdna" + flag + " AS plBnaName, stpos" +
+                "SELECT plna" + flag + " AS plAnaName, bdna" + flag + " AS plBnaName, stPos, stNr" +
                 "  FROM StDoubleList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
                 " WHERE (cpType = 2 OR cpType = 3) AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= " + numPoles + " " +
                 "UNION ALL " +
-                "SELECT na" + flag + " AS plAnaName, NULL AS plBnaName, stPos " +
+                "SELECT na" + flag + " AS plAnaName, NULL AS plBnaName, stPos, stNr " +
                 "  FROM StTeamList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
                 " WHERE cpType = 4 AND cpName = '" + cpName + "' AND grName = '" + grName + "' AND stPos > 0 AND stPos <= " + numPoles + " " +
                 "ORDER BY stPos, stNr "
