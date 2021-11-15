@@ -24,6 +24,8 @@
         <dependency org="com.shinyhut" name="vernacular" rev="1.11" conf="compile->default"/>
         <!-- https://mvnrepository.com/artifact/org.ini4j/ini4j -->
         <dependency org="org.ini4j" name="ini4j" rev="0.5.4" conf="compile->default"/>
+        <!-- https://mvnrepository.com/artifact/org.mozilla/rhino-engine -->
+        <dependency org="org.mozilla" name="rhino-engine" rev="1.7.13"/>
         
         <!-- Test libs -->
         <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->

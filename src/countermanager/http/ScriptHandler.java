@@ -30,7 +30,7 @@ import javax.script.ScriptException;
 public class ScriptHandler implements HttpHandler {
 
     private javax.script.ScriptEngineManager manager = new javax.script.ScriptEngineManager();
-    private javax.script.ScriptEngine jsengine = manager.getEngineByName("js");
+    private javax.script.ScriptEngine jsengine = manager.getEngineByName("rhino");
 
     private String alias;
     private String script;

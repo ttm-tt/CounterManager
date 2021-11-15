@@ -60,7 +60,7 @@ public class XmlRpc implements HttpHandler {
 
     private XmlRpcServer xmlrpcServer = new XmlRpcServer() {
         private javax.script.ScriptEngineManager manager = new javax.script.ScriptEngineManager();
-        private javax.script.ScriptEngine jsengine = manager.getEngineByName("js");
+        private javax.script.ScriptEngine jsengine = manager.getEngineByExtension("js");
 
         private Map<String, Long> handlerSet = new java.util.HashMap<>();
         
