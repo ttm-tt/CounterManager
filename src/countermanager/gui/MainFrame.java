@@ -23,10 +23,13 @@ import javax.swing.JOptionPane;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import static countermanager.prefs.Prefs.*;
+import countermanager.prefs.Properties;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import javax.swing.JFileChooser;
 
 /**
  *
@@ -340,6 +343,7 @@ public class MainFrame extends javax.swing.JFrame {
         };
         debugMenuItem = new javax.swing.JCheckBoxMenuItem();
         largeFontMenuItem = new javax.swing.JCheckBoxMenuItem();
+        openIniFileMenuItem = new javax.swing.JMenuItem();
         exitMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -466,7 +470,15 @@ public class MainFrame extends javax.swing.JFrame {
         });
         connectionsMenu.add(largeFontMenuItem);
 
-        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
+        openIniFileMenuItem.setText("Load Configuration");
+        openIniFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openIniFileMenuItemActionPerformed(evt);
+            }
+        });
+        connectionsMenu.add(openIniFileMenuItem);
+
+        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_DOWN_MASK));
         exitMenuItem.setText(bundle.getString("exitMenuItem")); // NOI18N
         exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -726,6 +738,22 @@ public class MainFrame extends javax.swing.JFrame {
     private void lockscreenMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lockscreenMenuItemActionPerformed
         CounterModel.getDefaultInstance().lockAllScreens(!lockscreenMenuItem.isSelected());        
     }//GEN-LAST:event_lockscreenMenuItemActionPerformed
+
+    private void openIniFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openIniFileMenuItemActionPerformed
+        File old = countermanager.prefs.Properties.getIniFile();
+        javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+        fc.setFileSelectionMode(javax.swing.JFileChooser.FILES_ONLY);
+        fc.setSelectedFile(old);
+        int ret = fc.showOpenDialog(this);
+        if (ret != JFileChooser.APPROVE_OPTION)
+            return;
+        
+        File ini = fc.getSelectedFile();
+
+        Properties.setIniFile(ini);
+        
+        setTitle(bundle.getString("counterManagerTitle") + " - " + ini.getName());
+    }//GEN-LAST:event_openIniFileMenuItemActionPerformed
         
     private java.awt.Component getInvoker(java.awt.Component c) {        
         while (c.getParent() != null)
@@ -888,6 +916,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem livetickerMenuItem;
     private javax.swing.JCheckBoxMenuItem lockscreenMenuItem;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem openIniFileMenuItem;
     private javax.swing.JMenuItem preferencesMenuItem;
     private javax.swing.JMenuItem refreshCounterMenuItem;
     private javax.swing.JMenuItem saveMenuItem;

@@ -75,9 +75,24 @@ public class Properties extends java.util.Properties {
         return file;
     }
 
+    public static void setIniFile(File f) {
+        iniFile = f;
+        
+        if (!iniFile.exists()) {
+            try {
+                iniFile.createNewFile();
+            } catch (IOException ex) {
+                Logger.getLogger(Properties.class.getName()).log(Level.SEVERE, null, ex);
+                iniFile = null;
+            }            
+        }
+    }
     
     public static File getIniFile() {
-        return getIniFile("countermanager.ini");
+        if (iniFile != null && iniFile.exists())
+            return iniFile;
+        
+        return (iniFile = getIniFile("countermanager.ini"));
     }
     
     
@@ -222,4 +237,6 @@ public class Properties extends java.util.Properties {
      
         ini.add(section, key, val);
     }
+    
+    private static File iniFile;
 }
