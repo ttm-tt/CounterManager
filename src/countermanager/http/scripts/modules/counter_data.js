@@ -4,7 +4,7 @@
  * Definition of the data model used in live ticker input
  */
 
-import CounterSettings from '/counter/counter_settings.js';
+import CounterSettings from '../../counter/counter_settings.js';
 
 
 export const GameMode = Object.freeze({

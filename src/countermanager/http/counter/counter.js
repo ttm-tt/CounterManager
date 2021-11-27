@@ -2,7 +2,7 @@
 
 import * as Counter from '../scripts/modules/counter.js';
 import * as CounterData from '../scripts/modules/counter_data.js';
-import CounterSettings from '/counter/counter_settings.js';
+import CounterSettings from '../counter/counter_settings.js';
 
 var counterMatch = null;
 var counterData = CounterData.create();
