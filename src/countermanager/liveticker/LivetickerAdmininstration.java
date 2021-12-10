@@ -8,6 +8,7 @@
 package countermanager.liveticker;
 
 import countermanager.model.CounterModel;
+import countermanager.prefs.Properties;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
@@ -113,16 +114,22 @@ public class LivetickerAdmininstration {
             disabled.remove(counter);
     }  
     
-    
-    private final static String ltFileName = "liveticker.xml";
 
+    private static String getLivetickerFileName() {
+        String ltFileName = Properties.getIniFile().getPath();
+        // Default is still "liveticker.xml"
+        ltFileName = ltFileName.replace("countermanager.ini", "liveticker.xml");
+        // And now rename to <config>-lt.xml
+        ltFileName = ltFileName.replace(".ini", "-lt.xml");
+        return ltFileName;        
+    }
+    
     public static void storeLiveticker() {
         try {
-            java.io.File dir = countermanager.prefs.Properties.getIniFile().getParentFile();
             JAXBContext context = JAXBContext.newInstance(LivetickerList.class);
             Marshaller m = context.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            m.marshal(liveticker, new java.io.FileWriter(new java.io.File(dir, ltFileName)));    
+            m.marshal(liveticker, new java.io.FileWriter(new java.io.File(getLivetickerFileName())));    
         } catch (JAXBException ex) {
             Logger.getLogger(LivetickerAdmininstration.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FileNotFoundException ex) {
@@ -139,10 +146,9 @@ public class LivetickerAdmininstration {
         }
         
         try {
-            java.io.File dir = countermanager.prefs.Properties.getIniFile().getParentFile();
             JAXBContext context = JAXBContext.newInstance(LivetickerList.class);
             Unmarshaller um = context.createUnmarshaller();
-            java.io.File ltFile = new java.io.File(dir, ltFileName);
+            java.io.File ltFile = new java.io.File(getLivetickerFileName());
             if (ltFile.exists())
                 liveticker = (LivetickerList) um.unmarshal(new java.io.FileReader(ltFile));
             if (liveticker.list.isEmpty()) {
