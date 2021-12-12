@@ -369,6 +369,8 @@ function resetMatch() {
     counterMatch = null;
     counterData = CounterData.create();
     
+    clearData();
+    
     updateScreen();
 }
 
