@@ -11,7 +11,7 @@
 
     <dependencies defaultconf="compile->default;sources->sources;javadoc->javadoc">
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
-        <dependency org="com.google.code.gson" name="gson" rev="2.8.8"/>
+        <dependency org="com.google.code.gson" name="gson" rev="2.8.9"/>
         <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
         <dependency org="javax.xml.bind" name="jaxb-api" rev="2.3.1"/>
         <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
