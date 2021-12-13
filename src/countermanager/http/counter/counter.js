@@ -182,11 +182,14 @@ function restoreData() {
         }
         
         setMatch(data.counterMatch);
-        
-        // counterMatch = data.counterMatch;
+
+        // If the stored data is in state END, remove it, we can't work with it anymore
+        if (data.counterData.gameMode == 'END')
+            data.counterData = CounterData.create();
+
         counterData = Object.assign(counterData, data.counterData);
         
-        // But without the locked attribute
+        // But without the locked attribute (in case it is not a fresh CounterData object)
         counterData.locked = false;
     }        
 }
