@@ -89,7 +89,7 @@ export function swapSides(data) {
         data.sideChange = -data.sideChange;
         
         // If in the last game, just reverse service
-        if (cg === data.bestOf - 1 && data.hasGameStarted(cg)) {
+        if (data.bestOf > 1 && cg === data.bestOf - 1 && data.hasGameStarted(cg)) {
             // This must be the middle of the last game
             // For doubles it would be the reverse of the previous service / return
             changeServicePrev(data);
@@ -297,8 +297,8 @@ export function isChangeServiceRequired(data) {
     
     const cg = data.setsLeft + data.setsRight;
     const game = data.setHistory[cg];
-    const sc = (cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
-    const win = (cg === data.bestOf - 1 ? CounterSettings.pointsToPlayLastGame : CounterSettings.pointsToPlay);
+    const sc = (data.bestOf > 1 && cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
+    const win = (data.bestOf > 1 && cg === data.bestOf - 1 ? CounterSettings.pointsToPlayLastGame : CounterSettings.pointsToPlay);
     
     if (data.expedite)
         return true;
@@ -324,7 +324,7 @@ const Side = Object.freeze({
 // Add point
 function addPoint(data, side) {
     const cg = data.setsLeft + data.setsRight;
-    const cs = (cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
+    const cs = (data.bestOf > 1 && cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
     const sl = CounterSettings.sideChangeLastGame;
     
     if (data.setHistory.length <= cg)
@@ -357,7 +357,7 @@ function addPoint(data, side) {
     // The next point removes that flag
     if (data.sideChange === CounterData.SideChange.AFTER)
         data.sideChange = CounterData.SideChange.NONE;
-    else if (cg === data.bestOf - 1 && sl > 0 &&
+    else if (data.bestOf > 1 && cg === data.bestOf - 1 && sl > 0 &&
             data.setHistory[cg][side] === sl && 
             data.setHistory[cg][side === Side.LEFT ? Side.RIGHT : Side.LEFT] < sl) {
         data.sideChange = CounterData.SideChange.BEFORE;
@@ -384,7 +384,7 @@ function addPoint(data, side) {
 // Sub point
 function subPoint(data, side) {
     let cg = data.setsLeft + data.setsRight;
-    const cs = (cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
+    const cs = (data.bestOf > 1 && cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
     const sl = CounterSettings.sideChangeLastGame;
     
     if (data.setHistory.length <= cg)
@@ -417,7 +417,7 @@ function subPoint(data, side) {
     // Going further back removes that flag
     if (data.sideChange == CounterData.SideChange.BEFORE)
         data.sideChange = CounterData.SideChange.NONE;
-    else if (cg === data.bestOf - 1 && sl > 0 && 
+    else if (data.bestOf > 1 && cg === data.bestOf - 1 && sl > 0 && 
             data.setHistory[cg][side] == sl &&
             data.setHistory[cg][side === Side.LEFT ? Side.RIGHT : Side.LEFT] < sl) {
         data.sideChange = CounterData.SideChange.AFTER;
@@ -583,7 +583,7 @@ function calculateFirstService(data) {
     const cg = data.setsLeft + data.setsRight;
     const cp = data.setHistory[cg][0] + data.setHistory[cg][1];
     
-    const cs = (cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
+    const cs = (data.bestOf > 1 && cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
     const sl = CounterSettings.sideChangeLastGame;
 
     // Service repeats every 4th (2*cs) point  for 2 points (cs)
@@ -596,7 +596,7 @@ function calculateFirstService(data) {
     // Going forward or backward, the moment one reaches 5 and the other have less
     // we will at the point of side change. Going on or further back will reset
     // the flag.
-    if ( cg == data.bestOf - 1 && sl > 0 && (
+    if ( data.bestOf > 1 && cg == data.bestOf - 1 && sl > 0 && (
             data.sideChange == CounterData.SideChange.AFTER || 
             data.setHistory[cg][0] > 5 ||
             data.setHistory[cg][1] > 5) ) {
@@ -610,7 +610,7 @@ function calculateFirstService(data) {
 function calculateFirstServiceDouble(data) {
     const cg = data.setsLeft + data.setsRight;
     const cp = data.setHistory[cg][0] + data.setHistory[cg][1];
-    const cs = (cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
+    const cs = (data.bestOf > 1 && cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
     const sl = CounterSettings.sideChangeLastGame;
 
     // Running in the cycle where are we starting from the beginning
@@ -631,7 +631,7 @@ function calculateFirstServiceDouble(data) {
     // Going forward or backward, the moment one reaches 5 and the other have less
     // we will at the point of side change. Going on or further back will reset
     // the flag.
-    if ( cg == data.bestOf - 1 && sl > 0 && (
+    if ( data.bestOf > 1 && cg == data.bestOf - 1 && sl > 0 && (
             data.sideChange == CounterData.SideChange.AFTER || 
             data.setHistory[cg][0] > 5 ||
             data.setHistory[cg][1] > 5) ) {
@@ -691,8 +691,8 @@ function wo(data, side) {
         return false;
     
     for (let i = 0; !data.hasMatchFinished(); i++) {
-        let pts = (i === data.bestOf - 1 ? CounterSettings.pointsToPlayLastGame : CounterSettings.pointsToPlay);
-        let win = (i === data.bestOf - 1 ? CounterSettings.leadToWinLastGame : CounterSettings.leadToWin);
+        let pts = (data.beestOf > 1 && i === data.bestOf - 1 ? CounterSettings.pointsToPlayLastGame : CounterSettings.pointsToPlay);
+        let win = (data.bestOf > 1 && i === data.bestOf - 1 ? CounterSettings.leadToWinLastGame : CounterSettings.leadToWin);
 
         if (!data.hasGameFinished(i)) {
             data.setHistory[i][other] = Math.max(data.setHistory[i][side] + win, pts);
