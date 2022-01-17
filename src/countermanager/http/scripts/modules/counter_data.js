@@ -287,8 +287,8 @@ export function create(match = null) {
             if (idx < 0 || idx >= this.setHistory.length)
                 return false;
             
-            let pts = (idx === this.bestOf - 1 ? CounterSettings.pointsToPlayLastGame : CounterSettings.pointsToPlay);
-            let win = (idx === this.bestOf - 1 ? CounterSettings.leadToWinLastGame : CounterSettings.leadToWin);
+            let pts = (this.bestOf > 1 && idx === this.bestOf - 1 ? CounterSettings.pointsToPlayLastGame : CounterSettings.pointsToPlay);
+            let win = (this.bestOf > 1 && idx === this.bestOf - 1 ? CounterSettings.leadToWinLastGame : CounterSettings.leadToWin);
 
             if (this.setHistory[idx][0] >= pts && this.setHistory[idx][0] >= this.setHistory[idx][1] + win)
                 return true;
