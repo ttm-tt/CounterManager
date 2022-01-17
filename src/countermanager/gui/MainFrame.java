@@ -39,7 +39,7 @@ public class MainFrame extends javax.swing.JFrame {
     
     private static final int ITEM_SIZE = 100;
     
-    private static final String VERSION_STRING = "22.01.01";
+    private static final String VERSION_STRING = "22.01.02";
     private static final String COPYRIGHT_STRING = "(C) 2022 Christoph Theis";
     
     private static final ResourceBundle bundle = ResourceBundle.getBundle("countermanager/gui/resources/CounterManager");
