@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -176,7 +177,7 @@ public class MainFrame extends javax.swing.JFrame {
         for (String tmp11 : tmp1) {
             if (tmp11.length() == 0) {
                 continue;
-            }
+    }
             String[] tmp2 = tmp11.split(",");
             int     nr     = Integer.parseInt(tmp2[0]);
             boolean active = Boolean.parseBoolean(tmp2[1]);
@@ -743,6 +744,9 @@ public class MainFrame extends javax.swing.JFrame {
         File old = countermanager.prefs.Properties.getIniFile();
         javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
         fc.setFileSelectionMode(javax.swing.JFileChooser.FILES_ONLY);
+        FileNameExtensionFilter cfgFilter = new FileNameExtensionFilter(bundle.getString("configurationFileFilter"), "ini");
+        fc.addChoosableFileFilter(cfgFilter);
+        fc.setFileFilter(cfgFilter);
         fc.setSelectedFile(old);
         int ret = fc.showOpenDialog(this);
         if (ret != JFileChooser.APPROVE_OPTION)
@@ -751,6 +755,8 @@ public class MainFrame extends javax.swing.JFrame {
         File ini = fc.getSelectedFile();
 
         Properties.setIniFile(ini);
+        
+        countermanager.liveticker.LivetickerAdmininstration.loadLiveticker();
         
         setTitle(bundle.getString("counterManagerTitle") + " - " + ini.getName());
     }//GEN-LAST:event_openIniFileMenuItemActionPerformed
