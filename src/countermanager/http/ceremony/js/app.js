@@ -2732,7 +2732,7 @@
       // Initialized location for flags from query parameter
       window.imageLocation = getParameterByName('flagLocation', window.imageLocation);
       numFlagPoles = parseInt(getParameterByName('numFlagPoles', 4));
-      if (numFlagPoles < 2 || numFlagPoles > 4)
+      if (numFlagPoles < 1 || numFlagPoles > 4)
         numFlagPoles = 4;
       var flags = fromQuery();
       var imgWidth = getParameterByName('flagWidth', 'auto');
@@ -2791,7 +2791,7 @@
           flagDistance = parseInt(getParameterByName('flagHeight', 'auto')) * 1.1;
       var flagStart = flagDistance * 2.2;
       var flagPoleStart = -0.45;
-      var flagPoleDistance = 0.24 * 4 / numFlagPoles;
+      var flagPoleDistance = 0.24 * 4 / Math.max(numFlagPoles, 2);
       
       if (numFlagPoles > 1) {
         app.module(FlagGroupModule.displayName, 0).subject.object.position.set(window.innerWidth * flagPoleStart, window.innerHeight * 0.6 / 2, 0);
@@ -2799,8 +2799,8 @@
       }
       
       if (numFlagPoles > 0) {
-        app.module(FlagGroupModule.displayName, 1).subject.object.position.set(window.innerWidth * (flagPoleStart + 1 * flagPoleDistance), window.innerHeight * 0.8 / 2, 0);
-        app.module(FlagGroupModule.displayName, 1).moveFlags(-(window.innerHeight + window.innerHeight * 0.8) / 2 + flagStart, flagDistance);
+        app.module(FlagGroupModule.displayName, (numFlagPoles > 1 ? 1 : 0)).subject.object.position.set(window.innerWidth * (flagPoleStart + 1 * flagPoleDistance), window.innerHeight * 0.8 / 2, 0);
+        app.module(FlagGroupModule.displayName, (numFlagPoles > 1 ? 1 : 0)).moveFlags(-(window.innerHeight + window.innerHeight * 0.8) / 2 + flagStart, flagDistance);
       }
       
       if (numFlagPoles > 2) {
