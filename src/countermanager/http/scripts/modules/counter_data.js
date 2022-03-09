@@ -29,7 +29,7 @@ export const TimeInterval = Object.freeze({
     MATCH   : 600,
     BREAK   : 60,
     TIMEOUT : 60,
-    INJUREY : 600
+    INJURY  : 600
 });
 
 export const Cards = Object.freeze({

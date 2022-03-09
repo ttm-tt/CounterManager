@@ -66,6 +66,9 @@ export function swapSides(data) {
     const sc = CounterSettings.sideChange;
     const sl = CounterSettings.sideChangeLastGame;
     
+    if (data.gameMode === CounterData.GameMode.NONE)
+        startTimer(data);
+    
     // Nothing to do when match is finished
     if (data.gameMode == CounterData.GameMode.END)
         return;
@@ -112,8 +115,12 @@ export function swapSides(data) {
     data.serviceRight = data.hasServiceRight();
 
     // If we are in GameMode NONE we switch to WARMUP
-    if (data.gameMode == CounterData.GameMode.NONE)
+    if (data.gameMode == CounterData.GameMode.RESET) {
         data.gameMode = CounterData.GameMode.WARMUP;
+        data.timeMode = CounterData.TimeMode.PREPARE;
+        data.time = CounterData.TimeInterval.PREPARE;
+        startTimer(data);
+    }
     
     // A side change after end game increments the result
     if (data.hasGameFinished(cg)) {
@@ -247,6 +254,8 @@ export function toggleStartGame(data) {
         data.timeMode = CounterData.TimeMode.NONE;
     }
     
+    startTimer(data);
+    
     fireListeners();
 }
 
@@ -363,6 +372,9 @@ function addPoint(data, side) {
         data.sideChange = CounterData.SideChange.BEFORE;
     }
     
+    if (data.gameMode === CounterData.GameMode.NONE)
+        startTimer(data);
+    
     // And update match and time status
     if (data.hasMatchFinished()) {
         // Not GameMode.END, this is only set when you click 'End Match'
@@ -377,7 +389,7 @@ function addPoint(data, side) {
         data.gameMode = CounterData.GameMode.RUNNING;
         data.timeMode = CounterData.TimeMode.MATCH;
     }
-        
+    
     return true;
 }
 
@@ -476,6 +488,9 @@ function toggleService(data, side) {
     if (data.gameMode === CounterData.GameMode.RESET) {
         data.gameMode = CounterData.GameMode.WARMUP;
         data.timeMode = CounterData.TimeMode.PREPARE;
+        data.time = CounterData.TimeInterval.PREPARE;
+        
+        startTimer(data);
     }
     
     return true;
@@ -655,6 +670,9 @@ function toggleTimeout(data, side) {
         data.timeMode = CounterData.TimeMode.TIMEOUT;
     else if (!data.timeoutLeftRunning && !data.timeoutRightRunning)
         data.timeMode = CounterData.TimeMode.NONE;
+    
+    if (data.timeMode == CounterData.TimeMode.TIMEOUT)
+        data.time = CounterData.TimeInterval.TIMEOUT;
 }
 
 
@@ -715,7 +733,7 @@ function wo(data, side) {
     
     return true;
 }
-
+ 
 // -----------------------------------------------------------------------
 // Update GUI
 export function addListener(callback) {
@@ -728,7 +746,55 @@ function fireListeners() {
     }
 }
 
+
 // -----------------------------------------------------------------------
+// Timer
+// start timer
+var currentSec;
+export function startTimer(data) {
+    clearInterval(tid);
+    tid = setInterval(function() {onTimer(data);}, 100, data);
+    currentSec = Math.floor(Date.now() / 1000);
+}
+
+function onTimer(data) {
+    if (Math.floor(Date.now() / 1000) === currentSec)
+        return;
+    
+    currentSec = Math.floor(Date.now() / 1000);
+    
+    if (data === undefined || data === null)
+        return;
+    
+    switch (data.gameMode) {
+        case CounterData.GameMode.NONE:
+        case CounterData.GameMode.END:
+            return;
+    }
+    
+    switch (data.timeMode) {
+        case CounterData.TimeMode.NONE:
+            break;
+            
+        case CounterData.TimeMode.MATCH: 
+            if (data.gameTime > 0)
+                --data.gameTime;
+            break;
+            
+        default:
+            if (data.time > 0)
+                --data.time;
+            break;
+    }
+    
+    fireListeners();
+}
+
+
+// -----------------------------------------------------------------------
+// Timer ID
+var tid = setInterval(function() {onTimer();}, 1000); 
+
 // Internal administration
 var listeners = [];
 

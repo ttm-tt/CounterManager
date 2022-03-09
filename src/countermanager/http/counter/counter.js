@@ -580,6 +580,13 @@ function updateScreen() {
         $('#teamresult').html('');        
     }
     
+    if (counterData.timeMode == CounterData.TimeMode.NONE)
+        $('#timer .timer').html('');
+    else if (counterData.timeMode == CounterData.TimeMode.MATCH)
+        $('#timer .timer').html(counterData.gameTime);
+    else
+        $('#timer .timer').html(counterData.time);
+        
     if (counterMatch && counterMatch.cpType == 4) {
         // Team match
         $('#caption #teams').removeClass('hidden');
@@ -680,3 +687,5 @@ function updateScreen() {
     
     $('#endMatch').attr('checked', counterData.gameMode === CounterData.GameMode.END);
 }
+
+
