@@ -11,7 +11,7 @@
 
     <dependencies defaultconf="compile->default;sources->sources;javadoc->javadoc">
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
-        <dependency org="com.google.code.gson" name="gson" rev="2.8.9"/>
+        <dependency org="com.google.code.gson" name="gson" rev="2.9.0"/>
         <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
         <dependency org="javax.xml.bind" name="jaxb-api" rev="2.3.1"/>
         <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
@@ -21,11 +21,13 @@
         <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc_auth -->
         <dependency org="com.microsoft.sqlserver" name="mssql-jdbc_auth" rev="9.4.0.x64" conf="runtime->default"/>
         <!-- https://mvnrepository.com/artifact/com.shinyhut/vernacular -->
-        <dependency org="com.shinyhut" name="vernacular" rev="1.11" conf="compile->default"/>
+        <dependency org="com.shinyhut" name="vernacular" rev="1.14" conf="compile->default"/>
         <!-- https://mvnrepository.com/artifact/org.ini4j/ini4j -->
         <dependency org="org.ini4j" name="ini4j" rev="0.5.4" conf="compile->default"/>
+        <!-- https://mvnrepository.com/artifact/org.mozilla/rhino -->
+        <dependency org="org.mozilla" name="rhino" rev="1.7.14"/>
         <!-- https://mvnrepository.com/artifact/org.mozilla/rhino-engine -->
-        <dependency org="org.mozilla" name="rhino-engine" rev="1.7.13"/>
+        <dependency org="org.mozilla" name="rhino-engine" rev="1.7.14"/>
         
         <!-- Test libs -->
         <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
