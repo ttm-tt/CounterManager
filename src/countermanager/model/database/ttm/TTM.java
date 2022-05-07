@@ -397,7 +397,7 @@ public final class TTM implements IDatabase {
             // Order: By Table, Time, Individual.
             // Also for Round and Match-in-Round for RR-groups with all matches 
             // at the same time and table.
-            " ORDER BY mtTable, mtDateTime, mtMS, mtRound, mtMatch";
+            " ORDER BY mtTable, mtDateTime, mtNr, mtMS, mtRound, mtMatch";
         
         List<CounterModelMatch> list = new java.util.ArrayList<>();
         

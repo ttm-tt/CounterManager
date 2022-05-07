@@ -185,6 +185,11 @@ public class Match implements Comparable<Match> {
         if (mtDateTime > mt.mtDateTime)
             return +1;
 
+        if (mtNr < mt.mtNr)
+            return -1;
+        if (mtNr > mt.mtNr)
+            return +1;
+
         if (mtMS < mt.mtMS)
             return -1;
         if (mtMS > mt.mtMS)

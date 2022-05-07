@@ -177,6 +177,10 @@ public class League implements IDatabase {
                     return -1;
                 if (o1.mtTable > o2.mtTable)
                     return +1;
+                if (o1.mtNr < o2.mtNr)
+                    return -1;
+                if (o2.mtNr > o2.mtNr)
+                    return +1;
                 if (o1.mtMS < o2.mtMS)
                     return -1;
                 if (o2.mtMS > o2.mtMS)
