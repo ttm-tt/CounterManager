@@ -391,8 +391,8 @@ public final class TTM implements IDatabase {
             "       (mt.mtResX IS NULL OR 2 * mt.mtResX < mt.mtBestOf) AND " +
             "       (mt.mtWalkOverA IS NULL OR mt.mtWalkOverA = 0) AND " +
             "       (mt.mtWalkOverX IS NULL OR mt.mtWalkOverX = 0) AND " +
-            "       ((sy.syComplete = 0 AND 2 * mttmResA < mt.mtMatches AND 2 * mttmResX < mt.mtMatches) OR " +
-            "        (sy.syComplete = 1 AND (mt.mttmResA + mt.mttmResX) < mt.mtMatches)) AND "
+            "       (((sy.syComplete = 0 OR gr.grModus <> 1) AND 2 * mttmResA < mt.mtMatches AND 2 * mttmResX < mt.mtMatches) OR " +
+            "        ((sy.syComplete = 1 AND gr.grModus = 1) AND (mt.mttmResA + mt.mttmResX) < mt.mtMatches)) AND "
             )) +
             "       cp.cpType = 4 AND mt.mtTable >= ? AND mt.mtTable <= ? " +
 
@@ -1007,7 +1007,9 @@ public final class TTM implements IDatabase {
                 "    LEFT OUTER JOIN MtSet mtSet7 ON mtSet7.mtID = mt.mtID AND mtSet7.mtSet = 7 AND mtSet7.mtMS = mt.mtMS " +
                 " WHERE mtDateTime IS NOT NULL AND mtTable IS NOT NULL " +
                 "       AND tmAtmID IS NOT NULL AND tmXtmID IS NOT NULL " +
-                where + (notFinished ? " AND sy.syComplete = 0 AND 2 * ISNULL(mt.mttmResA, 0) < mtMatches AND 2 * ISNULL(mt.mttmResX, 0) < mtMatches " : "")
+                where + (notFinished ? 
+                    " AND (((sy.syComplete = 0 OR gr.grModus <> 1) AND 2 * ISNULL(mt.mttmResA, 0) < mtMatches AND 2 * ISNULL(mt.mttmResX, 0) < mtMatches) " + 
+                    "  OR  ((sy.syComplete = 1 AND gr.grModus = 1) AND (ISNULL(mttm.mtResA, 0) + ISNULL(mt.mttm.mtResX, 0)) < mtMatches))  " : "")
             ;
         
         sql += " ORDER BY mtDateTime, mtTable, mtNr, mtMS ";
