@@ -41,7 +41,8 @@ public class LivetickerAdmininstration {
         @XmlElements({
             @XmlElement(name="ttm", type=countermanager.liveticker.ttm.TTM.class),
             @XmlElement(name="unas", type=countermanager.liveticker.unas.Unas.class),
-            @XmlElement(name="scripting", type=countermanager.liveticker.scripting.Scripting.class)
+            @XmlElement(name="scripting", type=countermanager.liveticker.scripting.Scripting.class),
+            @XmlElement(name="atos", type=countermanager.liveticker.atos.Atos.class)
         })
         @XmlElementWrapper(name="livetickers")
         List<countermanager.liveticker.Liveticker> list = new java.util.ArrayList<>();
@@ -90,13 +91,21 @@ public class LivetickerAdmininstration {
     }
 
     public static void setLivetickerEnabled(boolean b) {
+        if (b == Liveticker.globalEnabled)
+            return;
+        
         for (Liveticker lt : liveticker.list ) {
             CounterModel.getDefaultInstance().removeCounterModelListener(lt);
-            if (b && lt.isInstanceEnabled())
+            if (b && lt.isInstanceEnabled()) {
                 CounterModel.getDefaultInstance().addCounterModelListener(lt);
+            }
         }
         
         Liveticker.globalEnabled = b;
+        
+        for (Liveticker lt : liveticker.list) {
+            lt.onGlobalEnable(b);
+        }
     }
     
     public static boolean isLivetickerEnabled() {

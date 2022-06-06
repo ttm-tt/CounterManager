@@ -23,6 +23,11 @@ public abstract class  Liveticker implements ICounterModelListener {
     public abstract String getName();
     public abstract void setName(String name);
 
+    public void onGlobalEnable(boolean e) {
+        
+    }
+    
+    
     public void setInstanceEnabled(boolean e) {
         instanceEnabled = e;
     }

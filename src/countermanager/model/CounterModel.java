@@ -98,7 +98,7 @@ public class CounterModel {
                         updateFromCounters();
                         // updateFromDatabase();
                     } catch (Throwable t) {
-                        System.out.println(t.getLocalizedMessage());
+                        Logger.getLogger(CounterModel.class.getName()).log(Level.SEVERE, null, t);                        
                     }
                     
                     try {
@@ -112,7 +112,7 @@ public class CounterModel {
                         // updateFromCounters();
                         updateFromDatabase();
                     } catch (Throwable t) {
-                        System.out.println(t.getLocalizedMessage());
+                        Logger.getLogger(CounterModel.class.getName()).log(Level.SEVERE, null, t);                        
                     }
                     
                     try {
@@ -699,7 +699,7 @@ public class CounterModel {
                 continue;
             
             // Only use the first match
-            if (lastTable == match.mtTable - tableOffset) {
+            if (lastTable >= 0 && lastTable == match.mtTable - tableOffset) {
                 if (counterList[lastTable] == null || !counterList[lastTable].isForced())
                     continue;
             }

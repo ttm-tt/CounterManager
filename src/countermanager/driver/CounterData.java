@@ -15,7 +15,8 @@ package countermanager.driver;
  * @author Christoph Theis
  */
 public class CounterData {
-    
+    public enum Cards {NONE, YELLOW, YR1P, YR2P }
+        
     // Get the alert text or null
     public String getAlertText() {return null;}
     
@@ -33,6 +34,7 @@ public class CounterData {
     private GameMode  gameMode;
     private boolean   serviceLeft;
     private boolean   serviceRight;
+    private int       serviceDouble;
     private boolean   abandonOrAbort;
     private int       gameNr;
     private int       playerNrLeft;
@@ -51,6 +53,9 @@ public class CounterData {
     private int       setsLeft;
     private int       setsRight;
     private int[][]   setHistory;
+    private Cards     cardLeft = Cards.NONE;
+    private Cards     cardRight = Cards.NONE;
+    private boolean   expedite;
     private boolean   swapped = false;
     private long      updateTime;
     
@@ -65,7 +70,7 @@ public class CounterData {
                 try {
                     if (sb.length() > 0)
                         sb.append(", ");
-                    sb.append("" + fields[i].getName() + "=" + fields[i].get(this));
+                    sb.append("").append(fields[i].getName()).append("=").append(fields[i].get(this));
                 } catch (Throwable t) {
                     
                 }
@@ -167,6 +172,10 @@ public class CounterData {
     public boolean getServiceRight() {
         return serviceRight;
     }
+    
+    public int getServiceDouble() {
+        return serviceDouble;
+    }
 
     public void setServiceLeft(boolean serviceLeft) {
         this.serviceLeft = serviceLeft;
@@ -174,6 +183,10 @@ public class CounterData {
 
     public void setServiceRight(boolean serviceRight) {
         this.serviceRight = serviceRight;
+    }
+    
+    public void setServiceDouble(int serviceDouble) {
+        this.serviceDouble = serviceDouble;
     }
 
     public TimeMode getTimeMode() {
@@ -252,6 +265,10 @@ public class CounterData {
         return timeMode == TimeMode.INJURY && injuredRightRunning;
     }
     
+    public boolean isExpedite() {
+        return expedite;
+    }
+    
     public int getTime() {
         return time;
     }
@@ -279,6 +296,22 @@ public class CounterData {
         return false;
     }
     
+    public void setCardLeft(Cards card) {
+        cardLeft = card;
+    }
+    
+    public Cards getCardLeft() {
+        return cardLeft;
+    }
+    
+    public void setCardRight(Cards card) {
+        cardRight = card;
+    }
+    
+    public Cards getCardRight() {
+        return cardRight;
+    }
+    
     // Set the swapped flag
     public void setSwapped(boolean b) {
         swapped = b;
@@ -289,6 +322,8 @@ public class CounterData {
         return swapped;
     }
     
+    
+    // Compare result
     public static boolean equalSetHistory(int[][] s1, int[][] s2) {
         if (s1 == s2)
             return true;
@@ -304,6 +339,25 @@ public class CounterData {
                 return false;
             
             if (s1[i][1] != s2[i][1])
+                return false;
+        }
+        
+        return true;
+    }
+    
+    
+    public static boolean equalStartGameTime(long[] s1, long[] s2) {
+        if (s1 == s2)
+            return true;
+        
+        if (s1 == null || s2 == null)
+            return false;
+        
+        if (s1.length != s2.length)
+            return false;
+        
+        for (int idx = 0; idx < s1.length; ++idx) {
+            if (s1[idx] != s2[idx])
                 return false;
         }
         
@@ -331,12 +385,16 @@ public class CounterData {
                 playerNrRight == cd.playerNrRight &&
                 serviceLeft == cd.serviceLeft &&
                 serviceRight == cd.serviceRight &&
+                serviceDouble == cd.serviceDouble &&
                 equalSetHistory(setHistory, cd.setHistory) &&
                 setsLeft == cd.setsLeft &&
                 setsRight == cd.setsRight &&
                 timeMode.equals(cd.timeMode) &&
                 timeoutLeft == cd.timeoutLeft &&
                 timeoutRight == cd.timeoutRight &&
+                cardLeft.equals(cd.cardLeft) &&
+                cardRight.equals(cd.cardRight) &&
+                expedite == cd.expedite &&
                 time == cd.time &&
                 swapped == cd.swapped
             ;                

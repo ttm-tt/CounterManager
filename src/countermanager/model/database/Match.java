@@ -50,6 +50,33 @@ public class Match {
     public Umpire  up1;  // Main umpire
     public Umpire  up2;  // Assistent umpire
     
+    // For statistics
+    public long    startMatchTime = 0;
+    public long    endMatchTime = 0;
+    public long[]  startGameTime = new long[] {0, 0, 0, 0, 0, 0, 0};
+    public long[]  endGameTime = new long[] {0, 0, 0, 0, 0, 0, 0};
+    
+    // Get curent match time
+    public long getRunningMatchTime() {
+        if (endMatchTime > 0)
+            return endMatchTime - startMatchTime;
+        else
+            return System.currentTimeMillis() - startMatchTime;
+    }
+    
+    
+    // Get current cs time
+    public long getRunningGameTime(int cs) {
+        if (cs < 0 || cs >= startGameTime.length || cs >= endGameTime.length)
+            return 0;
+        
+        if (endGameTime[cs] > 0)
+            return endGameTime[cs] - startGameTime[cs];
+        else
+            return System.currentTimeMillis() - startGameTime[cs];
+    }
+    
+    
     public Map<String, Object> convertToMap(String prefix) {
         Map map = new java.util.HashMap<>();
         
