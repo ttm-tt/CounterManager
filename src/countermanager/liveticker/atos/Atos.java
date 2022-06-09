@@ -209,9 +209,9 @@ public class Atos extends Liveticker {
 
     @Override
     public void counterChanged(int counter) {
-        if (counter < fromTable - CounterModel.getDefaultInstance().getTableOffset())
+        if (counter < getFromTable() - CounterModel.getDefaultInstance().getTableOffset())
             return;
-        if (counter > toTable - CounterModel.getDefaultInstance().getTableOffset())
+        if (counter > getToTable() - CounterModel.getDefaultInstance().getTableOffset())
             return;
         
         onCounterChanged(counter);
@@ -278,6 +278,46 @@ public class Atos extends Liveticker {
 
     public void setToTable(int toTable) {
         this.toTable = toTable;
+    }
+
+    public int getTableOffset() {
+        return tableOffset;
+    }
+
+    public void setTableOffset(int tableOffset) {
+        this.tableOffset = tableOffset;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
     }
 
     @Override
@@ -351,9 +391,9 @@ public class Atos extends Liveticker {
     
     
     private void onTimer() {
-        for (int table = fromTable; table <= toTable; ++table) {
-            CounterModelMatch counterMatch = CounterModel.getDefaultInstance().getCounterMatch(table - tableOffset);
-            CounterData counterData = CounterModel.getDefaultInstance().getCounterData(table - tableOffset);
+        for (int table = getFromTable(); table <= getToTable(); ++table) {
+            CounterModelMatch counterMatch = CounterModel.getDefaultInstance().getCounterMatch(table - getTableOffset());
+            CounterData counterData = CounterModel.getDefaultInstance().getCounterData(table - getTableOffset());
             
             if (counterMatch == null || counterData == null)
                 continue;
@@ -394,6 +434,8 @@ public class Atos extends Liveticker {
             return;
         
         CounterModelMatch cm = CounterModel.getDefaultInstance().getCounterMatch(counter);
+        if (cm == null)
+            return;
         
         if (cm.startMatchTime == 0)
             cm.startMatchTime = System.currentTimeMillis();
@@ -418,6 +460,8 @@ public class Atos extends Liveticker {
             return;
         
         CounterModelMatch cm = CounterModel.getDefaultInstance().getCounterMatch(counter);
+        if (cm == null)
+            return;
         
         String daytime = daytimeFormat.format(new Date(System.currentTimeMillis()));
         String idmatch = idmatches.get(cm.mtTable);
@@ -440,6 +484,8 @@ public class Atos extends Liveticker {
             return;
         
         CounterModelMatch cm = CounterModel.getDefaultInstance().getCounterMatch(counter);
+        if (cm == null)
+            return;
         
         int cs = cm.mtResA + cm.mtResX;
         if (cm.startGameTime[cs] == 0)
@@ -466,6 +512,8 @@ public class Atos extends Liveticker {
             return;
         
         CounterModelMatch cm = CounterModel.getDefaultInstance().getCounterMatch(counter);  
+        if (cm == null)
+            return;
         
         // 0-base, but we are already in the next game
         int cs = cm.mtResA + cm.mtResX - 1;
@@ -489,6 +537,8 @@ public class Atos extends Liveticker {
     
     private void sendScore(int counter, CounterData oldCounterData, CounterData newCounterData) {
         CounterModelMatch cm = CounterModel.getDefaultInstance().getCounterMatch(counter);
+        if (cm == null)
+            return;
      
         // current set, 0-based
         int cs = newCounterData.getSetsLeft() + newCounterData.getSetsRight();
@@ -517,6 +567,8 @@ public class Atos extends Liveticker {
     
     private void sendCard(int counter, CounterData oldCounterData, CounterData newCounterData) {
         CounterModelMatch cm = CounterModel.getDefaultInstance().getCounterMatch(counter);
+        if (cm == null)
+            return;
         
         // [SOH]<<Id>>[DC3]1008<<AA>><<BBB>><<CC>><<M>><<pp>><<xx>><<yy>><<SERVICE>><<PLAYER>><<CARD>><<f>><<GAMETIME>><<MATCHTIME>><<IDMATCH>>[EOT]
         
@@ -610,6 +662,8 @@ public class Atos extends Liveticker {
     
     private void sendHistory(int counter, CounterData oldCounterData, CounterData newCounterData) {
         CounterModelMatch cm = CounterModel.getDefaultInstance().getCounterMatch(counter);
+        if (cm == null)
+            return;
      
         // current set, 0-based
         int cs = oldCounterData.getSetsLeft() + oldCounterData.getSetsRight();
@@ -626,6 +680,8 @@ public class Atos extends Liveticker {
             pt = "A";
         // Strokes
         int strokes = 0;
+        // DEBUG
+        strokes = 2 + (int) Math.round(10 * Math.random());
         // Do, Undo
         String f = "+";
         String mt = formatDuration(cm.getRunningMatchTime());
@@ -747,14 +803,20 @@ public class Atos extends Liveticker {
         public boolean wantAnswer = false;
     };
     
+    private String name = getClass().getSimpleName();
+
     private int fromTable = 1;
     private int toTable = 1;
     private int tableOffset = 1;
     
-    private String name = getClass().getSimpleName();
-
+    public enum Type {
+        FILE,
+        NET
+    };
+    private Type type = Type.FILE;
     private String host;
     private int    port;
+    private String file;
     
     // Last state of CounterData
     private Map<Integer, CounterData> currentCounterData = new java.util.HashMap<>();
@@ -782,7 +844,8 @@ public class Atos extends Liveticker {
             os.write(msg.data.getBytes(StandardCharsets.UTF_8));
             os.write(EOT);
             // Format logfile with line breaks
-            os.write("\r\n".getBytes(StandardCharsets.UTF_8));
+            if (type == Type.FILE)
+                os.write("\r\n".getBytes(StandardCharsets.UTF_8));
         }
         
         private Message nextMatchResponse = null;
@@ -837,24 +900,29 @@ public class Atos extends Liveticker {
         @Override
         public void run() {
             while (true) {
-/*                
-                while (isEnabled() && socket == null) {
-                    try {
-                        socket = new Socket(host, port);
-                    } catch (IOException ex) {
-                        Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
-                        socket = null;
+                if (type == Type.NET) {
+                    while (isEnabled() && socket == null) {
+                        try {
+                            socket = new Socket(host, port);
+                            is = socket.getInputStream();
+                            os = socket.getOutputStream();
+                        } catch (IOException ex) {
+                            Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
+                            socket = null;
+                            is = null;
+                            os = null;
+                        }
                     }
-                }
-*/
-                while (isEnabled() && is == null) {
-                    try {                    
-                        is  = new java.io.FileInputStream("..\\2022.03.17.13.26.18.SERVER_TCP_1_CLIENT_1.log");
-                        os = new java.io.FileOutputStream("..\\test.log");
-                    } catch (IOException ex) {
-                        Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
-                        is = null;
-                        os = null;
+                } else {
+                    while (isEnabled() && is == null) {
+                        try {                    
+                            is  = new java.io.FileInputStream("..\\2022.03.17.13.26.18.SERVER_TCP_1_CLIENT_1.log");
+                            os = new java.io.FileOutputStream("..\\test.log");
+                        } catch (IOException ex) {
+                            Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
+                            is = null;
+                            os = null;
+                        }
                     }
                 }
                 
