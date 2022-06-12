@@ -3,13 +3,13 @@
 
 [Setup]
 AppName=ScoreBoardManager
-AppVerName=ScoreBoardManager 22.01.02
+AppVerName=ScoreBoardManager 22.06
 ; AppPublisher=Christoph Theis
-DefaultDirName={pf}\TTM\CounterManager
+DefaultDirName={autopf}\TTM\CounterManager
 DefaultGroupName=TTM
 OutputDir=.\Output
-MinVersion= 0,6.0
-OutputBaseFilename=setup
+MinVersion= 0,6.1
+OutputBaseFilename=install
 ArchitecturesInstallIn64BitMode=x64
 
 ; Sign installer
