@@ -961,5 +961,5 @@ public class Atos extends Liveticker {
     
     CommThread commThread = null;
     
-    private static long INTERVAL = 1000;
+    private static long INTERVAL = 10000; // 10s
 }
