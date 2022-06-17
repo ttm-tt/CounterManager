@@ -474,7 +474,7 @@ var ttm = new function() {
             }
         
             var row = list[idx].convertToMap("");
-        
+            
             // Add flags if liveticker input is available
             row.put('ltActive', 
                 Packages.countermanager.model.CounterModel.getDefaultInstance().isLivetickerActive(

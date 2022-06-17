@@ -316,10 +316,15 @@ export function updateResult(matches, data) {
 export function isFinished(mt) {
     if (mt === undefined || mt === null)
         return false;
-
-    if (mt.mtMatches > 1 && ((2 * mt.mttmResA > mt.mtMatches) || (2 * mt.mttmResX > mt.mtMatches)))
-        return true;
-
+    
+    if (mt.syComplete && (mt.grModus = 1)) {
+        if (( mt.mttmResA + mt.mttmResX) == mt.mtMatches)
+            return true;
+    } else {
+        if (mt.mtMatches > 1 && ((2 * mt.mttmResA > mt.mtMatches) || (2 * mt.mttmResX > mt.mtMatches)))
+            return true;
+    }
+        
     if (mt.mtWalkOverA || mt.mtWalkOverX) {
         if (debug)
             console.log('Finished:  nr = ' + mt.mtNr + ', woA = ' + mt.mtWalkOverA + ', woX = ' + mt.mtWalkOverX);

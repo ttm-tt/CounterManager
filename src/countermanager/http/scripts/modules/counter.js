@@ -64,7 +64,7 @@ export function subPointRight(data) {
 export function swapSides(data) {
     const cg = data.setsLeft + data.setsRight;
     const sc = CounterSettings.sideChange;
-    const sl = CounterSettings.sideChangeLastGame;
+    const sl = CounterSettings.sideChangeLastGame ? 5 : 0;
     
     if (data.gameMode === CounterData.GameMode.NONE)
         startTimer(data);
@@ -334,7 +334,7 @@ const Side = Object.freeze({
 function addPoint(data, side) {
     const cg = data.setsLeft + data.setsRight;
     const cs = (data.bestOf > 1 && cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
-    const sl = CounterSettings.sideChangeLastGame;
+    const sl = CounterSettings.sideChangeLastGame ? 5 : 0;
     
     if (data.setHistory.length <= cg)
         return false;
@@ -397,7 +397,7 @@ function addPoint(data, side) {
 function subPoint(data, side) {
     let cg = data.setsLeft + data.setsRight;
     const cs = (data.bestOf > 1 && cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
-    const sl = CounterSettings.sideChangeLastGame;
+    const sl = CounterSettings.sideChangeLastGame ? 5 : 0;
     
     if (data.setHistory.length <= cg)
         return false;
@@ -599,7 +599,7 @@ function calculateFirstService(data) {
     const cp = data.setHistory[cg][0] + data.setHistory[cg][1];
     
     const cs = (data.bestOf > 1 && cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
-    const sl = CounterSettings.sideChangeLastGame;
+    const sl = CounterSettings.sideChangeLastGame ? 5 : 0;
 
     // Service repeats every 4th (2*cs) point  for 2 points (cs)
     if ( Math.floor((cp % (2 * cs)) / Math.max(cs, 1)) )
@@ -626,7 +626,7 @@ function calculateFirstServiceDouble(data) {
     const cg = data.setsLeft + data.setsRight;
     const cp = data.setHistory[cg][0] + data.setHistory[cg][1];
     const cs = (data.bestOf > 1 && cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
-    const sl = CounterSettings.sideChangeLastGame;
+    const sl = CounterSettings.sideChangeLastGame ? 5 : 0;
 
     // Running in the cycle where are we starting from the beginning
     const offset = Math.floor((cp % (4 * cs)) / Math.max(1, cs));

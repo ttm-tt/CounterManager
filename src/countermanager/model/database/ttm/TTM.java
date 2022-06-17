@@ -877,7 +877,7 @@ public final class TTM implements IDatabase {
             
 
         sql =
-            "SELECT cpName, cpDesc, cpType, grName, grDesc, grModus, grSize, grWinner, grNofRounds, grNofMatches, " +
+            "SELECT cpName, cpDesc, cpType, grName, grDesc, grModus, grSize, grWinner, grNofRounds, grNofMatches, NULL AS syComplete, " +
             "   mtRound, mtMatch, 1 AS mtMatches, mtBestOf, mtNr, 0 AS mtMS, mtWalkOverA, mtWalkOverX, mt.mtResA, mt.mtResX, 0 AS mtReverse, " +
             "   plAplNr, plApsLast, plApsFirst, plAnaName, plAnaDesc, plAnaRegion, plAplExtID, " +
             "   NULL AS plBplNr, NULL AS plBpsLast, NULL AS plBpsFirst, NULL AS plBnaName, NULL AS plBnaDesc, NULL AS plBnaRegion, NULL AS plBplExtID, " +
@@ -911,7 +911,7 @@ public final class TTM implements IDatabase {
         ;
         
         sql += " UNION " +
-            "SELECT cpName, cpDesc, cpType, grName, grDesc, grModus, grSize, grWinner, grNofRounds, grNofMatches, " +
+            "SELECT cpName, cpDesc, cpType, grName, grDesc, grModus, grSize, grWinner, grNofRounds, grNofMatches, NULL AS syComplete, " +
             "   mtRound, mtMatch, 1 AS mtMatches, mtBestOf, mtNr, 0 AS mtMS, mtWalkOverA, mtWalkOverX, mt.mtResA, mt.mtResX, 0 AS mtReverse, " +
             "   plAplNr, plApsLast, plApsFirst, plAnaName, plAnaDesc, plAnaRegion, plAplExtID, " +
             "   plBplNr, plBpsLast, plBpsFirst, plBnaName, plBnaDesc, plBnaRegion, plBplExtID, " +
@@ -946,7 +946,7 @@ public final class TTM implements IDatabase {
         
         if (!individual)
             sql += " UNION " +
-                "SELECT cpName, cpDesc, cpType, grName, grDesc, grModus, grSize, grWinner, grNofRounds, grNofMatches, " +
+                "SELECT cpName, cpDesc, cpType, grName, grDesc, grModus, grSize, grWinner, grNofRounds, grNofMatches, sy.syComplete, " +
                 "   mtRound, mtMatch, mtMatches, mtBestOf, mtNr, 0 AS mtMS, mtWalkOverA, mtWalkOverX, mt.mtResA, mt.mtResX, mtReverse, " +
                 "   NULL AS plAplNr, NULL AS plApsLast, NULL AS plApsFirst, NULL AS plAnaName, NULL AS plAnaDesc, NULL AS plAnaRegion, NULL AS plAplExtID, " +
                 "   NULL AS plBplNr, NULL AS plBpsLast, NULL AS plBpsFirst, NULL AS plBnaName, NULL AS plBnaDesc, NULL AS plBnaRegion, NULL AS plBplExtID, " +
@@ -974,7 +974,7 @@ public final class TTM implements IDatabase {
             ;
         else 
             sql += " UNION " +
-                "SELECT cpName, cpDesc, cpType, grName, grDesc, grModus, grSize, grWinner, grNofRounds, grNofMatches, " +
+                "SELECT cpName, cpDesc, cpType, grName, grDesc, grModus, grSize, grWinner, grNofRounds, grNofMatches, sy.syComplete, " +
                 "   mtRound, mtMatch, mtMatches, mtBestOf, mtNr, mt.mtMS AS mtMS, mtWalkOverA, mtWalkOverX, mt.mtResA, mt.mtResX, mtReverse, " +
                 "   plAplNr, plApsLast, plApsFirst, plAnaName, plAnaDesc, plAnaRegion, plAplExtID, " +
                 "   plBplNr, plBpsLast, plBpsFirst, plBnaName, plBnaDesc, plBnaRegion, plBplExtID, " +
@@ -992,7 +992,7 @@ public final class TTM implements IDatabase {
                 "   mtSet7.mtResA, mtSet7.mtResX " +
                 "  FROM MtIndividualList mt " +
                 "    INNER JOIN GrList gr ON mt.grID = gr.grID " +
-                "    INNER JOIN SyLisg sy ON gr.syID = sy.syID " +
+                "    INNER JOIN SyList sy ON gr.syID = sy.syID " +
                 "    INNER JOIN CpList cp ON gr.cpID = cp.cpID AND cp.cpType = 4 " +
                 "    LEFT OUTER JOIN TmTeamList tmA ON mt.tmAtmID = tmA.tmID " +
                 "    LEFT OUTER JOIN TmTeamList tmX ON mt.tmXtmID = tmX.tmID " +
@@ -1009,7 +1009,7 @@ public final class TTM implements IDatabase {
                 "       AND tmAtmID IS NOT NULL AND tmXtmID IS NOT NULL " +
                 where + (notFinished ? 
                     " AND (((sy.syComplete = 0 OR gr.grModus <> 1) AND 2 * ISNULL(mt.mttmResA, 0) < mtMatches AND 2 * ISNULL(mt.mttmResX, 0) < mtMatches) " + 
-                    "  OR  ((sy.syComplete = 1 AND gr.grModus = 1) AND (ISNULL(mttm.mtResA, 0) + ISNULL(mt.mttm.mtResX, 0)) < mtMatches))  " : "")
+                    "  OR  ((sy.syComplete = 1 AND gr.grModus = 1) AND (ISNULL(mt.mttmResA, 0) + ISNULL(mt.mttmResX, 0)) < mtMatches))  " : "")
             ;
         
         sql += " ORDER BY mtDateTime, mtTable, mtNr, mtMS ";
@@ -1049,6 +1049,7 @@ public final class TTM implements IDatabase {
                         mt.grWinner = result.getInt(++idx);
                         mt.grNofRounds = result.getInt(++idx);
                         mt.grNofMatches = result.getInt(++idx);
+                        mt.syComplete = result.getBoolean(++idx); 
                         mt.mtRound = result.getInt(++idx);
                         mt.mtMatch = result.getInt(++idx);
                         mt.mtMatches = result.getInt(++idx);

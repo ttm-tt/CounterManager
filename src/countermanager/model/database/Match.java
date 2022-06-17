@@ -20,6 +20,7 @@ public class Match {
     public int     grWinner;
     public int     grNofRounds;
     public int     grNofMatches;
+    public boolean syComplete = false;
     public int     mtMatches;
     public int     mtBestOf;
     public int     mtRound;
