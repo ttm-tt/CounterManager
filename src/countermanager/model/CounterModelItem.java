@@ -261,6 +261,65 @@ import java.io.IOException;
                 System.err.println("Reset endTime from ct to 0");
             endTime = 0;        
         }
+
+        // Timings, depend on match
+        if (match != null) {
+            // RESET / WARMUP to RUNNING
+            if (counterData.getGameMode() == CounterData.GameMode.RUNNING) {
+                if (oldCounterData == null || oldCounterData.getGameMode() != CounterData.GameMode.RUNNING)
+                    match.startMatchTime();
+            }
+
+            // End a running match
+            if ((match.mtResA + match.mtResX) > 0) {
+                // END from RUNNING
+                if (counterData.getGameMode() == CounterData.GameMode.END) {
+                    if (oldCounterData == null || oldCounterData.getGameMode() == CounterData.GameMode.RUNNING)
+                        match.endMatchTime();
+                }
+
+                // RESET from RUNNING
+                if (counterData.getGameMode() == CounterData.GameMode.RESET) {
+                    if (oldCounterData == null || oldCounterData.getGameMode() == CounterData.GameMode.RUNNING)
+                        match.endMatchTime();
+                }
+            }
+
+
+            // Start / end game time
+            // current game, but 0-based. Games are updated after a game or match has finished,
+            int cs = match.mtResA + match.mtResX;
+            if (counterData.getTimeMode() == CounterData.TimeMode.BREAK)
+                --cs;
+            else if (counterData.getGameMode() == CounterData.GameMode.END)
+                --cs;
+
+            // Handle interruptions
+            switch (counterData.getTimeMode()) {
+                case TIMEOUT :
+                case INJURY :
+                case NONE :
+                    match.breakGameTime(cs);                
+                    break;
+
+                case MATCH :   
+                    match.startGameTime(cs);                
+                    break;
+
+                case BREAK :
+                    match.endGameTime(cs);                    
+                    break;
+            }
+
+            // game mode from anything to END / RESET, if a game is running
+            if ((match.mtResA + match.mtResX) > 0) {
+                if (counterData.getGameMode() == CounterData.GameMode.END)
+                    match.endGameTime(cs);
+
+                if (counterData.getGameMode() == CounterData.GameMode.RESET)
+                    match.endGameTime(cs);
+            }
+        }
     }
     
     public void setMatch(CounterModelMatch match) throws IOException {

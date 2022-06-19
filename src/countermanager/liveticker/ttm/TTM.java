@@ -72,10 +72,10 @@ public final class TTM extends Liveticker {
     }
 
     /**
-     * @param ftpUser the ftpUser to set
+     * @param usr the ftpUser to set
      */
-    public void setFtpUser(String ftpUser) {
-        this.ftpUser = ftpUser;
+    public void setFtpUser(String usr) {
+        ftpUser = usr;
     }
 
     /**
@@ -89,10 +89,10 @@ public final class TTM extends Liveticker {
     }
 
     /**
-     * @param ftpPassword the ftpPassword to set
+     * @param pwd the ftpPassword to set
      */
-    public void setFtpPassword(String ftpPassword) {
-        this.ftpPassword = ftpPassword;
+    public void setFtpPassword(String pwd) {
+        ftpPassword = pwd;
     }
 
     /**
@@ -432,8 +432,8 @@ public final class TTM extends Liveticker {
 
             updateMatch.time = counterData.getTime();
 
-            updateMatch.timeoutLeft = counterData.getTimeoutLeft();
-            updateMatch.timeoutRight = counterData.getTimeoutRight();
+            updateMatch.timeoutLeft = counterData.isTimeoutLeft();
+            updateMatch.timeoutRight = counterData.isTimeoutRight();
 
             updateMatch.serviceLeft = counterData.getServiceLeft();
             updateMatch.serviceRight = counterData.getServiceRight();

@@ -55,26 +55,93 @@ public class Match {
     public long    startMatchTime = 0;
     public long    endMatchTime = 0;
     public long[]  startGameTime = new long[] {0, 0, 0, 0, 0, 0, 0};
+    public long[]  elapsedGameTime = new long[] {0, 0, 0, 0, 0, 0, 0};
     public long[]  endGameTime = new long[] {0, 0, 0, 0, 0, 0, 0};
     
-    // Get curent match time
+    
+    // Start and stop and get running match time
+    public void startMatchTime() {
+        if (startMatchTime == 0)
+            startMatchTime = System.nanoTime();
+    }
+    
+    public void endMatchTime() {
+        long ct = System.nanoTime();
+        
+        if (startMatchTime == 0)
+            startMatchTime = ct;
+        
+        endMatchTime = ct;
+    }
+    
     public long getRunningMatchTime() {
         if (endMatchTime > 0)
             return endMatchTime - startMatchTime;
         else
-            return System.currentTimeMillis() - startMatchTime;
+            return System.nanoTime()- startMatchTime;
     }
     
     
-    // Get current cs time
+    // Start, stop, break, and get game time
+    public void startGameTime(int cs) {
+        if (cs < 0 || cs >= startGameTime.length)
+            return;
+            
+        if (startGameTime[cs] == 0)
+            startGameTime[cs] = System.nanoTime();
+    }
+    
+    public void breakGameTime(int cs) {
+        if (cs < 0 || cs >= startGameTime.length)
+            return;
+            
+        if (startGameTime[cs] == 0)
+            return;
+        
+        elapsedGameTime[cs] += System.nanoTime() - startGameTime[cs];
+        startGameTime[cs] = 0;
+    }
+    
+    public void endGameTime(int cs) {
+        if (cs < 0 || cs >= endGameTime.length)
+            return;
+            
+        if (endGameTime[cs] != 0)
+            return;
+        
+        long ct = System.nanoTime();
+        
+        if (startGameTime[cs] == 0)
+            startGameTime[cs] = ct;
+        
+        endGameTime[cs] = ct;
+    }
+        
+    // Get current game time
     public long getRunningGameTime(int cs) {
-        if (cs < 0 || cs >= startGameTime.length || cs >= endGameTime.length)
+        if (cs < 0 || cs >= startGameTime.length)
             return 0;
         
-        if (endGameTime[cs] > 0)
-            return endGameTime[cs] - startGameTime[cs];
+        if (startGameTime[cs] == 0)
+            return elapsedGameTime[cs];
+        
+        long ct = System.nanoTime();
+        long ret = 0;
+        
+        if (endGameTime[cs] == 0 && startGameTime[cs] > ct) {
+            System.out.println(String.format("Start game time %d less than current time %d for game %d", startGameTime[cs], ct, cs));
+        }
+        
+        if (endGameTime[cs] == 0)
+            ret = ct - startGameTime[cs] + elapsedGameTime[cs];
         else
-            return System.currentTimeMillis() - startGameTime[cs];
+            ret = endGameTime[cs] - startGameTime[cs]  + elapsedGameTime[cs];
+        
+        if (ret < 0) {
+            System.out.println("Running game time < 0");
+        }
+        
+        return ret;
     }
     
     

@@ -317,7 +317,11 @@ public class CounterModel {
     void fireCounterChangedEvent(int counter) {
         ICounterModelListener listeners[] = listenerList.getListeners(ICounterModelListener.class);
         for (ICounterModelListener listener : listeners) {
-            listener.counterChanged(counter);
+            try {
+                listener.counterChanged(counter);
+            } catch (Throwable t) {
+                Logger.getLogger(listener.getClass().getName()).log(Level.SEVERE, null, t);
+            }
         }
     }
     
@@ -332,12 +336,13 @@ public class CounterModel {
     
     // -------------------------------------------------------------------    
     public void refreshConfiguration(int counter) {
-        if (counterList[counter] != null)            
+        if (counterList[counter] != null) {           
             try {
                 counterList[counter].refreshConfiguration();
             } catch (IOException ex) {
                setCounterData(counter, null);
             }
+        }
     }
     
     public void refresh() {

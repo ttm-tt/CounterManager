@@ -14,7 +14,7 @@ package countermanager.driver;
  *
  * @author Christoph Theis
  */
-public class CounterData {
+public class CounterData implements Cloneable {
     public enum Cards {NONE, YELLOW, YR1P, YR2P }
         
     // Get the alert text or null
@@ -60,6 +60,50 @@ public class CounterData {
     private long      updateTime;
     
     // Bei Erweiterungen equals beachten
+    
+    @Override
+    public CounterData clone() throws CloneNotSupportedException {
+        CounterData cd = (CounterData) super.clone();
+        cd.alert = alert;
+        cd.gameMode = gameMode;
+        cd.serviceLeft = serviceLeft;
+        cd.serviceRight = serviceRight;
+        cd.serviceDouble = serviceDouble;
+        cd.abandonOrAbort = abandonOrAbort;
+        cd.gameNr = gameNr;
+        cd.playerNrLeft = playerNrLeft;
+        cd.playerNrRight = playerNrRight;
+        cd.bestOf = bestOf;
+        cd.timeMode = timeMode;
+        cd.timeoutLeft = timeoutLeft;
+        cd.timeoutRight = timeoutRight;
+        cd.timeoutLeftRunning = timeoutLeftRunning;
+        cd.timeoutRightRunning = timeoutRightRunning;
+        cd.injuredLeft = injuredLeft;
+        cd.injuredRight = injuredRight;
+        cd.injuredLeftRunning = injuredLeftRunning;
+        cd.injuredRightRunning = injuredRightRunning;
+        cd.time = time;
+        cd.setsLeft = setsLeft;
+        cd.setsRight = setsRight;
+        if (setHistory != null) {
+            cd.setHistory = new int[setHistory.length][2];
+            for (int i = 0; i < setHistory.length; ++i) {
+                cd.setHistory[i][0] = setHistory[i][0];
+                cd.setHistory[i][1] = setHistory[i][1];
+            }
+        } else {
+            cd.setHistory = null;
+        }
+                
+        cd.cardLeft = cardLeft;
+        cd.cardRight = cardRight;
+        cd.expedite = expedite;
+        cd.swapped = swapped;
+        cd.updateTime = updateTime;
+        
+        return cd;
+    }
 
     @Override
     public String toString() {
@@ -197,7 +241,7 @@ public class CounterData {
         this.timeMode = timeMode;
     }
 
-    public boolean getTimeoutLeft() {
+    public boolean isTimeoutLeft() {
         return timeoutLeft;
     }
     
@@ -206,7 +250,7 @@ public class CounterData {
     }
     
     
-    public boolean getTimeoutRight() {
+    public boolean isTimeoutRight() {
         return timeoutRight;
     }
     
@@ -230,8 +274,17 @@ public class CounterData {
     public boolean isTimeoutRightRunning() {
         return timeMode == TimeMode.TIMEOUT && timeoutRightRunning;
     }
+
+    public boolean hasTimeoutLeft() {
+        return timeoutLeft || timeoutLeftRunning;
+    }
+    
+    
+    public boolean hasTimeoutRight() {
+        return timeoutRight || timeoutRightRunning;
+    }
         
-    public boolean getInjuredLeft() {
+    public boolean isInjuredLeft() {
         return injuredLeft;
     }
     
@@ -240,7 +293,7 @@ public class CounterData {
     }
     
     
-    public boolean getInjuredRight() {
+    public boolean isInjuredRight() {
         return injuredRight;
     }
     
@@ -263,6 +316,14 @@ public class CounterData {
     
     public boolean isInjuredRightRunning() {
         return timeMode == TimeMode.INJURY && injuredRightRunning;
+    }
+    
+    public boolean hasInjuredLeft() {
+        return injuredLeft || injuredLeftRunning;
+    }
+    
+    public boolean hasInjuredRight() {
+        return injuredRight || injuredRightRunning;
     }
     
     public boolean isExpedite() {
@@ -398,5 +459,71 @@ public class CounterData {
                 time == cd.time &&
                 swapped == cd.swapped
             ;                
+    }
+    
+    public void swap() {
+        {
+            boolean tmp = serviceLeft;
+            serviceLeft = serviceRight;
+            serviceRight = tmp;
+        }
+        
+        {
+            serviceDouble = -serviceDouble;
+        }
+        
+        {
+            int tmp = playerNrLeft;
+            playerNrLeft = playerNrRight;
+            playerNrRight = tmp;
+        }
+        
+        {
+            boolean tmp = timeoutLeft;
+            timeoutLeft = timeoutRight;
+            timeoutRight = tmp;
+        }
+        
+        {
+            boolean tmp = timeoutLeftRunning;
+            timeoutLeftRunning = timeoutRightRunning;
+            timeoutRightRunning = tmp;
+        }
+        
+        {
+            boolean tmp = injuredLeft;
+            injuredLeft = injuredRight;
+            injuredRight = tmp;
+        }
+        
+        {
+            boolean tmp = injuredLeftRunning;
+            injuredLeftRunning = injuredRightRunning;
+            injuredRightRunning = tmp;
+        }
+        
+        {
+            int tmp = setsLeft;
+            setsLeft = setsRight;
+            setsRight = tmp;
+        }
+        
+        if (setHistory != null) {
+            for (int i = 0; i < setHistory.length; ++i) {
+                int tmp = setHistory[i][0];
+                setHistory[i][0] = setHistory[i][1];
+                setHistory[i][1] = tmp;
+            }
+        }
+        
+        {
+            Cards tmp = cardLeft;
+            cardLeft = cardRight;
+            cardRight = tmp;            
+        }
+        
+        {
+            swapped = !swapped;
+        }
     }
 }
