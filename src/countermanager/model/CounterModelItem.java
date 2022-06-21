@@ -366,6 +366,13 @@ import java.io.IOException;
         if (counterData.getGameMode() != CounterData.GameMode.RESET) {
             if (match == null || counterData.getGameNr() != matchNr)
                 return;
+            
+            // Else copy the running times
+            if (this.match != null) {
+                match.startMatchTime = this.match.startMatchTime;
+                match.startGameTime = this.match.startGameTime;
+                match.elapsedGameTime = this.match.elapsedGameTime;
+            }
         }
         
         boolean needPlayersUpdate = 
