@@ -123,8 +123,8 @@ public class Atos extends Liveticker {
         int ocs = oldData.getSetsLeft() + oldData.getSetsRight();
         int ncs = newData.getSetsLeft() + newData.getSetsRight();
 
-        int[] osh = oldData.getSetHistory() == null ? new int[] {0, 0} : oldData.getSetHistory()[ocs];
-        int[] nsh = newData.getSetHistory() == null ? new int[] {0, 0} : newData.getSetHistory()[ocs];
+        int[] osh = oldData.getSetHistory() == null || oldData.getSetHistory().length <= ocs ? new int[] {0, 0} : oldData.getSetHistory()[ocs];
+        int[] nsh = newData.getSetHistory() == null || newData.getSetHistory().length <= ncs ? new int[] {0, 0} : newData.getSetHistory()[ncs];
         
         // Start of match
         if (oldData.getGameMode() == CounterData.GameMode.RESET && newData.getGameMode() == CounterData.GameMode.RUNNING)
@@ -684,13 +684,23 @@ public class Atos extends Liveticker {
         
         StringBuilder sb = new StringBuilder();
         
+        int resA = cm.mtResA;
+        int resX = cm.mtResX;
+        
+        // points left / right
+        int[] sh = newCounterData.getSetHistory() == null ? new int[] {0, 0} : newCounterData.getSetHistory()[cs];
+        if (sh[0] > sh[1])
+            ++resA;
+        else if (sh[1] > sh[0])
+            ++resX;
+        
         sb
                 // AA BBB CC M
                 .append(matchStrings.get(cm.mtTable))
                 // pp
                 .append(String.format("%d", cs + 1))
                 // x y
-                .append(String.format("%d%d", cm.mtResA, cm.mtResX))
+                .append(String.format("%d%d", resA, resX))
                 // GAMETIME
                 .append(gt)
                 // MATCHTIME
@@ -961,7 +971,7 @@ public class Atos extends Liveticker {
             return;
         }
      
-        boolean isDouble = (cm.cpType == 2 || cm.cpType == 3);
+        boolean isDouble = (cm.cpType == 2 || cm.cpType == 3 || (cm.cpType == 4 && cm.nmType == 2));
                 
         // current set, 0-based
         int cs = oldCounterData.getSetsLeft() + oldCounterData.getSetsRight();
@@ -972,7 +982,7 @@ public class Atos extends Liveticker {
         boolean isAdd = nsh[0] > osh[0] || nsh[1] > osh[1];
         
         // service
-        int s = calculateService(isAdd ? newCounterData : oldCounterData, isDouble).ordinal();
+        int s = calculateService(isAdd ? oldCounterData : newCounterData, isDouble).ordinal();
         // point_to
         String pt = "";
         if (nsh[0] != osh[0])
