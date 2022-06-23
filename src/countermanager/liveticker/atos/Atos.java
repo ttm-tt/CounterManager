@@ -1243,9 +1243,9 @@ public class Atos extends Liveticker {
                 }
             }
             
-            while (true) {
+            while (isEnabled()) {
                 if (type == Type.NET) {
-                    while (isEnabled() && socket == null) {
+                    while (socket == null) {
                         try {
                             socket = new Socket(host, port);
                             is = socket.getInputStream();
@@ -1255,72 +1255,57 @@ public class Atos extends Liveticker {
                             socket = null;
                             is = null;
                             os = null;
+                            
+                            break;
                         }
-                    }
-                    
-                    if (!isEnabled() && socket != null) {
-                        try {
-                            socket.close();
-                        } catch (IOException ex) {
-                            Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        
-                        socket = null;
-                        is = null;
-                        os = null;
                     }
                 } else {
-                    while (isEnabled() && is == null) {
+                    if (is == null) {
                         try {
                             if (getInputFile() != null && !getInputFile().isEmpty())
                                 is  = new java.io.FileInputStream(getInputFile());
-                            else {
-                                is = null;
-                                break;
-                            }
+                            else
+                                is = new java.io.InputStream() {
+                                    @Override
+                                    public int read() throws IOException {
+                                        return -1; // EOF
+                                    }
+                                };
                         } catch (IOException ex) {
                             Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
                             is = null;
-                            os = null;
                         }
                     } 
                     
-                    if (!isEnabled() && is != null) {
-                        try {
-                            is.close();
-                        } catch (IOException ex) {
-                            Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        
-                        is = null;
-                    }
-                            
-                    while (isEnabled() && os == null) {
+                    if (os == null) {
                         try {
                             if (getOutputFile() != null && !getOutputFile().isEmpty()) {
                                 os = new java.io.FileOutputStream(getOutputFile().replace(
                                         "<DT>", new SimpleDateFormat("yyyyMMdd'T'HHmmss").format(new Date()))
                                 );
                             } else {
-                                os = null;
-                                break;
+                                os = new java.io.OutputStream() {
+                                    @Override
+                                    public void write(int b) throws IOException {
+                                       // Nothing;
+                                    }
+                                };
                             }
                         } catch (IOException ex) {
                             Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
-                            is = null;
                             os = null;
                         }
                     }
-                    
-                    if (!isEnabled() && os != null) {
-                        try {
-                            os.close();
-                        } catch (IOException ex) {
-                            Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                }
+                
+                if (is == null || os == null) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
                         
-                        os = null;
                     }
+                    
+                    continue;
                 }
                 
                 synchronized (output) {
@@ -1352,6 +1337,25 @@ public class Atos extends Liveticker {
                         }
                     }
                 }
+            }
+            
+            if (!isEnabled()) {
+                try {
+                    if (socket != null) {
+                        socket.close();
+                    } else {
+                        if (is != null)
+                            is.close();
+                        if (os != null)
+                             os.close();
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);                        
+                }
+                
+                socket = null;
+                is = null;
+                os = null;
             }
         }
     };
