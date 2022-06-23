@@ -8,6 +8,7 @@ import countermanager.model.CounterModelMatch;
 import countermanager.prefs.Preferences;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -1169,17 +1170,20 @@ public class Atos extends Liveticker {
             if (os == null)
                 return;
             
-            os.write(SOH);
-            os.write(String.format("%02d", msg.id).getBytes(StandardCharsets.UTF_8));
-            os.write(DC3);
-            os.write(String.format("%04d", msg.code).getBytes(StandardCharsets.UTF_8));
-            os.write(msg.data.getBytes(StandardCharsets.UTF_8));
-            os.write(EOT);
+            // Buffer bytes
+            java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+            bos.write(SOH);
+            bos.write(String.format("%02d", msg.id).getBytes(StandardCharsets.UTF_8));
+            bos.write(DC3);
+            bos.write(String.format("%04d", msg.code).getBytes(StandardCharsets.UTF_8));
+            bos.write(msg.data.getBytes(StandardCharsets.UTF_8));
+            bos.write(EOT);
             // Format logfile with line breaks
-            if (type == Type.FILE) {
-                os.write("\r\n".getBytes(StandardCharsets.UTF_8));
-                os.flush();
-            }
+            if (type == Type.FILE)
+                bos.write("\r\n".getBytes(StandardCharsets.UTF_8));
+            
+            bos.writeTo(os);
+            os.flush();
         }
         
         private Message nextMatchResponse = null;
@@ -1248,6 +1252,8 @@ public class Atos extends Liveticker {
                     while (socket == null) {
                         try {
                             socket = new Socket(host, port);
+                            Logger.getLogger(Atos.class.getName()).log(Level.INFO, "Connected to server with local port " + socket.getLocalPort());
+                            socket.setSoTimeout(500);
                             is = socket.getInputStream();
                             os = socket.getOutputStream();
                         } catch (IOException ex) {
@@ -1331,6 +1337,8 @@ public class Atos extends Liveticker {
                                 onMessage(ret);
                             }
                             output.remove(0);
+                        } catch (SocketTimeoutException ex) {
+                            onMessage(null);
                         } catch (IOException ex) {
                             Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
                             socket = null;                        
