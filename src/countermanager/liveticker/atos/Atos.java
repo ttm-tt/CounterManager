@@ -173,9 +173,11 @@ public class Atos extends Liveticker {
             res.add(WhatToSend.NTF_SCORE);
 
         // Points
-        if (osh[0] != nsh[0] || osh[1] != nsh[1]) {
-            res.add(WhatToSend.NTF_SCORE);
-            res.add(WhatToSend.NTF_SCORE_HISTORY);
+        if (newData.getGameMode() != CounterData.GameMode.END) {
+            if (osh[0] != nsh[0] || osh[1] != nsh[1]) {
+                res.add(WhatToSend.NTF_SCORE);
+                res.add(WhatToSend.NTF_SCORE_HISTORY);
+            }
         }
         
         // Timeout
