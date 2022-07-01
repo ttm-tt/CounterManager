@@ -8,17 +8,17 @@ function counterChanged(matchList, dataList) {
         
         switch (m.cpType) {
             case 1 : // Single
-                return "<single>" + formatSingle(m, d) + "</single>";
+                return "<type>single</type><single>" + formatSingle(m, d) + "</single>";
                 
             case 2 : // Double
             case 3 : // Mixed
-                return "<pairs>" + formatPair(m, d) + "</pairs>";
+                return "<type>pairs</type><pairs>" + formatPair(m, d) + "</pairs>";
                 
             case 4 : // Team
                 if (m.nmType == 1)
-                    return "<team>" + formatTeam(m, d) + "</team>";
+                    return "<type>team</type><team>" + formatTeam(m, d) + "</team>";
                 else if (m.nmType == 2)
-                    return "<teampairs>" + formatTeamPairs(m, d) + "</teampairs>";
+                    return "<type>teampairs</type><teampairs>" + formatTeamPairs(m, d) + "</teampairs>";
                 else // not possible
                     return "";
                 
