@@ -67,10 +67,10 @@ function counterChanged(matchList, dataList) {
         
     this.formatTeamPairs = function(m, d) {
         return "" +
-            "<P1T1>" + formatPlayer(m.plA, false) + "</P1T1>" +
-            "<P2T1>" + formatPlayer(m.plB, false) + "</P2T1>" +
-            "<P1T2>" + formatPlayer(m.plX, false) + "</P1T2>" +
-            "<P2T2>" + formatPlayer(m.plY, false) + "</P2T2>" +
+            "<P1T1>" + formatPlayer(m.plA, true) + "</P1T1>" +
+            "<P2T1>" + formatPlayer(m.plB, true) + "</P2T1>" +
+            "<P1T2>" + formatPlayer(m.plX, true) + "</P1T2>" +
+            "<P2T2>" + formatPlayer(m.plY, true) + "</P2T2>" +
             "<T1set>" + formatGameA(m, d) + "</T1set>" +
             "<T1point>" + formatPointA(m, d) + "</T1point>" +
             "<T2set>" + formatGameX(m, d) + "</T2set>" +
