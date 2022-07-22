@@ -201,6 +201,7 @@ public final class Simulation implements IDatabase {
         if ( teamsEach > 0 && (table % teamsEach) == 0 ) {
             match.cpType = 4;
             match.mtMS = 1;
+            match.mtBestOf = 5;
             if (doublesEach > 0 && (table % doublesEach) == 0)
                 match.nmType = 2;
             else
@@ -208,17 +209,18 @@ public final class Simulation implements IDatabase {
         } else if ( doublesEach > 0 && (table % doublesEach) == 0 ) {
             match.cpType = 2;
             match.mtMS = 0;
+            match.mtBestOf = 5;
             match.nmType = 2;
         } else {                
             match.cpType = 1;
             match.mtMS = 0;
+            match.mtBestOf = 7;
             match.nmType = 1;
         }
 
         match.grName = "GR-" + table;
         match.grDesc = "Sim";
         match.grModus = 1;
-        match.mtBestOf = 5;
         match.mtRound = 1;
         match.mtMatch = 1;
         
