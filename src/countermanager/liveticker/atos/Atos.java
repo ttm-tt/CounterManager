@@ -8,6 +8,7 @@ import countermanager.model.CounterModelMatch;
 import countermanager.prefs.Preferences;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -486,7 +487,9 @@ public class Atos extends Liveticker {
             if (counterMatch == null || counterData == null)
                 continue;
             
-            if (counterData.getGameMode() != CounterData.GameMode.RESET)
+            if ( (counterData.getGameMode() != CounterData.GameMode.RESET) && 
+                    idmatches.containsKey(table) && !idmatches.get(table).startsWith("<") &&
+                    matchStrings.containsKey(table) && !matchStrings.get(table).startsWith("<") )
                 continue;
             
             Message msg = new Message();
@@ -1123,7 +1126,7 @@ public class Atos extends Liveticker {
         idmatches.put(msg.id, idmatch);
         matchStrings.put(msg.id, String.format("%s%03d  0", event, mtMatch));
         
-        System.out.println("Event: " + event + ", phase: " + phase + ", pool: " + pool + ", match: " + mtMatch + ", plAnaName: " + plAnaName + ", plXnaName: " + plXnaName + ", idMatch:" + idmatch);
+        System.out.println("Table: " + msg.id + ", Event: " + event + ", phase: " + phase + ", pool: " + pool + ", match: " + mtMatch + ", plAnaName: " + plAnaName + ", plXnaName: " + plXnaName + ", idMatch: " + idmatch);
     }
     
     private static class Message {
@@ -1198,9 +1201,10 @@ public class Atos extends Liveticker {
             
             do {
                 c = is.read();
-                // when we read from file return a good response after EOL
-                if (c == -1)
-                    return nextMatchResponse;
+                // when we read from file return a good response after EOT
+                if (c == -1) {
+                    return type == Type.FILE ? nextMatchResponse : null;
+                }
                 
                 if (Character.isWhitespace(c))
                     continue;
@@ -1220,7 +1224,7 @@ public class Atos extends Liveticker {
             
             if ((c = s.charAt(s.length() - 1)) != EOT) {
                 os.close();
-                throw new IOException("Illegal end ff data received");                
+                throw new IOException("Illegal end of data received");                
             }
             
             // Read 2 bytes ID
@@ -1253,13 +1257,15 @@ public class Atos extends Liveticker {
                 if (type == Type.NET) {
                     while (socket == null) {
                         try {
-                            socket = new Socket(host, port);
-                            Logger.getLogger(Atos.class.getName()).log(Level.INFO, "Connected to server with local port " + socket.getLocalPort());
+                            socket = new Socket();
+                            socket.connect(new java.net.InetSocketAddress(host, port), 1000);
+                            
+                            Logger.getLogger(Atos.class.getName()).log(Level.INFO, "Connected to server " + host + " at " + port + " with local port " + socket.getLocalPort());
                             socket.setSoTimeout(500);
                             is = socket.getInputStream();
                             os = socket.getOutputStream();
                         } catch (IOException ex) {
-                            Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, "Conection to " + host + " at " + port + "failed", ex);
                             socket = null;
                             is = null;
                             os = null;
