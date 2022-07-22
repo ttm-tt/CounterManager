@@ -8,7 +8,6 @@ import countermanager.model.CounterModelMatch;
 import countermanager.prefs.Preferences;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -499,6 +498,14 @@ public class Atos extends Liveticker {
             msg.wantAnswer = true;
             
             sendMessage(msg);
+            
+            // Delay after sending to give some time to write on socket
+            // We need a better way to do it.
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                // Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     
@@ -1258,10 +1265,10 @@ public class Atos extends Liveticker {
                     while (socket == null) {
                         try {
                             socket = new Socket();
-                            socket.connect(new java.net.InetSocketAddress(host, port), 1000);
+                            socket.connect(new java.net.InetSocketAddress(host, port), 2000);
                             
                             Logger.getLogger(Atos.class.getName()).log(Level.INFO, "Connected to server " + host + " at " + port + " with local port " + socket.getLocalPort());
-                            socket.setSoTimeout(500);
+                            socket.setSoTimeout(2000);
                             is = socket.getInputStream();
                             os = socket.getOutputStream();
                         } catch (IOException ex) {
@@ -1334,6 +1341,8 @@ public class Atos extends Liveticker {
                     if (!output.isEmpty()) {
                         try {
                             Message msg = output.get(0);
+                            // Remove msg before sending, or in case of IO errors it would be sent again
+                            output.remove(0);
                             sendMessage(msg);
                             if (msg.wantAnswer) {
                                 Message ret;
@@ -1344,7 +1353,6 @@ public class Atos extends Liveticker {
 
                                 onMessage(ret);
                             }
-                            output.remove(0);
                         } catch (SocketTimeoutException ex) {
                             onMessage(null);
                         } catch (IOException ex) {
