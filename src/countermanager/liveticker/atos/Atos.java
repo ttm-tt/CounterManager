@@ -1003,7 +1003,18 @@ public class Atos extends Liveticker {
         else if (nsh[1] != osh[1])
             pt = "A";
         // Strokes
-        int strokes = 1 + (new java.util.Random()).nextInt(10);
+        int strokes = 0;
+        
+        if (isAdd) {
+            strokes = 2 * oldCounterData.getStrokes(); // 1 + (new java.util.Random()).nextInt(10);
+            // + 1, if server makes the point. But who is the server?
+            // If receiver (A) scores => +0 strokes
+            // If server scores => +1 strokes
+            if (oldCounterData.getServiceLeft() && pt.equals("H"))
+                ++strokes;
+            else if (oldCounterData.getServiceRight() && pt.equals("A"))
+                ++strokes;
+        }
         // Do, Undo
         String f = isAdd ? "+" : "-";
         String mt = formatDuration(cm.getRunningMatchTime());

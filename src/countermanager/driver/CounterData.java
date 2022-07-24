@@ -50,6 +50,7 @@ public class CounterData implements Cloneable {
     private boolean   injuredLeftRunning;
     private boolean   injuredRightRunning;
     private int       time;
+    private int       strokes;
     private int       setsLeft;
     private int       setsRight;
     private int[][]   setHistory;
@@ -84,6 +85,7 @@ public class CounterData implements Cloneable {
         cd.injuredLeftRunning = injuredLeftRunning;
         cd.injuredRightRunning = injuredRightRunning;
         cd.time = time;
+        cd.strokes = strokes;
         cd.setsLeft = setsLeft;
         cd.setsRight = setsRight;
         if (setHistory != null) {
@@ -338,6 +340,14 @@ public class CounterData implements Cloneable {
         this.time = time;
     }
     
+    public int getStrokes() {
+        return strokes;
+    }
+
+    public void setStrokes(int strokes) {
+        this.strokes = strokes;
+    }
+    
     public long getUpdateTime() {
         return updateTime;
     }
@@ -457,6 +467,7 @@ public class CounterData implements Cloneable {
                 cardRight.equals(cd.cardRight) &&
                 expedite == cd.expedite &&
                 time == cd.time &&
+                strokes == cd.strokes &&
                 swapped == cd.swapped
             ;                
     }

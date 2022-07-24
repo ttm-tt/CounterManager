@@ -133,6 +133,7 @@ export function create(match = null) {
         /* boolean  */  injuredLeftRunning : false,
         /* boolean  */  injuredRightRunning : false,
         /* int      */  time : 0,
+        /* int      */  strokes : 0,
         /* int      */  setsLeft : 0,
         /* int      */  setsRight : 0,
         /* int[][]  */  setHistory : [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]],

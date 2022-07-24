@@ -57,6 +57,29 @@ export function subPointRight(data) {
     fireListeners();
 }
 
+
+export function incStrokes(data) {
+    ++data.strokes;
+    
+    fireListeners();
+}
+
+
+export function decStrokes(data) {
+    if (data.strokes > 0)
+        --data.strokes;
+    
+    fireListeners();
+}
+
+
+export function clrStrokes(data) {
+    data.strokes = 0;
+    
+    fireListeners();
+}
+
+
 /**
  * 
  * @param {CounterData} data
@@ -336,6 +359,9 @@ function addPoint(data, side) {
     const cs = (data.bestOf > 1 && cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
     const sl = CounterSettings.sideChangeLastGame ? 5 : 0;
     
+    // Reset strokes
+    data.strokes = 0;
+    
     if (data.setHistory.length <= cg)
         return false;
         
@@ -398,6 +424,9 @@ function subPoint(data, side) {
     let cg = data.setsLeft + data.setsRight;
     const cs = (data.bestOf > 1 && cg === data.bestOf - 1 ? CounterSettings.serviceChangeLastGame : CounterSettings.serviceChange);
     const sl = CounterSettings.sideChangeLastGame ? 5 : 0;
+    
+    // Reset strokes
+    data.strokes = 0;
     
     if (data.setHistory.length <= cg)
         return false;

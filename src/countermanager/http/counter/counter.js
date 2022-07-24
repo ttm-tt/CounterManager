@@ -106,6 +106,25 @@ function doInitialize() {
     
     restoreData();
     
+    $('html').keydown(function(event) {
+        switch (event.key) {
+            case 'l' : 
+                event.preventDefault();
+                Counter.incStrokes(counterData);
+                break;
+                
+            case 'c' :
+                event.preventDefault();
+                Counter.clrStrokes(counterData);
+                break;
+
+            case 'r' : 
+                event.preventDefault();
+                Counter.decStrokes(counterData);
+                break;
+        }
+    });
+    
     connectHttp(); 
 }
 
@@ -686,6 +705,8 @@ function updateScreen() {
         $('#endMatch').addClass('disabled');
     
     $('#endMatch').attr('checked', counterData.gameMode === CounterData.GameMode.END);
+    
+    $('#strokes').html('Strokes: ' + counterData.strokes);
 }
 
 
