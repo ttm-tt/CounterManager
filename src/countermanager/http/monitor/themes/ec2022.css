@@ -1,0 +1,35 @@
+/* Themes */
+
+@font-face {
+    font-family: "Titillium Bold";
+    src: url("../fonts/Titillium-Bold.otf") format("OpenType");
+}
+
+body {
+    font-family: "Titillium Bold";
+    border: transparent 1px solid;
+}
+
+#event {
+    text-transform: uppercase;
+}
+
+#names {
+    color: white;
+}
+
+#names .name.center {
+    color: #1576ba;
+}
+
+#result .points {
+    color: white;
+}
+
+#result .games {
+    color: #1576ba;
+}
+
+.timeouts {
+    background-color: transparent;
+}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!--
+[Fah/ne][Nat/ion][Runde][Nat/ion][Fah/ne]
+
+[Name             ][_][             Name]
+[Name             ][ ][             Name]
+
+[Satz]                             [Satz]
+
+      [Ball]       [:]       [Ball]
+
+[              Zeit / Sätze             ]
+
+Hintergrund: Schwarz
+Text:        Weiss
+
+Aufschläger: Invertiert?
+
+Sponsoren?
+
+Seiten invertiert (links weiss auf schwarz, rechts schwarz auf weiss)?
+Saetze entsprechend dem Sieger darstellen?
+-->
+<html>
+    <head>
+        <title>Monitor</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">  
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1"> 
+        
+        <link rel="stylesheet" type="text/css" href="ec2022.css">
+        <link rel="stylesheet" type="text/css" href="themes/common.css">
+        
+        <script src="../scripts/jquery.js"></script>
+        <script src="../scripts/common.js"></script>
+        <script type="module" src="ec2022.js"></script>
+                
+        <!-- IE 7 and below don't know about JSON, so do it in JS code -->
+        <!--[if lt IE 8]>
+            <script type="text/javascript" src="../scripts/json2.js"></script>
+        <![endif]-->
+
+        <script>
+            var vw = $(window).width();
+            var vh = $(window).height();
+            
+            var scr = "" + vw + "x" + vh;
+            
+            if (vw <= 512)
+                scr = "512x512";
+            else if (vw <= 1024)
+                scr = "1024x768";
+            else if (vw <= 1280)
+                scr = "1280x1024";
+            else if (vw <= 1440)
+                scr = "1440x900";
+            else 
+                scr = "1920x1080";
+            
+            scr = getParameterByName("layout", scr);
+            document.write('<link rel="stylesheet" type="text/css" href="layouts/' + scr + '.css">');
+            
+            document.write('<link rel="stylesheet" type="text/css" href="themes/' + getParameterByName("theme", "default") + '.css">');
+            document.write('<link rel="stylesheet" type="text/css" href="themes/' + getParameterByName("config", "default") + '.css">');
+        </script>
+            
+    </head>
+    <body>
+        <div id="header"></div>
+        <div id="content" class="invisible">
+            <div id="event" class="event"><span></span></div>
+            <div id="names" class="names">
+                <div id="nameleft" class="name right middle invert"><span class="crop"></span></div>
+                <div id="flagleft" class="flag left">
+                    <div class="flags">
+                        <div id="flagb" class="invert"><span></span></div>
+                        <div id="flaga" class="invert"><span></span></div>
+                    </div>
+                </div>
+                <div id="serviceleft" class="service middle invisible"><div></div></div>
+                <div id="namecenter" class="name center middle"><span>vs</span></div>
+                <div id="serviceright" class="service middle invisible"><div></div></div>
+                <div id="flagright" class="flag right">
+                    <div class="flags">
+                        <div id="flagx" class="invert"><span></span></div>
+                        <div id="flagy" class="invert"><span></span></div>   
+                    </div>
+                </div>
+                <div id="nameright" class="name left middle"><span class="crop"></span></div>
+            </div>
+            <div id="result" class="result">
+                <div id="gamesleft" class="games left"></div>
+                <div id="gamesright" class="games right"></div>
+                <div id="timeoutleft" class="timeouts left hidden">T</div>
+                <div id="cardleft" class="cards left hidden"></div>
+                <div id="pointsleft" class="points left"></div>
+                <div id="pointscenter" class="points center">:</div>
+                <div id="pointsright" class="points right"></div>
+                <div id="cardright" class="cards right hidden"></div>
+                <div id="timeoutright" class="timeouts right hidden">T</div>
+            </div>
+            <div id="timeresult" class="time result">
+                <div id="schedule" class="schedule center"></div>
+                <div id="match" class="match hidden">
+                    <div id="game1" class="match game"></div>
+                    <div id="game2" class="match game"></div>
+                    <div id="game3" class="match game"></div>
+                    <div id="game4" class="match game"></div>
+                    <div id="game5" class="match game"></div>
+                    <div id="game6" class="match game"></div>
+                    <div id="game7" class="match game"></div>
+                </div>
+            </div>  
+        </div>
+        <div id="footer"></div>
+    </body>
+</html>

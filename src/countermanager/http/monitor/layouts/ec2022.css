@@ -1,0 +1,308 @@
+/* Copyright (C) 2020 Christoph Theis */
+
+/* Positions and Sizes */
+/* 1920 x 1080 */
+body {
+    margin: 0;
+    width: 1920px;
+    height: 1080px;
+    /* border: 1px solid white; */
+    
+    background: url('../img/ec2022.png');
+}
+
+#content {
+    width: 1920px;
+    height: 1080px;
+}
+
+#caption {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 1920px;
+    height: 150px;
+    font-size: 110px;
+}
+
+.flag {
+    height: inherit;
+    position: absolute;
+}
+
+.flag img {
+    max-width: 135px;
+    max-height: 0.7em;
+}
+
+.nation {
+    width: 590px;
+    height: inherit;
+    position: absolute;
+}
+
+#flagleft {
+    left: 0px;
+}
+
+#flagb {
+}
+
+#flaga {
+}
+
+#nationleft {
+    left: 300px;
+    padding-right: 10px;
+}
+
+#teamresult {
+    width: 240px;    
+    height: 150px;
+    position: absolute;
+    left: 840px;
+}
+
+#flagleft {
+    left: 700px;
+    width: 100px;
+    display: flex;
+    justify-content: center;
+}
+
+#flagleft .flags {
+    align-self: center;
+}
+
+#flagright {
+    right: 700px;
+    width: 100px;
+    display: flex;
+    justify-content: center;
+}
+
+#flagright .flags {
+    align-self: center;
+}
+
+#flagx {
+}
+
+#flagy {
+}
+
+#nationright {
+    right: 300px;
+    padding-left: 10px;
+}
+
+#event {
+    position: absolute;
+    top: 80px;
+    left: 0px;
+    width: 1920px;
+    height: 350px;
+    font-size: 70px;
+    display: block;
+    font-weight: bold;
+    padding-left: 20px;
+}
+
+#names {
+    position: absolute;
+    top: 220px;
+    left: 0px;
+    width: 1920px;
+    height: 350px;
+    font-size: 100px;
+    display: block;
+    line-height: 130%;
+}
+
+.name {
+    width: 600px;
+    position: absolute;
+    height: inherit;
+}
+
+.name span {
+    max-width: 900px;  /* Same as .name */
+}
+
+#nameleft {
+    left: 0px;
+    padding-right: 10px;
+}
+
+#namecenter {
+    left: 900px;
+    width: 120px;
+}
+
+#nameright {
+    right: 0px;
+    padding-left: 10px;
+}
+
+.service {
+    position: absolute;
+    top: 150px;                             /* adjust by team result font */
+    height: 350px;
+    border-color: transparent;
+    border: initial;
+    padding-top: 10px;
+}
+
+.service div {
+    width: 0.5em;
+    min-width: 0.5em;
+    height: 0.5em;
+    border-radius: 0.5em;
+    background-color: white;        
+}
+
+#serviceleft {
+    left: 850px;                           /* 1em left of team result */
+}
+
+#serviceright {
+    right: 850px;                          /* 1 em right of team result */
+}
+
+#result {
+    position: absolute;
+    top: 590px;
+    left: 0px;
+    width: 1920px;
+    height: 430px;
+}
+
+#result .games {
+    width: 150px;
+    height: 270px;
+    top: 10px;
+    position: absolute;
+    font-size: 275px;
+    line-height: 0.9;
+}
+
+#result .timeouts {
+    width: 120px;
+    height: 160px;
+    position: absolute;
+    top: 250px;
+    font-size: 160px;
+    line-height: 160px;
+}
+
+#result .cards {
+    width: 120px;
+    height: 140px;
+    position: absolute;
+    top: 270px;
+    font-size: 140px;
+    line-height: 140px;
+}
+
+#result .points{
+    width: 600px;
+    height: 275px;
+    position: absolute;
+    top: 5px;
+    font-size: 250px;
+    line-height: 250px;
+}
+
+#result #gamesleft {
+    left: 400px;
+}
+
+#result #gamesright {
+    right: 400px;
+}
+
+#result #timeoutleft {
+    left: 160px;
+}
+
+#result #cardleft {
+    left: 0px;
+}
+
+#result #pointsleft {
+    left: 300px;
+    text-align: right;
+}
+
+#result #pointscenter {
+    width: 180px;
+    left: 870px;  
+    line-height: 0.85;
+}
+
+#result #pointsright {
+    right: 300px;
+    text-align: left;
+}
+
+#result #timeoutright {
+    right: 160px;
+}
+
+#result #cardright {
+    right: 0px;
+}
+
+#timeresult {
+    position: absolute;
+    top: 930px;
+    left: 0px;
+    width: 1920px;
+    height: 150px;
+    font-size: 200px;
+    line-height: 150px;
+    display: none;
+}
+
+div#schedule {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+}
+
+div#match .game {
+    position: absolute;
+    bottom: 0px;
+    width: 270px;
+}
+
+#match #game1 {
+    left: 0px;
+}
+
+#match #game2 {
+    left: 270px;
+}
+
+#match #game3 {
+    left: 540px;    
+}
+
+#match #game4 {
+    left: 810px;
+}
+
+#match #game5 {
+    left: 1080px;
+}
+
+#match #game6 {
+    left: 1350px;
+}
+
+#match #game7 {
+    left: 1620px;
+}
+
+
+
