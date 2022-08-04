@@ -11,6 +11,9 @@ package countermanager.gui;
 import countermanager.driver.CounterConfig;
 import countermanager.driver.CounterData;
 import countermanager.driver.CounterDriver;
+import countermanager.liveticker.Liveticker;
+import countermanager.liveticker.LivetickerAdmininstration;
+import countermanager.liveticker.atos.AtosData;
 import countermanager.model.CounterModel;
 import countermanager.model.CounterModelMatch;
 
@@ -187,6 +190,7 @@ public final class CounterPanelItem extends javax.swing.JPanel {
         jSeparator1 = new javax.swing.JSeparator();
         configMenuItem = new javax.swing.JMenuItem();
         dataMenuItem = new javax.swing.JMenuItem();
+        atosDataMenuItem = new javax.swing.JMenuItem();
         resultsMenuItem = new javax.swing.JMenuItem();
         matchMenuItem = new javax.swing.JMenuItem();
         addressMenuItem = new javax.swing.JMenuItem();
@@ -250,6 +254,14 @@ public final class CounterPanelItem extends javax.swing.JPanel {
             }
         });
         counterPopupMenu.add(dataMenuItem);
+
+        atosDataMenuItem.setText("Atos Data");
+        atosDataMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                atosDataMenuItemActionPerformed(evt);
+            }
+        });
+        counterPopupMenu.add(atosDataMenuItem);
 
         resultsMenuItem.setText(bundle.getString("resultsMenuItem")); // NOI18N
         resultsMenuItem.setActionCommand("results");
@@ -930,6 +942,28 @@ public final class CounterPanelItem extends javax.swing.JPanel {
             CounterDriver.unlockScreen(counter);
     }//GEN-LAST:event_lockscreenMenuItemActionPerformed
 
+    private void atosDataMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_atosDataMenuItemActionPerformed
+        countermanager.liveticker.atos.Atos atos = null;
+        for (Liveticker lt : LivetickerAdmininstration.getLiveticker()) {
+            if (lt instanceof countermanager.liveticker.atos.Atos) {
+                atos = (countermanager.liveticker.atos.Atos) lt;
+                break;
+            }
+        
+        }
+        
+        String idMatch = atos == null ? "" : atos.getIdMatch(counter);
+        String matchString = atos == null ? "AABBBCCM" : atos.getMatchString(counter) ;
+        
+        AtosData data = new AtosData(idMatch, matchString);
+        
+        PropertyPanel panel = new PropertyPanel();
+        panel.setObject(data, false, false);
+
+        javax.swing.JOptionPane.showMessageDialog(
+                this, panel, "Atos Data", javax.swing.JOptionPane.PLAIN_MESSAGE);
+    }//GEN-LAST:event_atosDataMenuItemActionPerformed
+
     private boolean isCounterMatchForced() {
         return CounterModel.getDefaultInstance().isCounterMatchForced(counter);
     }
@@ -1221,6 +1255,7 @@ public final class CounterPanelItem extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBoxMenuItem activateMenuItem;
     private javax.swing.JMenuItem addressMenuItem;
+    private javax.swing.JMenuItem atosDataMenuItem;
     private javax.swing.JCheckBoxMenuItem checkedMenuItem;
     private javax.swing.JMenuItem configMenuItem;
     private javax.swing.JPopupMenu counterPopupMenu;

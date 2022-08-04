@@ -54,6 +54,21 @@ public class Atos extends Liveticker {
     // Atos' match id as table <-> idmatch
     private final Map<Integer, String> idmatches = new java.util.HashMap<>();
     
+    public String getIdMatch(int counter) { 
+        if (idmatches.containsKey(counter))
+            return idmatches.get(counter);
+        else
+            return "0";
+    }
+    
+    
+    public String getMatchString(int counter) {
+        if (matchStrings.containsKey(counter))
+            return matchStrings.get(counter);
+        else
+            return "AABBBCCM";
+    }
+    
     private Service calculateService(CounterData cd, boolean  isDouble) {
         if (!isDouble) {
             if (cd.getServiceLeft())
@@ -557,7 +572,7 @@ public class Atos extends Liveticker {
         dbg
                 .append("Start Match: ")
                 .append("Match String = ").append(matchStrings.get(cm.mtTable)).append(", ")
-                .append("DAy Time = ").append(daytime).append(", ")
+                .append("Day Time = ").append(daytime).append(", ")
                 .append("ID Match = ").append(idmatches.get(cm.mtTable)).append(", ")
         ;
         
