@@ -487,7 +487,8 @@ public final class TTM extends Liveticker {
             updateMatch.timeoutLeftRunning = counterData.isTimeoutLeftRunning();
             updateMatch.timeoutRightRunning = counterData.isTimeoutRightRunning();
         } else {
-            updateMatch.gameRunning = counterMatch.getMtResult()[0][0] > 0 || counterMatch.getMtResult()[0][1] > 0;
+            updateMatch.gameRunning = counterMatch.getMtResult() != null && counterMatch.getMtResult().length > 0 && counterMatch.getMtResult()[0].length > 0 && 
+                    (counterMatch.getMtResult()[0][0] > 0 || counterMatch.getMtResult()[0][1] > 0);
             updateMatch.matchRunning = updateMatch.gameRunning || counterMatch.mtResA > 0 || counterMatch.mtResX > 0;
             updateMatch.timeoutLeftRunning = false;
             updateMatch.timeoutRightRunning = false;
