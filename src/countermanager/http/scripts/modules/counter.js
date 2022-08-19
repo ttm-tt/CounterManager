@@ -125,7 +125,7 @@ export function swapSides(data) {
         } else if (data.sideChange === CounterData.SideChange.AFTER) {
             // Each game the other players have service
             data.service = ((cg % 2) == 0) ? -data.firstService : +data.firstService;
-            data.serviceDouble = -data.firstServiceDouble;
+            data.serviceDouble = ((cg % 2) == 0) ? -data.firstServiceDouble : +data.firstServiceDouble;
         } else {
             // Restore last service
             data.service = data.lastService;
@@ -679,6 +679,8 @@ function calculateFirstServiceDouble(data) {
             data.sideChange == CounterData.SideChange.AFTER || 
             data.setHistory[cg][0] > 5 ||
             data.setHistory[cg][1] > 5) ) {
+        data.firstServiceDouble = -data.firstServiceDouble;
+    }  else if ((cg % 2) == 1) {
         data.firstServiceDouble = -data.firstServiceDouble;
     }    
 }
