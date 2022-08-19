@@ -501,7 +501,8 @@ public class Atos extends Liveticker {
             if (counterMatch == null || counterData == null)
                 continue;
             
-            if ( (counterData.getGameMode() != CounterData.GameMode.RESET) && 
+            if ( !(counterData.getGameMode() == CounterData.GameMode.RESET || 
+                    counterData.getGameMode() == CounterData.GameMode.WARMUP) && 
                     idmatches.containsKey(table) && !idmatches.get(table).startsWith("<") &&
                     matchStrings.containsKey(table) && !matchStrings.get(table).startsWith("<") )
                 continue;
@@ -784,6 +785,9 @@ public class Atos extends Liveticker {
             --cs;
         
         // service, return
+        boolean lt = newCounterData.getServiceLeft();
+        boolean rt = newCounterData.getServiceRight();
+        int dl = newCounterData.getServiceDouble();
         int s = calculateService(newCounterData, isDouble).ordinal();
         int r = calculateReceiver(newCounterData, isDouble).ordinal();
         String e = newCounterData.isExpedite() ? "Y" : "N";
