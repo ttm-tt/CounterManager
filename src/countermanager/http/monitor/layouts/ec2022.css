@@ -121,12 +121,13 @@ body {
 
 .name {
     width: 600px;
+    max-width: 600px;
     position: absolute;
     height: inherit;
 }
 
 .name span {
-    max-width: 900px;  /* Same as .name */
+    max-width: 600px;  /* Same as .name */
 }
 
 #nameleft {
