@@ -480,7 +480,8 @@ public class CounterData implements Cloneable {
         }
         
         {
-            serviceDouble = -serviceDouble;
+            // Propably not necessary
+            // serviceDouble = -serviceDouble;
         }
         
         {
