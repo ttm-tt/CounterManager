@@ -462,7 +462,7 @@ function formatPlayer(pl) {
         str += pl.psFirst.substring(0, 1) + '.' + '&nbsp;';
     
     if (window.matchMedia("(orientation: landscape)").matches)
-        str += pl.psLast;
+        str += formatString(pl.psLast, 10);
     else
         str += formatString(pl.psLast, 7);
     

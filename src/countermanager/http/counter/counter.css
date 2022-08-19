@@ -1,7 +1,7 @@
 /* Copyright (C) 2020 Christoph Theis */
 
 html {
-    font-size: 100%;
+    font-size: 200%;
 }
 
 /* Debug settings */
@@ -81,9 +81,11 @@ button {
 }
 
 /* Column widths */
-#counter .names .name.left #counter .names .name.right { 
+#counter .names .name.left, #counter .names .name.right { 
     /* One player name, left or right */
     width: 43%;
+    max-width: 43%;
+    overflow-x: hidden;
 }
 
 #counter .center {
