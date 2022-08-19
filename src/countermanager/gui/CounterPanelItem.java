@@ -952,8 +952,8 @@ public final class CounterPanelItem extends javax.swing.JPanel {
         
         }
         
-        String idMatch = atos == null ? "" : atos.getIdMatch(counter);
-        String matchString = atos == null ? "AABBBCCM" : atos.getMatchString(counter) ;
+        String idMatch = atos == null ? "" : atos.getIdMatch(counter + CounterModel.getDefaultInstance().getTableOffset());
+        String matchString = atos == null ? "AABBBCCM" : atos.getMatchString(counter + CounterModel.getDefaultInstance().getTableOffset()) ;
         
         AtosData data = new AtosData(idMatch, matchString);
         
