@@ -3,12 +3,12 @@
 
 [Setup]
 AppName=ScoreBoardManager
-AppVerName=ScoreBoardManager 22.08
+AppVerName=ScoreBoardManager 22.09
 ; AppPublisher=Christoph Theis
 DefaultDirName={autopf}\TTM\CounterManager
 DefaultGroupName=TTM
 OutputDir=.\Output
-MinVersion= 0,6.1
+MinVersion= 0,6.1sp1
 OutputBaseFilename=install
 ArchitecturesInstallIn64BitMode=x64
 
@@ -93,7 +93,7 @@ begin
   begin
     Result := ExpandConstant('{app}');
   end
-  else if ( isAdminLoggedOn OR FileExists(ExpandConstant( '{commonappdata}\TTM' )) ) then
+  else if ( isAdmin OR FileExists(ExpandConstant( '{commonappdata}\TTM' )) ) then
   begin
     CreateDir(ExpandConstant('{commonappdata}\TTM\CounterManager'));
     Result := ExpandConstant('{commonappdata}\TTM\CounterManager');
