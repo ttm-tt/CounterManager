@@ -376,6 +376,8 @@ var ttm = new function() {
         var all = false;
         var individual = true;
         
+        // debugger;
+        
         if (arguments.length > 0 && args.size() > 0) {
             if (args.get('date') !== null) {                
                 from = to = Packages.java.time.LocalDateTime.parse(this.formatDateTime(args.get('date')));

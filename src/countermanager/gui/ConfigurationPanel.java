@@ -147,7 +147,7 @@ public class ConfigurationPanel extends javax.swing.JPanel {
         firstCounterSpinner.setValue(prefs.getInt(FIRST_COUNTER_PREF, 0));
         offsetTableSpinner.setValue(prefs.getInt(OFFSET_TABLE_PREF, 1) - 1);
         
-        resetTimeoutTextField.setText( (new Integer(prefs.getInt(RESET_TIMEOUT_PREF, 30))).toString() );
+        resetTimeoutTextField.setText( (Integer.valueOf(prefs.getInt(RESET_TIMEOUT_PREF, 30))).toString() );
 
         fromTableSpinner.setValue(prefs.getInt(FROM_TABLE_PREF, 1));
         toTableSpinner.setValue(prefs.getInt(TO_TABLE_PREF, CounterModel.MAX_COUNTERS));
