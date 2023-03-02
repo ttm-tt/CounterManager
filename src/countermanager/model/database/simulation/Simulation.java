@@ -319,7 +319,7 @@ public final class Simulation implements IDatabase {
             }
         }
         
-        return list.toArray(new Match[0]);
+        return list.toArray(Match[]::new);
     }
 
     @Override
