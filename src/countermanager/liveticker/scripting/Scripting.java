@@ -64,7 +64,15 @@ public class Scripting extends Liveticker {
         if (counter > toTable - CounterModel.getDefaultInstance().getTableOffset())
             return;
         
-        runScript();
+        List<CounterModelMatch> matchList = new java.util.ArrayList<>();
+        List<CounterData> dataList = new java.util.ArrayList<>();
+        
+        for (int table = fromTable; table <= toTable; ++table) {
+            matchList.add(CounterModel.getDefaultInstance().getCounterMatch(table - 1));
+            dataList.add(CounterModel.getDefaultInstance().getCounterData(table - 1));
+        }
+        
+        runScript("counterChanged", matchList, dataList);
     }
 
     @Override
@@ -175,16 +183,9 @@ public class Scripting extends Liveticker {
         ftpPassword = savePwd;
     }
     
-    protected void runScript() {
+    
+    protected void runScript(String method, Object... args) {
         String s = null;
-        
-        List<CounterModelMatch> matchList = new java.util.ArrayList<>();
-        List<CounterData> dataList = new java.util.ArrayList<>();
-        
-        for (int table = fromTable; table <= toTable; ++table) {
-            matchList.add(CounterModel.getDefaultInstance().getCounterMatch(table - 1));
-            dataList.add(CounterModel.getDefaultInstance().getCounterData(table - 1));
-        }
         
         // Use a script to convert that list to sthg
         try {
@@ -210,8 +211,8 @@ public class Scripting extends Liveticker {
                 
                 lastModifiedScript = fs.lastModified();
             }
-
-            Object o = ((Invocable) jsEngine).invokeFunction("counterChanged", matchList, dataList);      
+            
+            Object o = ((Invocable) jsEngine).invokeFunction(method, args);      
 
             if (o instanceof String)
                 s = o.toString();
