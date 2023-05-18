@@ -9,7 +9,9 @@
 package countermanager.gui;
 
 import java.awt.Component;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTable;
@@ -31,6 +33,17 @@ public class PropertyPanel extends javax.swing.JPanel {
                 ((DefaultTableCellRenderer) c).setText("");
             else
                 ((DefaultTableCellRenderer) c).setText(String.format("%-" + value.toString().length() + "s", "").replace(' ', '*'));
+            return c;
+        }
+    }
+    
+    // Render a Map as "..."
+    private class MapTableCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                              boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            ((DefaultTableCellRenderer) c).setText("...");
             return c;
         }
     }
@@ -81,6 +94,7 @@ public class PropertyPanel extends javax.swing.JPanel {
                         rows.get(row)[col] = Boolean.valueOf(value.toString());
                     else
                         rows.get(row)[col] = value;
+                    
                     fireTableCellUpdated(row, col);
                 }
         });
@@ -88,6 +102,14 @@ public class PropertyPanel extends javax.swing.JPanel {
     
     
     private void fillRows(List<Object[]> rows, Object obj, Class clazz, boolean inherit) {
+        
+        if (obj == null)
+            return;
+        
+        if (obj instanceof Map) {
+            fillRowsFromMap(rows, (Map) obj);
+            return;
+        }
         
         if (clazz.getName().equals("java.lang.Object"))
             return;
@@ -127,13 +149,6 @@ public class PropertyPanel extends javax.swing.JPanel {
                 if (method != null) {
                     row[0] = name;
                     row[1] = method.invoke(obj);
-
-                    if (row[1] == null) {
-                        row[1] = method.getReturnType().newInstance();
-                    }
-
-                    // TODO: Wenn Wert ein Object oder Array ist, als String formatieren.
-                    // Aber wie kann man das Object wieder deserialisieren?
                     
                     if (row[1].getClass().isArray()) {
                         row[1] = json.toJson(row[1]);
@@ -144,6 +159,17 @@ public class PropertyPanel extends javax.swing.JPanel {
             } catch (Exception e) {
                 Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, e);
             }
+        }
+    }
+    
+    
+    private void fillRowsFromMap(List<Object[]> rows, Map map) {
+        for (Iterator it = map.keySet().iterator(); it.hasNext();) {
+            Object key = it.next();
+            Object[] row = new Object[2];
+            row[0] = key.toString();
+            row[1] = map.get(key);
+            rows.add(row);
         }
     }
     
@@ -163,6 +189,8 @@ public class PropertyPanel extends javax.swing.JPanel {
                 return super.getCellRenderer(row, col);
                 else if (value instanceof Boolean)
                 return getDefaultRenderer(Boolean.class);
+                else if (value instanceof java.util.Map)
+                return new MapTableCellRenderer();
                 else if (col == 1 && getValueAt(row, 0).toString().indexOf("Password") >= 0)
                 return new PasswordTableCellRenderer();
                 else
@@ -198,6 +226,11 @@ public class PropertyPanel extends javax.swing.JPanel {
 
             }
         ));
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableMouseClicked(evt);
+            }
+        });
         scrollPane.setViewportView(table);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -212,13 +245,41 @@ public class PropertyPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    void updateObject(Object counterConfig) {
+    private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
+        int row = table.rowAtPoint(evt.getPoint());
+        Object value = table.getModel().getValueAt(row, 1);
+
+        if (value instanceof Map) {
+            PropertyPanel panel = new PropertyPanel();
+            panel.setObject(value, true, false);
+
+            int ret = javax.swing.JOptionPane.showConfirmDialog(
+                    this, panel, java.util.ResourceBundle.getBundle("countermanager/gui/resources/CounterManager")
+                        .getString("configurationString"), javax.swing.JOptionPane.OK_CANCEL_OPTION,
+                    javax.swing.JOptionPane.PLAIN_MESSAGE);
+
+            if (ret == javax.swing.JOptionPane.OK_OPTION) {
+                panel.updateObject(value);
+                table.getModel().setValueAt(value, row, 1);
+            }       
+        }
+    }//GEN-LAST:event_tableMouseClicked
+
+    void updateObject(Object obj) {
+        if (obj == null)
+            return;
+        
         for (int row = 0; row < table.getModel().getRowCount(); row++) {
             String name = table.getModel().getValueAt(row, 0).toString();
             Object value = table.getModel().getValueAt(row, 1);
 
             if (value == null)
                 continue;
+            
+            if (obj instanceof Map) {
+                ((Map) obj).put(name, value);
+                continue;
+            }
             
             try {
                 Class clazz = value.getClass();
@@ -238,9 +299,16 @@ public class PropertyPanel extends javax.swing.JPanel {
                     clazz = Float.TYPE;
                 else if (clazz == Double.class)
                     clazz = Double.class;
+                else if (value instanceof Map) {
+                    // In case of Map (ScriptOptions) the class is org.mozilla.javascript.NativeObject
+                    clazz = Map.class;
+                } else if (value instanceof List) {
+                    // In case of Map (ScriptOptions) the class is org.mozilla.javascript.NativeArray
+                    clazz = List.class;
+                }                
 
-                java.lang.reflect.Method method = counterConfig.getClass().getMethod("set" + name, clazz);
-                method.invoke(counterConfig, value);
+                java.lang.reflect.Method method = obj.getClass().getMethod("set" + name, clazz);
+                method.invoke(obj, value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
