@@ -17,30 +17,24 @@ setScriptOptions = function(o) {
     return scriptOptions;
 };
 
-function counterChanged(table, matchList, dataList) {
+function tableChanged(table, matchList, dataList) {
     this.formatTVTable = function(t, m, d) {
+        return formatTable(t, m, d);
+    };
+    
+    
+    this.formatOtherTable = function(t, m, d) {
+        return formatTable(t, m, d);
+    };
+    
+    
+    this.formatTable = function(t, m, d) {
         if (m === null || d === null)
             return "";
                     
         if (m === undefined || d === undefined)
             return "";
         
-        return formatTable(t, m, d);
-    };
-    
-    
-    this.formatOtherTable = function(t, m, d) {
-        // if (m === null || d === null)
-        //     return "";
-                    
-        if (m === undefined || d === undefined)
-            return "";
-        
-        return formatTable(t, m, d);
-    };
-    
-    
-    this.formatTable = function(t, m, d) {
         var ret = "" +
                 "<T" + t + ">" +
                     "<FlagU1>" + formatFlagPL(m.plA, m.plB) + "</FlagU1>" +
@@ -174,14 +168,14 @@ function counterChanged(table, matchList, dataList) {
     };
 
     // -------------------------------------------------------------------------
-    // if (matchList.length != dataList.length)
-    //     return "";
+    if (matchList.length != dataList.length)
+       return "";
     
     var ret = [];    
     
     if ((table >= scriptOptions.tvFrom) && (table <= scriptOptions.tvTo)) {  
-        // the key in matchList and dataList are Intger, so convert JS int to Java Integer
-        var t = new java.lang.Integer(table);
+        // the key in matchList and dataList are java Intger, so convert JS int to Java Integer
+        var t = java.lang.Integer.valueOf(table);
         var m = matchList.get(t);
         var d = dataList.get(t);
 
