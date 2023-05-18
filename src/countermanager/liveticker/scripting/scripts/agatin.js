@@ -1,7 +1,7 @@
 //@ sourceURL=F:\user\cht\CounterManager\src\countermanager\http\scripts\agatin.js
 /* Copyright (C) 2020 Christoph Theis */
 
-function counterChanged(counter, matchList, dataList) {
+function tableChanged(table, matchList, dataList) {
     this.formatRow = function(m, d) {
         if (m === null)
             return "";
@@ -185,9 +185,11 @@ function counterChanged(counter, matchList, dataList) {
     ret.push("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
     ret.push("<table>");
     
-    for (var i = 0; i < matchList.length; i++) {
-        var m = matchList[i];
-        var d = dataList[i];
+    var iter = matchList.keySet().iterator();
+    while (iter.hasNext()) {
+        var t = iter.next();
+        var m = matchList.get(t);
+        var d = dataList.get(t);
         
         if (m === null)
             continue;

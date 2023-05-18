@@ -60,20 +60,23 @@ public class Scripting extends Liveticker {
 
     @Override
     public void counterChanged(int counter) {
-        if (counter < fromTable - CounterModel.getDefaultInstance().getTableOffset())
+        int offset = CounterModel.getDefaultInstance().getTableOffset();
+        
+        if ((counter + offset) < fromTable)
             return;
-        if (counter > toTable - CounterModel.getDefaultInstance().getTableOffset())
+        if ((counter + offset) > toTable)
             return;
         
-        List<CounterModelMatch> matchList = new java.util.ArrayList<>();
-        List<CounterData> dataList = new java.util.ArrayList<>();
+        Map<Integer, CounterModelMatch> matchList = new java.util.HashMap<>();
+        Map<Integer, CounterData> dataList = new java.util.HashMap<>();
         
         for (int table = fromTable; table <= toTable; ++table) {
-            matchList.add(CounterModel.getDefaultInstance().getCounterMatch(table - 1));
-            dataList.add(CounterModel.getDefaultInstance().getCounterData(table - 1));
+            matchList.put(table, CounterModel.getDefaultInstance().getCounterMatch(table-offset));
+            dataList.put(table, CounterModel.getDefaultInstance().getCounterData(table-offset));
         }
         
-        Object o = runScript("counterChanged", counter, matchList, dataList);
+        // We pass counter with offset so we don't have to figure ut out in the script
+        Object o = runScript("tableChanged", counter + offset, matchList, dataList);
 
         if (o == null)
             return;
