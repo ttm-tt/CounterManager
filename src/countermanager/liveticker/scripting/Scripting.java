@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.script.Invocable;
@@ -72,7 +73,52 @@ public class Scripting extends Liveticker {
             dataList.add(CounterModel.getDefaultInstance().getCounterData(table - 1));
         }
         
-        runScript("counterChanged", matchList, dataList);
+        Object o = runScript("counterChanged", counter, matchList, dataList);
+
+        if (o == null)
+            return;
+        
+        String file = getOutputName();
+        String content = null;
+        
+        if ((o instanceof Map)){
+            if ( ((Map) o).containsKey("file") && ((Map) o).containsKey("content")) {
+                file = ((Map) o).get("file").toString();
+                content = ((Map) o).get("content").toString();
+            } else {
+                Logger.getLogger(Scripting.class.getName()).log(Level.SEVERE, null, "Returned map has not the required keys");
+                return;
+            }
+        } else if (o instanceof String) {
+            content = o.toString();
+        } else {
+            Logger.getLogger(Scripting.class.getName()).log(Level.SEVERE, null, "Illegal return type " + o.getClass().getSimpleName());
+            return;
+        }
+
+        // Check if we have to store the result
+        File outputFile = new File(getLocalDirectory(), file);
+        boolean doSave = !outputFile.exists();
+        doSave |= !content.equals(lastResult.get(file));
+
+        if (!content.isEmpty() && doSave) {     
+            outputFile.getParentFile().mkdirs();
+
+            try (PrintWriter pw = new PrintWriter(outputFile.getPath(), StandardCharsets.UTF_8)) {
+                // Store with current timestamp
+                pw.print(content.replaceAll("<CURRENT_TIMESTAMP>", "" + System.currentTimeMillis()));
+                lastResult.put(file, content);  // Unchanged string
+
+                // We ignore errors in upload, for the moment at least
+                upload(file, content.replaceAll("<CURRENT_TIMESTAMP>", "" + System.currentTimeMillis()));                    
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Scripting.class.getName()).log(Level.SEVERE, null, ex);
+                lastResult.remove(file);
+            } catch (IOException ex) {
+                Logger.getLogger(Scripting.class.getName()).log(Level.SEVERE, null, ex);
+                lastResult.remove(file);
+            }
+        }
     }
 
     @Override
@@ -164,6 +210,34 @@ public class Scripting extends Liveticker {
         lastModifiedScript = 0;
     }
     
+    public Map<String, Object> getScriptOptions() {
+        if (scriptOptions == null || scriptOptions.isEmpty()) {
+            Object o = runScript("getScriptOptions");
+            
+            if (o == null || !(o instanceof Map))
+                return new java.util.HashMap<>();
+            
+            // We need top copy the Map, because JS uses their own implementation,
+            // which doesn't support put etc.
+            scriptOptions = new java.util.HashMap<>();
+            scriptOptions.putAll((Map) o);
+        }
+        
+        return scriptOptions;
+    }
+    
+    public void setScriptOptions(Map val) {
+        if (val == null || val.isEmpty())
+            val = new java.util.HashMap<>();
+        
+        // We need top copy the Map, because JS uses their own implementation,
+        // which doesn't support put etc.
+        scriptOptions = new java.util.HashMap<>();
+        scriptOptions.putAll((Map) val);
+        
+        runScript("setScriptOptions", scriptOptions);
+    }
+    
     @Override
     protected void loadProperties() {
         Preferences.loadProperties(this, this.getClass().getName(), true);
@@ -171,7 +245,7 @@ public class Scripting extends Liveticker {
         if (!ftpPassword.isEmpty())
             ftpPassword = PasswordCrypto.decryptPassword(ftpPassword);        
     }
-
+    
     @Override
     protected void saveProperties() {
         String savePwd = ftpPassword;
@@ -184,7 +258,7 @@ public class Scripting extends Liveticker {
     }
     
     
-    protected void runScript(String method, Object... args) {
+    protected Object runScript(String method, Object... args) {
         String s = null;
         
         // Use a script to convert that list to sthg
@@ -198,7 +272,7 @@ public class Scripting extends Liveticker {
 
             if (fs == null || !fs.exists()) {
                 Logger.getLogger(Scripting.class.getName()).log(Level.SEVERE, "Script file not found"); 
-                return;
+                return null;
             }
             
             if (fs.lastModified() != lastModifiedScript)
@@ -214,46 +288,18 @@ public class Scripting extends Liveticker {
             
             Object o = ((Invocable) jsEngine).invokeFunction(method, args);      
 
-            if (o instanceof String)
-                s = o.toString();
-            
-            // Should not happen
-            if (s == null)
-                return;
-            
-            // Check if we have to store the result
-            File outputFile = new File(getLocalDirectory(), getOutputName());
-            boolean doSave = !outputFile.exists();
-            doSave |= !s.equals(lastResult);
-
-            if (!s.isEmpty() && doSave) {     
-                outputFile.getParentFile().mkdirs();
-                
-                try (PrintWriter pw = new PrintWriter(outputFile.getPath(), StandardCharsets.UTF_8)) {
-                    // Store with current timestamp
-                    pw.print(s.replaceAll("<CURRENT_TIMESTAMP>", "" + System.currentTimeMillis()));
-                    lastResult = s;  // Unchanged string
-                    
-                    // We ignore errors in upload, for the moment at least
-                    upload(getOutputName(), s.replaceAll("<CURRENT_TIMESTAMP>", "" + System.currentTimeMillis()));                    
-                } catch (FileNotFoundException ex) {
-                    Logger.getLogger(Scripting.class.getName()).log(Level.SEVERE, null, ex);
-                    lastResult = null;
-                } catch (IOException ex) {
-                    Logger.getLogger(Scripting.class.getName()).log(Level.SEVERE, null, ex);
-                    lastResult = null;
-                }
-            }
+            return o;
         } catch (FileNotFoundException | ScriptException | NoSuchMethodException ex) {
             Logger.getLogger(Scripting.class.getName()).log(Level.SEVERE, null, ex);
 
             jsEngine = null;
-            lastResult = null;
+            lastResult.clear();
+            
+            return null;
         }
     }
     
-    
-    
+
     private boolean upload(String fileName, String data) {
         if (ftpHost.isEmpty())
             return true;
@@ -367,7 +413,7 @@ public class Scripting extends Liveticker {
     private boolean ftpDebug = false;
     private String  outputName = "tvprod.csv";
     private String  localDirectory = "";
-    private String  lastResult;
+    private Map<String, String>  lastResult = new java.util.HashMap<>();
     
     private int fromTable = 1;
     private int toTable = 1;
@@ -375,13 +421,16 @@ public class Scripting extends Liveticker {
     private String script = "tvprod.js";
     private long   lastModifiedScript = 0;
     
+    private Map scriptOptions = new java.util.HashMap<>();
+    
     private String name = getClass().getSimpleName();
 
     private javax.script.ScriptEngine jsEngine;
     
     // Resolve path for scripts: sources, dist, cwd
     private static File[] scriptPathes = new File[] {
-            new File("../src/countermanager/http/scripts"),
+            new File("../src/countermanager/liveticker/scripting/scripts"),
+            new File(Properties.getIniFile().getParent(), "liveticker/scripting/scripts"),
             new File(Properties.getIniFile().getParent(), "http/scripts"),
             new File(".")
     };
@@ -409,4 +458,6 @@ public class Scripting extends Liveticker {
     public void setLocalDirectory(String localDirectory) {
         this.localDirectory = localDirectory;
     }
+ 
+    final private static com.google.gson.Gson json = new com.google.gson.Gson();
 }

@@ -1,7 +1,7 @@
 //@ sourceURL=F:\user\cht\CounterManager\src\countermanager\http\scripts\tvprod.js
 /* Copyright (C) 2020 Christoph Theis */
 
-function counterChanged(matchList, dataList) {
+function counterChanged(counter, matchList, dataList) {
     this.formatRow = function(m, d) {
         var row = [];
         var i = 0;
