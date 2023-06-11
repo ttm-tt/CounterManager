@@ -4,7 +4,7 @@
 
 var scriptOptions = {
     tvFrom : 1,
-    tvTo   : 4
+    tvTo   : 1
 };
 
 getScriptOptions = function() {
@@ -205,8 +205,21 @@ function tableChanged(table, matchList, dataList) {
         ret.push("</Tables>");
     };
     
+    // Make sure scriptOptions {tvFrom, tvTo} are defined, so we can use tvFrom / tvTo
+    if (scriptOptions === undefined)
+        scriptOptions = {
+            tvFrom : 1,
+            tvTo   : 1
+        };
+
+    if (scriptOptions.tvFrom === undefined)
+        scriptOptions.tvFrom = 1;
+
+    if (scriptOptions.tvTo === undefined)
+        scriptOptions.tvTo = 1;
+
     return {
-        file : (((table >= scriptOptions.tvFrom.valueOf()) && (table <= scriptOptions.tvTo.valueOf())) ? ("Table" + table) : "Other") + ".xml",
+        file : (((table >= parseInt(scriptOptions.tvFrom)) && (table <= parseInt(scriptOptions.tvTo))) ? ("Table" + table) : "Others") + ".xml",
         content : ret.join("\n")
     };
 }
