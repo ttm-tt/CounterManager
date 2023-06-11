@@ -231,6 +231,10 @@ button {
     float: left;
 }
 
+#strokes {
+    display: none;
+}
+
 
 /* Colors and Fonts */
 body {
