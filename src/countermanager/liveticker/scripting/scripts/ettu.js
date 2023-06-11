@@ -12,8 +12,8 @@ getScriptOptions = function() {
 };
 
 
-setScriptOptions = function(o) {
-    scriptOptions = 0;
+setScriptOptions = function(so) {
+    scriptOptions = so;
     return scriptOptions;
 };
 
