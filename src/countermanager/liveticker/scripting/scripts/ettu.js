@@ -37,6 +37,7 @@ function tableChanged(table, matchList, dataList) {
         
         var ret = "" +
                 "<T" + t + ">" +
+                    "<Event>" + formatEvent(m) + "</Event>" +
                     "<FlagU1>" + formatFlagPL(m.plA, m.plB) + "</FlagU1>" +
                     "<FlagU2>" + formatFlagBD(m.plA, m.plB) + "</FlagU2>" +
                     "<NameU>"  + formatNames(m.plA, m.plB) + "</NameU>" + 
@@ -68,6 +69,26 @@ function tableChanged(table, matchList, dataList) {
         return ret;        
     };
     
+    
+    this.formatEvent = function(m) {
+        if (m === null || m.cpType === undefined)
+            return "";
+        
+        switch (m.cpType) {
+            case 1 : 
+                return "singles";
+               
+            case 2 :
+            case 3 :
+                return "doubles";
+                
+            case 4 :
+                return "teams";
+                
+            default:
+                return "";
+        }
+    }
     
     this.formatFlagPL = function(pl, bd) {
         if (pl === null || pl.naName === null || pl.naName === "")
