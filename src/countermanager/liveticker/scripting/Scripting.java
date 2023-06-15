@@ -15,7 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,26 +99,28 @@ public class Scripting extends Liveticker {
         }
 
         // Check if we have to store the result
-        File outputFile = new File(getLocalDirectory(), file);
-        boolean doSave = !outputFile.exists();
-        doSave |= !content.equals(lastResult.get(file));
+        for (var dir : getLocalDirectory().split(";")) {
+            File outputFile = new File(dir, file);
+            boolean doSave = !outputFile.exists();
+            doSave |= !content.equals(lastResult.get(outputFile.getPath()));
 
-        if (!content.isEmpty() && doSave) {     
-            outputFile.getParentFile().mkdirs();
+            if (!content.isEmpty() && doSave) {     
+                outputFile.getParentFile().mkdirs();
 
-            try (PrintWriter pw = new PrintWriter(outputFile.getPath(), StandardCharsets.UTF_8)) {
-                // Store with current timestamp
-                pw.print(content.replaceAll("<CURRENT_TIMESTAMP>", "" + System.currentTimeMillis()));
-                lastResult.put(file, content);  // Unchanged string
+                try (PrintWriter pw = new PrintWriter(outputFile.getPath(), StandardCharsets.UTF_8)) {
+                    // Store with current timestamp
+                    pw.print(content.replaceAll("<CURRENT_TIMESTAMP>", "" + System.currentTimeMillis()));
+                    lastResult.put(outputFile.getPath(), content);  // Unchanged string
 
-                // We ignore errors in upload, for the moment at least
-                upload(file, content.replaceAll("<CURRENT_TIMESTAMP>", "" + System.currentTimeMillis()));                    
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(Scripting.class.getName()).log(Level.SEVERE, null, ex);
-                lastResult.remove(file);
-            } catch (IOException ex) {
-                Logger.getLogger(Scripting.class.getName()).log(Level.SEVERE, null, ex);
-                lastResult.remove(file);
+                    // We ignore errors in upload, for the moment at least
+                    upload(file, content.replaceAll("<CURRENT_TIMESTAMP>", "" + System.currentTimeMillis()));                    
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(Scripting.class.getName()).log(Level.SEVERE, null, ex);
+                    lastResult.remove(file);
+                } catch (IOException ex) {
+                    Logger.getLogger(Scripting.class.getName()).log(Level.SEVERE, null, ex);
+                    lastResult.remove(file);
+                }
             }
         }
     }
