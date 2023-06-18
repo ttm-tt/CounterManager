@@ -531,7 +531,9 @@
 
     function buildCloth(options) {
       var restDistance = options.height / options.granularity;
-      return new Cloth(Math.round(options.width / restDistance), Math.round(options.height / restDistance), restDistance, options.mass);
+      var vscale = getParameterByName('vscale', 1.);
+      var hscale = getParameterByName('hscale', 1.);
+      return new Cloth(Math.round(options.width / restDistance * hscale), Math.round(options.height / restDistance * vscale), restDistance, options.mass);
     }
 
     function buildMesh(cloth, options) {
@@ -780,8 +782,8 @@
     }();
 
     Flag.defaults = {
-      width: 300,
-      height: 200,
+      width: 'auto',
+      height: 'auto',
       mass: 0.1,
       granularity: 10,
       rigidness: 1,
