@@ -4,8 +4,7 @@
 
 var scriptOptions = {
     tvFrom : 1,
-    tvTo   : 2,
-    flagsDirectory: 'D:/T/flags/'
+    tvTo   : 1
 };
 
 getScriptOptions = function() {
@@ -15,9 +14,6 @@ getScriptOptions = function() {
 
 setScriptOptions = function(so) {
     scriptOptions = so;
-    if ((scriptOptions.flagsDirectory !== '') && !scriptOptions.flagsDirectory.endsWith('/'))
-        scriptOptions.flagsDirectory += '/';
-    
     return scriptOptions;
 };
 
@@ -60,9 +56,9 @@ function tableChanged(table, matchList, dataList) {
 
         if (m.cpType === 4) {  // Team
             ret += 
-                "<TextUT>" + scriptOptions.flagsDirectory + m.tmA.tmName + ".png" + "</TextUT>" +
+                "<TextUT>" + m.tmA.tmName + ".png" + "</TextUT>" +
                 "<PointUT>" + m.mttmResA + "</PointUT>" +
-                "<TextDT>" + scriptOptions.flagsDirectory + m.tmX.tmName + ".png" + "</TextDT>" +
+                "<TextDT>" + m.tmX.tmName + ".png" + "</TextDT>" +
                 "<PointDT>" + m.mttmResX + "</PointDT>"
             ;
         }
@@ -96,22 +92,22 @@ function tableChanged(table, matchList, dataList) {
     
     this.formatFlagPL = function(pl, bd) {
         if (pl === null || pl.naName === null || pl.naName === "")
-            return scriptOptions.flagsDirectory + "empty.png";
+            return "empty.png";
         
-        return scriptOptions.flagsDirectory + pl.naName + ".png";
+        return pl.naName + ".png";
     };
     
     this.formatFlagBD = function(pl, bd) {
         if (bd === null || bd.naName === null || bd.naName === "")
-            return scriptOptions.flagsDirectory + "empty.png";
+            return "empty.png";
         
         if (pl === null || pl.naName === null || pl.naName === "")
             return formatFlagPL(bd, pl);
                 
         if (pl.naName === bd.naName)
-            return scriptOptions.flagsDirectory + "empty.png";
+            return "empty.png";
         
-        return scriptOptions.flagsDirectory  + bd.naName + ".png";
+        return bd.naName + ".png";
     };
     
     
@@ -138,7 +134,7 @@ function tableChanged(table, matchList, dataList) {
     
     this.formatService = function(lr, m, d) {
         if (d === null || d === undefined)
-            return scriptOptions.flagsDirectory + "empty.png";
+            return "empty.png";
         
         var gameMode = d.getGameMode();
         var swapped = d.isSwapped();
@@ -147,7 +143,7 @@ function tableChanged(table, matchList, dataList) {
         var sl = swapped ? d.getServiceRight() : d.getServiceLeft();
         var sr = swapped ? d.getServiceLeft() : d.getServiceRight();
         
-        return (gameMode == "RUNNING" && (lr ? sl : sr)) ? (scriptOptions.flagsDirectory  +"focus.png") : (scriptOptions.flagsDirectory  + "empty.png");
+        return (gameMode === "RUNNING" && (lr ? sl : sr)) ? "focus.png" : "empty.png";
     };
 
     
@@ -189,7 +185,7 @@ function tableChanged(table, matchList, dataList) {
 
         var swapped = d.isSwapped();
 
-        return (swapped | lr) ? (scriptOptions.flagsDirectory  + "empty.png") : (scriptOptions.flagsDirectory  + "empty.png");
+        return (swapped | lr) ? "empty.png" : "empty.png";
     };
 
     // -------------------------------------------------------------------------
@@ -231,13 +227,11 @@ function tableChanged(table, matchList, dataList) {
     };
     
     // Make sure scriptOptions {tvFrom, tvTo} are defined, so we can use tvFrom / tvTo
-    if (scriptOptions === undefined) {
+    if (scriptOptions === undefined)
         scriptOptions = {
             tvFrom : 1,
-            tvTo   : 1,
-            flagsDirectory : "D:/T/flags/"
+            tvTo   : 1
         };
-    }
 
     if (scriptOptions.tvFrom === undefined)
         scriptOptions.tvFrom = 1;
