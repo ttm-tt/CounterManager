@@ -159,7 +159,7 @@ public class TTMSettings extends javax.swing.JPanel implements IDatabaseSettings
         
         StringBuilder sb = new StringBuilder();
         sb.append("jdbc:sqlserver://");
-        if (server.equals("(local)"))
+        if (server.equalsIgnoreCase("(local)"))
             sb.append("localhost");
         else
             sb.append(server);
@@ -171,7 +171,7 @@ public class TTMSettings extends javax.swing.JPanel implements IDatabaseSettings
             sb.append("instanceName=").append(db[1]).append(";");
         
         if (windowsAuth)
-            sb.append("integratedSecurity=true;");
+            sb.append("integratedSecurity=true;trustServerCertificate=true;encrypt=true;");
         else
             sb.append("user=").append(user).append(";").append("password=").append(pwd).append(";");
         

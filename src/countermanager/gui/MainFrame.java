@@ -1,11 +1,5 @@
 /* Copyright (C) 2020 Christoph Theis */
 
-/*
- * MainFrame.java
- *
- * Created on 1. Januar 2007, 10:41
- */
-
 package countermanager.gui;
 
 import countermanager.http.HTTP;
@@ -40,7 +34,7 @@ public class MainFrame extends javax.swing.JFrame {
     
     private static final int ITEM_SIZE = 100;
     
-    private static final String VERSION_STRING = "22.09";
+    private static final String VERSION_STRING = "23.06";
     private static final String COPYRIGHT_STRING = "(C) 2022 Christoph Theis";
     
     private static final ResourceBundle bundle = ResourceBundle.getBundle("countermanager/gui/resources/CounterManager");

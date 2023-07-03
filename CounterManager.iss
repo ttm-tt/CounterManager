@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=ScoreBoardManager
-AppVerName=ScoreBoardManager 22.09
+AppVerName=ScoreBoardManager 23.06
 ; AppPublisher=Christoph Theis
 DefaultDirName={autopf}\TTM\CounterManager
 DefaultGroupName=TTM
@@ -133,10 +133,10 @@ var
 begin
 	jdkVersion := '';
   if IsWin64 then begin
-	  RegQueryStringValue(HKLM64, 'SOFTWARE\JDK', 'CurrentVersion', jdkVersion);
+	  RegQueryStringValue(HKLM64, 'SOFTWARE\JavaSoft\JDK', 'CurrentVersion', jdkVersion);
   end
   else begin
-  	RegQueryStringValue(HKLM, 'SOFTWARE\JDK', 'CurrentVersion', jdkVersion);
+  	RegQueryStringValue(HKLM, 'SOFTWARE\JavaSoft\JDK', 'CurrentVersion', jdkVersion);
   end;
 	Result := jdkVersion;
 end;

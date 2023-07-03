@@ -50,7 +50,7 @@ public final class TTM implements IDatabase {
         
         StringBuilder sb = new StringBuilder();
         sb.append("jdbc:sqlserver://");
-        if (server.equals("(local)"))
+        if (server.equalsIgnoreCase("(local)"))
             sb.append("localhost");
         else
             sb.append(server);
@@ -62,7 +62,7 @@ public final class TTM implements IDatabase {
             sb.append("instanceName=").append(database[1]).append(";");
         
         if (windowsAuth)
-            sb.append("integratedSecurity=true;");
+            sb.append("integratedSecurity=true;trustServerCertificate=true;encrypt=true;");
         else
             sb.append("user=").append(user).append(";").append("password=").append(pwd).append(";");
         
@@ -97,7 +97,7 @@ public final class TTM implements IDatabase {
         if (!map.containsKey("Trusted_Connection") || !map.get("Trusted_Connection").equals("Yes"))
             buffer.append("user=").append(map.get("UID")).append(";").append("password=").append(map.get("PWD")).append(";");
         else
-            buffer.append("integratedSecurity=true;");
+            buffer.append("integratedSecurity=true;trustServerCertificate=true;encrypt=true;");
         
         this.connectionString = buffer.toString();
     }
@@ -1115,7 +1115,7 @@ public final class TTM implements IDatabase {
             
             list.clear();
         }
-        return list.toArray(new Match[0]);
+        return list.toArray(Match[]::new);
     }
 
     @Override
