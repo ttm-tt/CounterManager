@@ -141,12 +141,14 @@ function tableChanged(table, matchList, dataList) {
         ret.resA = formatPointA(m, d);
         ret.resX = formatPointX(m, d);
         
+        ret.service = formatService(m, d);
+        
         return ret;
     };
     
     this.formatService = function(m, d) {
         if (d === null || d === undefined)
-            return 0;
+            return '';
         
         var gameMode = d.getGameMode();
         var swapped = d.isSwapped();
@@ -155,15 +157,16 @@ function tableChanged(table, matchList, dataList) {
         var sl = swapped ? d.getServiceRight() : d.getServiceLeft();
         var sr = swapped ? d.getServiceLeft() : d.getServiceRight();
         
-        if (gameMode !== 'RUNING')
-            return 0;
+        // Must be != and not !==, or the comparision does not work
+        if (gameMode != 'RUNNING')
+            return '';
         
         if (sl)
-            return 1;
+            return 'serviceL.png';
         else if (sr)
-            return -1;
+            return 'serviceR.png';
         else
-            return 0;
+            return '';
     };
     
     
