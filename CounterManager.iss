@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=ScoreBoardManager
-AppVerName=ScoreBoardManager 23.06
+AppVerName=ScoreBoardManager 23.08
 ; AppPublisher=Christoph Theis
 DefaultDirName={autopf}\TTM\CounterManager
 DefaultGroupName=TTM
@@ -151,11 +151,16 @@ begin
     javaVersion := getJREVersion();
   end;
 
-	if javaVersion <> '11' then begin
-		MsgBox('Setup is unable to find a Java Development Kit or Java Runtime 11 installed.' + #13 +
+	if javaVersion >= '11' then begin
+		(* MsgBox('Found java version' + javaVersion, mbInformation, MB_OK); *)
+		Result := true;
+	end
+	else begin
+		MsgBox('Setup is unable to find a Java Development Kit or Java Runtime 11, or higher, installed.' + #13 +
 			     'You must have installed at least JDK or JRE, 11 or higher to continue setup.' + #13 +
-           'Please install one from https://adoptopenjdk.com or select one from http://downloads.ttm.co.at/index.html', mbInformation, MB_OK);
-  end;
+			     'Please install one from https://AdoptOpenJDK.com and then run this setup again.', mbInformation, MB_OK);
+		Result := true;
+	end;
 		
   Result := true;
 end;
