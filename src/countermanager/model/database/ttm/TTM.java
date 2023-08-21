@@ -75,27 +75,27 @@ public final class TTM implements IDatabase {
         java.util.HashMap<String, String> map = new java.util.HashMap<>();
         for (String part : parts) {
             String[] tmp = part.split("=");
-            map.put(tmp[0], tmp.length > 1 ? tmp[1] : "");
+            map.put(tmp[0].toLowerCase(), tmp.length > 1 ? tmp[1] : "");
         }
         
-        String database[] = map.get("DATABASE").split("\\\\");
+        String database[] = map.get("database").split("\\\\");
         
         StringBuilder buffer = new StringBuilder();
         buffer.append("jdbc:sqlserver://");
-        if (!map.containsKey("SERVER"))
+        if (!map.containsKey("server"))
             buffer.append("localhost");
-        else if (map.get("SERVER").equals("(local)"))
+        else if (map.get("server").equals("(local)"))
             buffer.append("localhost");
         else
-            buffer.append(map.get("SERVER"));
+            buffer.append(map.get("server"));
         buffer.append(";");
         
         buffer.append("databaseName=").append(database[0]).append(";");
         if (database.length > 1)
             buffer.append("instanceName=").append(database[1]).append(";");
         
-        if (!map.containsKey("Trusted_Connection") || !map.get("Trusted_Connection").equals("Yes"))
-            buffer.append("user=").append(map.get("UID")).append(";").append("password=").append(map.get("PWD")).append(";");
+        if (!map.containsKey("trusted_connection") || !map.get("trusted_connection").equalsIgnoreCase("yes"))
+            buffer.append("user=").append(map.get("uid")).append(";").append("password=").append(map.get("pwd")).append(";");
         else
             buffer.append("integratedSecurity=true;trustServerCertificate=true;encrypt=true;");
         
