@@ -64,7 +64,7 @@ public final class TTM implements IDatabase {
         if (windowsAuth)
             sb.append("integratedSecurity=true;trustServerCertificate=true;encrypt=true;");
         else
-            sb.append("user=").append(user).append(";").append("password=").append(pwd).append(";");
+            sb.append("user=").append(user).append(";").append("password=").append(pwd).append(";").append("integratedSecurity=false;trustServerCertificate=true;encrypt=true;");
         
         connectionString = sb.toString();
     }
@@ -95,7 +95,7 @@ public final class TTM implements IDatabase {
             buffer.append("instanceName=").append(database[1]).append(";");
         
         if (!map.containsKey("trusted_connection") || !map.get("trusted_connection").equalsIgnoreCase("yes"))
-            buffer.append("user=").append(map.get("uid")).append(";").append("password=").append(map.get("pwd")).append(";");
+            buffer.append("user=").append(map.get("uid")).append(";").append("password=").append(map.get("pwd")).append(";").append("integratedSecurity=false;trustServerCertificate=true;encrypt=true;");
         else
             buffer.append("integratedSecurity=true;trustServerCertificate=true;encrypt=true;");
         

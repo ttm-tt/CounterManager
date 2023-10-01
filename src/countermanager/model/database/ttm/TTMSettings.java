@@ -173,7 +173,7 @@ public class TTMSettings extends javax.swing.JPanel implements IDatabaseSettings
         if (windowsAuth)
             sb.append("integratedSecurity=true;trustServerCertificate=true;encrypt=true;");
         else
-            sb.append("user=").append(user).append(";").append("password=").append(pwd).append(";");
+            sb.append("user=").append(user).append(";").append("password=").append(pwd).append(";").append("integratedSecurity=false;trustServerCertificate=true;encrypt=true;");
         
         String connectionString = sb.toString();
 
