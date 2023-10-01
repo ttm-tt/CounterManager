@@ -559,9 +559,11 @@ var ttm = new function() {
         var grName = args.get('grName');
         var numPoles = args.get('numFlagPoles');
         
-        if (cpName === '')
+        // If not specified, what are the values? 
+        // They are not exact (empty) strings, so use '==' and not '==='
+        if (cpName == '')
             cpName = null;
-        if (grName === '')
+        if (grName == '')
             grName = null;
               
         if (cpName === null)
