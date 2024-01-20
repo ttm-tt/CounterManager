@@ -39,7 +39,7 @@
         <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency org="junit" name="junit" rev="4.13" conf="test->default;sources->sources;javadoc->javadoc" />
         <!-- https://mvnrepository.com/artifact/com.github.tntim96/JSCover -->
-        <!-- <dependency org="com.github.tntim96" name="JSCover" rev="2.0.12" conf="test->default;sources->sources;javadoc->javadoc" /> -->
+        <dependency org="com.github.tntim96" name="JSCover" rev="2.0.19" conf="test->default;sources->sources;javadoc->javadoc" />
         
         <!-- Avoid evicting modules when resolving dependencies -->
         <conflict manager="all" />
