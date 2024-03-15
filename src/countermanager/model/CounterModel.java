@@ -138,8 +138,8 @@ public class CounterModel {
     
     
     public void removeCounter(final int counter) {
-        if (counterList[counter] == null)
-            return;
+        // if (counterList[counter] == null)
+        //     return;
         
         counterList[counter] = null;
         
@@ -642,6 +642,8 @@ public class CounterModel {
         for (int i = 0; i < counterList.length; i++) {
             if (i + tableOffset < fromTable || i + tableOffset > toTable) {
                 removeCounter(i);
+            } else if (counterList[i] == null) {
+                addCounter(i);
             }
         }
     }
