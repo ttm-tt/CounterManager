@@ -34,8 +34,8 @@ public class MainFrame extends javax.swing.JFrame {
     
     private static final int ITEM_SIZE = 100;
     
-    private static final String VERSION_STRING = "24.03.01";
-    private static final String COPYRIGHT_STRING = "(C) 2023 Christoph Theis";
+    private static final String VERSION_STRING = "24.03.02";
+    private static final String COPYRIGHT_STRING = "(C) 2024 Christoph Theis";
     
     private static final ResourceBundle bundle = ResourceBundle.getBundle("countermanager/gui/resources/CounterManager");
     
