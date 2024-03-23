@@ -160,6 +160,8 @@ public final class TTM extends Liveticker {
                     return;
                 }
                 
+                String updateString = getUpdateString(System.currentTimeMillis());
+                    
                 if (!isEnabled() || ftpHost.isEmpty()) {
                     if (client != null) {
                         try {
@@ -169,23 +171,15 @@ public final class TTM extends Liveticker {
                         }
                         client = null;
                         
-                        // Clear cache
-                        lastUpdateString = "";
-                        updates.clear();
-                        
-                        // Also when a counter expires
-                        expires.clear();
-                        
-                        // And the delay queue
-                        msgList.clear();
+                        clearCache();
                     }
-                    
+
                     // If host is empty store locally for debugging purposes
                     if (isEnabled()) { 
-                        String updateString = getUpdateString(System.currentTimeMillis());
                         if (updateString != null && !updateString.isEmpty()) {
                             try (PrintWriter pw = new PrintWriter(venue + ".js")) {
                                 pw.print(updateString);
+                                pw.flush();
                             } catch (FileNotFoundException ex) {
                                 Logger.getLogger(TTM.class.getName()).log(Level.SEVERE, null, ex);
                             }
@@ -237,8 +231,6 @@ public final class TTM extends Liveticker {
                     }
                 }  
 
-                String updateString = getUpdateString(System.currentTimeMillis());
-                
                 try {
                     if (!isUploadWithRename()) {
                         // Direktes upload
@@ -308,6 +300,7 @@ public final class TTM extends Liveticker {
         }
                 
         // Now check the first entry if it can be dequeued
+        // There must be one if the counter has changed
         if (msgList.isEmpty() || msgList.get(0).t > ct - uploadDelay * 1000)
             return null;
 
@@ -647,6 +640,36 @@ public final class TTM extends Liveticker {
     public void setName(String name) {
         this.name = name;
     }
+    
+    
+    @Override
+    public void onGlobalEnable(boolean e) {
+        super.onGlobalEnable(e);
+        
+        clearCache();
+    }
+    
+    
+    @Override
+    public void setInstanceEnabled(boolean e) {
+        super.setInstanceEnabled(e);
+        
+        clearCache();
+    }
+    
+    private void clearCache() {        
+        // On any change clear cache
+        lastUpdateString = "";
+        updates.clear();
+
+        // Also when a counter expires
+        expires.clear();
+
+        // And the delay queue
+        msgList.clear();        
+    }
+    
+    
 
     private String  ftpHost = "";
     private String  ftpUser = "";
