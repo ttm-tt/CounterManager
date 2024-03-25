@@ -146,7 +146,10 @@ public final class TTM extends Liveticker {
         startTimer();
     }
     
-    private void startTimer() {        
+    private void startTimer() { 
+        if (timer != null)
+            timer.cancel();
+            
         timer = new java.util.Timer();
         
         timer.schedule(new java.util.TimerTask() {
@@ -283,6 +286,12 @@ public final class TTM extends Liveticker {
         }, updateTime * 1000, updateTime * 1000);
     }
     
+    private void stopTimer() {
+        if (timer != null)
+            timer.cancel();
+        
+        timer = null;
+    }
     
     // Calculate what to upload, if there is anything to do so
     // Called periodically when ftp client is connected
@@ -646,7 +655,13 @@ public final class TTM extends Liveticker {
     public void onGlobalEnable(boolean e) {
         super.onGlobalEnable(e);
         
+        if (!e)
+            stopTimer();
+
         clearCache();
+        
+        if (e)
+            startTimer();
     }
     
     
@@ -654,7 +669,13 @@ public final class TTM extends Liveticker {
     public void setInstanceEnabled(boolean e) {
         super.setInstanceEnabled(e);
         
+        if (!e)
+            stopTimer();
+
         clearCache();
+        
+        if (e)
+            startTimer();
     }
     
     private void clearCache() {        
