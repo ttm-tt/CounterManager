@@ -67,83 +67,89 @@ public final class Simulation implements IDatabase {
         return true;
     }
 
+    private final Object syncUpdateMatch = new Object();
+    
     @Override
     public List<CounterModelMatch> update(int fromTable, int toTable, java.time.LocalDate when, boolean all) {
-        List<CounterModelMatch> list = new java.util.ArrayList<>();
-        for (int table = fromTable; table <= toTable; table++) {
-            if (table < 1)
-                continue;
-            if (table > CounterModel.getDefaultInstance().getToTable())
-                break;
-            
-            if (matches.get(table) == null)
-                matches.put(table, new java.util.ArrayList<>());
-            if (matches.get(table).isEmpty())
-                matches.get(table).add(createMatch(table));
-            
-            // Housekeeping: remove abandoned matches
-            if (matches.get(table).get(0).mtResult != null && CounterModel.getDefaultInstance().getCounterData(table) == null) {
-                if (matches.get(table).get(0).mtResult[0][0] > 0 || matches.get(table).get(0).mtResult[0][1] > 0) {
-                    if (matches.get(table).get(0).mtTimestamp < System.currentTimeMillis() - MATCH_TIMEOUT) {
-                        matches.get(table).remove(0);
-                        matches.get(table).add(createMatch(table));
+        synchronized (syncUpdateMatch) {
+            List<CounterModelMatch> list = new java.util.ArrayList<>();
+            for (int table = fromTable; table <= toTable; table++) {
+                if (table < 1)
+                    continue;
+                if (table > CounterModel.getDefaultInstance().getToTable())
+                    break;
+
+                if (matches.get(table) == null)
+                    matches.put(table, new java.util.ArrayList<>());
+                if (matches.get(table).isEmpty())
+                    matches.get(table).add(createMatch(table));
+
+                // Housekeeping: remove abandoned matches
+                if (matches.get(table).get(0).mtResult != null && CounterModel.getDefaultInstance().getCounterData(table) == null) {
+                    if (matches.get(table).get(0).mtResult[0][0] > 0 || matches.get(table).get(0).mtResult[0][1] > 0) {
+                        if (matches.get(table).get(0).mtTimestamp < System.currentTimeMillis() - MATCH_TIMEOUT) {
+                            matches.get(table).remove(0);
+                            matches.get(table).add(createMatch(table));
+                        }
+                    }
+                }
+
+                if (all)
+                    list.addAll(matches.get(table));
+                else {
+                    for (CounterModelMatch mt : matches.get(table)) {
+                        if (mt.mtWalkOverA || mt.mtWalkOverX)
+                            continue;
+
+                        if (2 * mt.mtResA > mt.mtBestOf || 2 * mt.mtResX > mt.mtBestOf)
+                            continue;
+
+                        list.add(mt);
                     }
                 }
             }
 
-            if (all)
-                list.addAll(matches.get(table));
-            else {
-                for (CounterModelMatch mt : matches.get(table)) {
-                    if (mt.mtWalkOverA || mt.mtWalkOverX)
-                        continue;
-                    
-                    if (2 * mt.mtResA > mt.mtBestOf || 2 * mt.mtResX > mt.mtBestOf)
-                        continue;
-                    
-                    list.add(mt);
-                }
-            }
+            return list;
         }
-        
-        return list;
     }
 
     @Override
     public boolean updateResult(int mtNr, int mtMS, int[][] mtSets, int mtWalkOverA, int mtWalkOverX) {
-        for (List<CounterModelMatch> list : matches.values()) {
-            for (CounterModelMatch mt : list) {
-                if (mt.mtNr != mtNr || mt.mtMS != mtMS)
-                    continue;
-                
-                // Remove all earlier and thus finished matches
-                while (mt != list.get(0))
-                    list.remove(0);
-                
-                // And add one more
-                if (list.size() < 2)
-                    list.add(createMatch(mt.mtTable));
+        synchronized (syncUpdateMatch) {
+            for (List<CounterModelMatch> list : matches.values()) {
+                for (CounterModelMatch mt : list) {
+                    if (mt.mtNr != mtNr || mt.mtMS != mtMS)
+                        continue;
 
-                mt.mtResult = mtSets;
-                mt.mtWalkOverA = mtWalkOverA > 0;
-                mt.mtWalkOverX = mtWalkOverX > 0;
-                mt.mtTimestamp = System.currentTimeMillis();
-                
-                // Calculate result in 
-                mt.mtResA = 0;
-                mt.mtResX = 0;
-                for (var game = 0; game < mtSets.length; ++game) {
-                    if (mtSets[game][0] >= 11 && mtSets[game][0] >= mtSets[game][1] + 2)
-                        ++mt.mtResA;
-                    if (mtSets[game][1] >= 11 && mtSets[game][1] >= mtSets[game][0] + 2)
-                        ++mt.mtResX;
+                    // Remove all earlier and thus finished matches
+                    while (mt != list.get(0))
+                        list.remove(0);
+
+                    // And add one more
+                    if (list.size() < 2)
+                        list.add(createMatch(mt.mtTable));
+
+                    mt.mtResult = mtSets;
+                    mt.mtWalkOverA = mtWalkOverA > 0;
+                    mt.mtWalkOverX = mtWalkOverX > 0;
+                    mt.mtTimestamp = System.currentTimeMillis();
+
+                    // Calculate result in 
+                    mt.mtResA = 0;
+                    mt.mtResX = 0;
+                    for (var game = 0; game < mtSets.length; ++game) {
+                        if (mtSets[game][0] >= 11 && mtSets[game][0] >= mtSets[game][1] + 2)
+                            ++mt.mtResA;
+                        if (mtSets[game][1] >= 11 && mtSets[game][1] >= mtSets[game][0] + 2)
+                            ++mt.mtResX;
+                    }
+
+                    return true;
                 }
-
-                return true;
             }
+
+            return false;
         }
-        
-        return false;
     }
     
     @Override
@@ -289,37 +295,39 @@ public final class Simulation implements IDatabase {
     public Match[] listMatches(
             long mtTimestamp, java.time.LocalDateTime from, java.time.LocalDateTime to, int fromTable, int toTable, 
             boolean individual, boolean notStarted, boolean notFinished) {
-        List<Match> list = new java.util.ArrayList<>();
-        
-        for (int table = fromTable; table <= toTable; table++) {
-            if (table < 1)
-                continue;
-            if (table > CounterModel.getDefaultInstance().getToTable())
-                break;
+        /* synchronized (syncUpdateMatch) */ {
+            List<Match> list = new java.util.ArrayList<>();
 
-            if (matches.get(table) == null)
-                continue;
-            
-            for (CounterModelMatch mt : matches.get(table)) {
-                if (mt.mtTimestamp <= mtTimestamp)
+            for (int table = fromTable; table <= toTable; table++) {
+                if (table < 1)
+                    continue;
+                if (table > CounterModel.getDefaultInstance().getToTable())
+                    break;
+
+                if (matches.get(table) == null)
                     continue;
 
-                if (java.time.ZonedDateTime.of(from, ZoneId.systemDefault()).toInstant().toEpochMilli() > mt.mtDateTime)
-                    continue;
-                if (java.time.ZonedDateTime.of(to, ZoneId.systemDefault()).toInstant().toEpochMilli() < mt.mtDateTime)
-                    continue;
-                
-                if (notStarted && (mt.mtResult[0][0] > 0 || mt.mtResult[0][1] > 0))
-                    continue;
-                
-                if (notFinished && (2 * mt.mtResA > mt.mtBestOf || 2 * mt.mtResX > mt.mtBestOf))
-                    continue;
-                
-                list.add(mt);
+                for (CounterModelMatch mt : matches.get(table)) {
+                    if (mt.mtTimestamp <= mtTimestamp)
+                        continue;
+
+                    if (java.time.ZonedDateTime.of(from, ZoneId.systemDefault()).toInstant().toEpochMilli() > mt.mtDateTime)
+                        continue;
+                    if (java.time.ZonedDateTime.of(to, ZoneId.systemDefault()).toInstant().toEpochMilli() < mt.mtDateTime)
+                        continue;
+
+                    if (notStarted && (mt.mtResult[0][0] > 0 || mt.mtResult[0][1] > 0))
+                        continue;
+
+                    if (notFinished && (2 * mt.mtResA > mt.mtBestOf || 2 * mt.mtResX > mt.mtBestOf))
+                        continue;
+
+                    list.add(mt);
+                }
             }
+
+            return list.toArray(Match[]::new);
         }
-        
-        return list.toArray(Match[]::new);
     }
 
     @Override
