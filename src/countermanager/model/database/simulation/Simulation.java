@@ -295,7 +295,7 @@ public final class Simulation implements IDatabase {
     public Match[] listMatches(
             long mtTimestamp, java.time.LocalDateTime from, java.time.LocalDateTime to, int fromTable, int toTable, 
             boolean individual, boolean notStarted, boolean notFinished) {
-        /* synchronized (syncUpdateMatch) */ {
+        synchronized (syncUpdateMatch) {
             List<Match> list = new java.util.ArrayList<>();
 
             for (int table = fromTable; table <= toTable; table++) {
