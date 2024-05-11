@@ -270,8 +270,13 @@ public final class Simulation implements IDatabase {
 
         if (false) {
             match.mtResA = 1;
+            match.mtResX = 0;
             match.mtResult = new int[][] {{11, 1}, {1, 0}, {0, 0}, {0, 0}, {0, 0}};
-        }       
+        } else {
+            match.mtResA = 0;
+            match.mtResX = 0;
+            match.mtResult = new int[][] {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};            
+        }
         
         return match;
     }
