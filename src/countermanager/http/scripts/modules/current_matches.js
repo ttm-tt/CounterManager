@@ -71,7 +71,7 @@ export function update(matches, data) {
  * @returns {Array}
  */
 export function sortData(data) {
-    if (!data)
+    if (!data || !Array.isArray(data))
         return;
 
     // Sort array by table, date / time, nr and team match

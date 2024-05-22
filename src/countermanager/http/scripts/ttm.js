@@ -443,7 +443,9 @@ var ttm = new function() {
             set.add(list[idx].mtTable);
             
             // Swap A/X in team matches
-            if (list[idx].mtReverse) {
+            var mtReverse = list[idx].mtReverse;
+            // !! to deal with undefined
+            if (!!mtReverse) {
                 var pl = list[idx].plA;
                 list[idx].plA = list[idx].plX;
                 list[idx].plX = pl;
@@ -471,18 +473,19 @@ var ttm = new function() {
                 list[idx].mttmResX = r;    
                 
                 var w = list[idx].mtWalkoverA;
-                list[idx].mtWalkOverA = list[idx].mtWalkOverX;
-                list[idx].mtWalkOverX = w;
-            }
+                // !! to deal with undefined
+                list[idx].mtWalkOverA = !!list[idx].mtWalkOverX;
+                list[idx].mtWalkOverX = !!w;
+            }            
         
             var row = list[idx].convertToMap("");
             
             // Add flags if liveticker input is available
-            row.put('ltActive', 
-                Packages.countermanager.model.CounterModel.getDefaultInstance().isLivetickerActive(
+            var ltActive = Packages.countermanager.model.CounterModel.getDefaultInstance().isLivetickerActive(
                         list[idx].mtTable - Packages.countermanager.model.CounterModel.getDefaultInstance().getTableOffset()
-                )
-            );
+                );
+            // Use !! to deal with undefined
+            row.put('ltActive', !!ltActive);
 
             row.put('mtService', 
                 Packages.countermanager.model.CounterModel.getDefaultInstance().getServiceAX(list[idx].mtTable, list[idx].mtNr, list[idx].mtMS)
@@ -502,7 +505,7 @@ var ttm = new function() {
                     row.get('mtResult').add(set);
                 }
             }
-            
+
             array.add(row);
         }
 
