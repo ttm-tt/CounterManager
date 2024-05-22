@@ -194,6 +194,8 @@ public class MainFrame extends javax.swing.JFrame {
         if (counters[nr] != null)
             return;
 
+        counters[nr] = new CounterPanelItem(nr);
+        
         // Changes must be within the event dispatch thread
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -233,7 +235,6 @@ public class MainFrame extends javax.swing.JFrame {
                     // panelHeightSpinner.setValue(new Integer(h));
                 }
                         
-                counters[nr] = new CounterPanelItem(nr);
                 counters[nr].setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
                 counterPanel.add(counters[nr]);
                 counters[nr].setBounds(w * ITEM_SIZE + 10, h * ITEM_SIZE + 10, ITEM_SIZE, ITEM_SIZE);                                   
@@ -248,12 +249,14 @@ public class MainFrame extends javax.swing.JFrame {
         if (counters[nr] == null)
             return;
         
+        final CounterPanelItem cpi = counters[nr];
+        counters[nr] = null;          
+        
         // Changes must be within the event dispatch thread
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                counterPanel.remove(counters[nr]);
-                counters[nr] = null;          
+                counterPanel.remove(cpi);
                 
                 repaint();
             }
@@ -270,7 +273,9 @@ public class MainFrame extends javax.swing.JFrame {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                counters[nr].counterChanged();
+                // Read again because it may have been removed
+                if (counters[nr] != null)
+                    counters[nr].counterChanged();
             }
         });
     }
@@ -797,8 +802,19 @@ public class MainFrame extends javax.swing.JFrame {
 
         int fromTable = prefs.getInt(FROM_TABLE_PREF, 1);
         int toTable   = prefs.getInt(TO_TABLE_PREF, CounterModel.MAX_COUNTERS);
-        CounterModel.getDefaultInstance().setTableRange(fromTable, toTable);        
+        CounterModel.getDefaultInstance().setTableRange(fromTable, toTable);
 
+        // Update items
+        for (int idx = 0; idx < counters.length; ++idx) {
+            // counterRemoved and countrAdded will handle null
+            if (idx < fromTable - tableOffset)
+                counterRemoved(idx);
+            else if (idx > toTable - tableOffset)
+                counterRemoved(idx);
+            else
+                counterAdded(idx);
+        }
+        
         if (HTTP.getDefaultInstance().isHttpServerRunning()) {
             HTTP.getDefaultInstance().setScriptFiles(prefs.getString(SCRIPT_PREF, null));
             HTTP.getDefaultInstance().setAliases(prefs.getString(ADD_DIRS_PREF, null));
