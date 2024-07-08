@@ -9,6 +9,7 @@
  *      mintime:            default 60          Mindestzeit in Sekunden, die ein fertiges Spiel angezeigt wird
  *      fromTable:          default ''          Anzeige von Tisch
  *      toTable:            default ''          Anzeige bis Tisch
+ *      table:              default ''          Anzeige Tisch
  *      date:               default ''          Auswahl Datum
  *      all:                default 0           Alle Spiele anzeigen
  *      rows:               default 999         Max. Anzahl Zeilen
@@ -86,6 +87,11 @@ if (getParameterByName('fromTable', 0) != 0)
 
 if (getParameterByName('toTable', 0) != 0)
     args['toTable'] = getParameterByName('toTable', 0);
+
+if (getParameterByName('table', 0) != 0) {
+    args['fromTable'] = getParameterByName('table', 0);
+    args['toTable'] = getParameterByName('table', 0);
+}
 
 update(args);
 
