@@ -108,7 +108,7 @@ function tableChanged(table, matchList, dataList) {
         if (m.tmA !== undefined && m.tmA.tmName !== undefined)
             ret.tmAtmName = m.tmA.tmName;
         if (m.tmX !== undefined && m.tmX.tmName !== undefined)
-            ret.tmXtmName = m.tmA.tmName;
+            ret.tmXtmName = m.tmX.tmName;
         
         ret.plAnaName = m.plA.naName;
         ret.plApsLast = m.plA.psLast;
