@@ -41,7 +41,7 @@ body {
 }
 
 .pos {
-    color: green;
+    color: #0bf80b; /* same as points */
 }
 
 .matchpoints {
