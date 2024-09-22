@@ -1,4 +1,4 @@
-#define Version '24.05.03'
+#define Version '24.09.01'
 
 [Setup]
 AppName=ScoreBoardManager
