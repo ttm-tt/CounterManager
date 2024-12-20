@@ -124,14 +124,23 @@ public final class CounterPanelItem extends javax.swing.JPanel {
             
             boolean isSwapped = counterData != null && counterData.isSwapped();
             
-            if (counterData == null || counterMatch.plA.naName == null || counterMatch.plX.naName == null)
+            String strA = null, strX = null;
+            
+            // If team use team name, else use player nation
+            if (counterMatch.cpType == 4) {
+                strA = counterMatch.tmA.tmName;
+                strX = counterMatch.tmX.tmName;
+            } else {
+                strA = counterMatch.plA.naName;
+                strX = counterMatch.plX.naName; 
+            }                
+            
+            if (counterData == null || strA == null || strX == null)
                 str = counterMatch.grName;
             else if (isSwapped)
-                str = "" + counterMatch.plX.naName + 
-                      " - " + counterMatch.plA.naName; 
+                str = "" + strX + " - " + strA; 
             else
-                str = "" + counterMatch.plA.naName + 
-                      " - " + counterMatch.plX.naName;
+                str = "" + strA + " - " + strX;
             
             x = ((getWidth() - g.getFontMetrics().stringWidth(str)) / 2);
             y = offset + ((g.getFontMetrics().getAscent()) / 2);
