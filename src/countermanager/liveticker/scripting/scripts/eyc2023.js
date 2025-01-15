@@ -68,9 +68,11 @@ function tableChanged(table, matchList, dataList) {
         var cg = d.getSetsLeft() + d.getSetsRight();
 
         if (gameMode == 'END') {
-            return ""; // setHistory[cg - 1][swapped ? 1 : 0];
+            return setHistory[cg - 1][swapped ? 1 : 0];
         } else if (gameMode == 'RUNNING') {
-            return setHistory[cg][swapped ? 1 : 0];            
+            return setHistory[cg][swapped ? 1 : 0];
+        } else if (gameMode == 'BREAK') {
+            return setHistory[cg][swapped ? 1 : 0];
         } else {
             return "";
         }
