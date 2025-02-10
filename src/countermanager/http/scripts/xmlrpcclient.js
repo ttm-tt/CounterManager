@@ -55,7 +55,7 @@ var xmlrpc = function(server, method, params, callback, callErr, callFinal, asyn
             }
 
             try {
-                callback(ret);
+                callback(ret, request);
             } catch (err) {
                 err.message = "callback: " + err.message;
                 callErr(err);

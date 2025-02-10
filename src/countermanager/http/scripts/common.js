@@ -8,6 +8,15 @@ function getParameterByName(name, def) {
     return params.get(name);
 }
 
+
+function formatNumber(n, len) {
+    if (n === undefined)
+      return ''.padStart(len, '0');
+  
+    return String(n).padStart(len, '0');
+}
+
+
 function formatString(s, len, appdx) {
     if (s === undefined)
         return '';

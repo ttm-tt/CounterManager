@@ -21,6 +21,7 @@
  *      showService:        default 1           Show who has the service
  *      individual:         default 1           Show individual matches for team events
  *      group:              default 'desc'      Show grName or grDesc for groups
+ *      showCurrentTime:    default 0           Show the current time below the tablee
  */
 
 var args = {};
@@ -39,6 +40,9 @@ var group = 'desc';
 
 var matches = [];
 var mtTimestamp = 0;
+
+var time = new Date();
+var tc = 0;
 
 import * as Matches from '../scripts/modules/current_matches.js';
 
@@ -93,6 +97,26 @@ if (getParameterByName('table', 0) != 0) {
     args['toTable'] = getParameterByName('table', 0);
 }
 
+if (getParameterByName('showCurrentTime', 0) != 0) {
+    setInterval(function() {
+        tc = ++tc % 2;
+        if (tc === 0)
+            $('#clock').html(
+                'Time ' +
+                '<span>' + formatNumber(time.getHours(), 2) + '</span>' + 
+                '<span>:</span>' + 
+                '<span>' + formatNumber(time.getMinutes(), 2) + '</span>'
+            );
+        else
+            $('#clock').html(
+                'Time ' +
+                '<span>' + formatNumber(time.getHours(), 2) + '</span>' + 
+                '<span> </span>' + 
+                '<span>' + formatNumber(time.getMinutes(), 2) + '</span>'
+            );
+    }, 1000);
+};    
+
 update(args);
 
 function update(args) {
@@ -104,7 +128,8 @@ function update(args) {
 
     xmlrpc(
             "../RPC2", "ttm.listNextMatches", [args],
-            function success(data) {
+            function success(data, request) {
+                time = new Date(request.getResponseHeader('Date'));
                 Matches.rebuild(matches, data);
                 mtTimestamp = Matches.updateMtTimestamp(data, mtTimestamp);
             },
