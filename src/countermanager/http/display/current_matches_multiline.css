@@ -94,12 +94,43 @@ body#current_matches_multiline {
 }
 
 /* Time */
+.clock {
+    padding-top: 1ex;    
+}
 .clock span {
     display: inline-flex;
-    justify-content: center;
     align-items: center;
-    width: 1.8ex;
 }
+
+.clock span#hour {
+    width: 1.2em;
+    justify-content: right;
+}
+
+.clock span#sephm {
+    width: 0.2em;
+    justify-content: center;
+    vertical-align: baseline;
+}
+
+.clock span#min {
+    width: 1.2em;
+    justify-content: center;
+}
+
+.clock span#sepms {
+    display: none;
+    width: 0.2em;
+    justify-content: center;
+    vertical-align: baseline;
+}
+
+.clock span#sec {
+    display: none;
+    width: 1.2em;
+    justify-content: left;
+}
+
 
 
 /* Fonts */

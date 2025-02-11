@@ -194,7 +194,8 @@ export function removeNotStarted(matches) {
 /**
  * Update all unfinished matches with new result
  * @param {Array} matches the current list of matches
- * @param {Object} data
+ * @param {Object} data list of updates
+ * @param {Integer} ct current time
  */
 export function updateUnfinished(matches, data, ct) {
     for (const i in data) {

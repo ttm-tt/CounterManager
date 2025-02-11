@@ -21,7 +21,7 @@
  *      showService:        default 1           Show who has the service
  *      individual:         default 1           Show individual matches for team events
  *      group:              default 'desc'      Show grName or grDesc for groups
- *      showCurrentTime:    default 0           Show the current time below the tablee
+ *      showCurrentTime:    default 'none'      Show the current time below the table, vaalues are hm (hours and min) and hms (with secs)
  */
 
 var args = {};
@@ -37,6 +37,7 @@ var minTime = 60;    // [s]
 var prestart = 3600; // [s]
 var individual = true;
 var group = 'desc';
+var showCurrentTime = 'none';
 
 var matches = [];
 var mtTimestamp = 0;
@@ -57,12 +58,16 @@ minTime = getParameterByName("minTime", minTime);
 prestart = getParameterByName("prestart", prestart);
 individual = getParameterByName("individual", 1);
 group = getParameterByName("group", "desc");
+showCurrentTime = getParameterByName("showCurrentTime", showCurrentTime);
 
 if (group !== 'desc' && group !== 'name' && group !== 'none')
     group = 'desc';
 
 if (getParameterByName('debug', 0) != 0)
     Matches.setDebug(true);
+
+if (showCurrentTime !== 'hm' && showCurrentTime !== 'hms')
+    showCurrentTime = 'none';
 
 // Set configuration
 Matches.setConfig({minTime: minTime, prestart: prestart});
@@ -97,25 +102,23 @@ if (getParameterByName('table', 0) != 0) {
     args['toTable'] = getParameterByName('table', 0);
 }
 
-if (getParameterByName('showCurrentTime', 0) != 0) {
-    setInterval(function() {
-        tc = ++tc % 2;
-        if (tc === 0)
-            $('#clock').html(
-                'Time ' +
-                '<span>' + formatNumber(time.getHours(), 2) + '</span>' + 
-                '<span>:</span>' + 
-                '<span>' + formatNumber(time.getMinutes(), 2) + '</span>'
-            );
-        else
-            $('#clock').html(
-                'Time ' +
-                '<span>' + formatNumber(time.getHours(), 2) + '</span>' + 
-                '<span> </span>' + 
-                '<span>' + formatNumber(time.getMinutes(), 2) + '</span>'
-            );
-    }, 1000);
-};    
+
+setInterval(function() {
+    tc = ++tc % 2;
+    if (tc === 1) {
+        $('#clock #hour').html(formatNumber(time.getHours(), 2));
+        $('#clock #sephm').html(':');
+        $('#clock #min').html(formatNumber(time.getMinutes(), 2));
+        $('#clock #sepms').html(':');
+        $('#clock #sec').html(formatNumber(time.getSeconds(), 2));
+    } else {
+        $('#clock #hour').html(formatNumber(time.getHours(), 2));
+        $('#clock #sephm').html(' ');
+        $('#clock #min').html(formatNumber(time.getMinutes(), 2));
+        $('#clock #sepms').html(' ');
+        $('#clock #sec').html(formatNumber(time.getSeconds(), 2));        
+    }
+}, 1000);
 
 update(args);
 
@@ -186,7 +189,8 @@ function show(start, mtTimestamp) {
     args['mtTimestamp'] = mtTimestamp;
 
     xmlrpc("../RPC2", "ttm.listNextMatches", [args],
-        function success(data) {
+        function success(data, request) {
+            time = new Date(request.getResponseHeader('Date'));
             Matches.updateResult(matches, data);
             mtTimestamp = Matches.updateMtTimestamp(data, mtTimestamp);
         },
@@ -229,7 +233,13 @@ function doShow(start, mtTimestamp) {
         var tr = formatMatch(mt, ((++matchCount % 2) == 0 ? 'even' : 'odd'));
         $('#table tbody').append(tr);
 
-        if ($('#table tbody').height() > document.documentElement.clientHeight - 10) {
+        // Check if matches fit on screen. Correct for display of current time
+        // EEveen if the clock is not shown it sometimes has a calculated height() > 0, 
+        // so correct it manually
+        let th = $('#table tbody').height();
+        let dh = document.documentElement.clientHeight;
+        let ch = showCurrentTime == 'none' ? 0 : $('#clock').height();
+        if (th > dh - 10 - ch) {
             $('#table tbody tr.last').remove();
             break;
         }
