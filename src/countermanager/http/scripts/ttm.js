@@ -118,22 +118,22 @@ var ttm = new function() {
         
         if (arguments.length > 0) {
             if (args.get('cpName') != null && args.get('cpName') != '')
-                where += " AND cpName = '" + args.get('cpName') + "'";
+                where += " AND cp.cpName = '" + args.get('cpName') + "'";
             
             if (args.get('cpNameList') != null && args.get('cpNameList') != '')
-                where += " AND cpName IN ('" + args.get('cpNameList').replace(",", "','") + "')";
+                where += " AND cp.cpName IN ('" + args.get('cpNameList').replace(",", "','") + "')";
             
             if (args.get('grStage') != null && args.get('grStage') != '')
-                where += " AND grStage = '" + args.get('grStage') + "'";
+                where += " AND gr.grStage = '" + args.get('grStage') + "'";
         }
         
         var sql = 
-            "SELECT cpName, cpDesc, cpType, grName, grDesc, grStage, grSize, grWinner, st.stNr, tb.stPos, " +
+            "SELECT cp.cpName, cp.cpDesc, cp.cpType, gr.grName, gr.grDesc, gr.grStage, gr.grSize, gr.grWinner, st.stNr, tb.stPos, " +
             "       mtMatchPoints, mtPointsA, mtPointsX, mtMatchesA, mtMatchesX, mtSetsA, mtSetsX, mtBallsA, mtBallsX, mtMatchCount, " +
             "       tmName, tmDesc, naName " +
             "  FROM CpList cp INNER JOIN GrList gr ON cp.cpID = gr.cpID CROSS APPLY TbSortFunc(gr.grID) tb INNER JOIN StTeamList st ON tb.stID = st.stID " +
             " WHERE cp.cpType = 4 AND gr.grModus = 1 AND tmName IS NOT NULL " + where + " " +
-            " ORDER BY cpName, grStage, grName, st.stNr";
+            " ORDER BY cp.cpName, gr.grStage, gr.grName, st.stNr";
             
         var connection = getConnection();
         var statement = connection.createStatement();
