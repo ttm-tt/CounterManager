@@ -182,13 +182,13 @@ var ttm = new function() {
         statement.close();
         
         sql = 
-            "SELECT cpName, cpDesc, cpType, grName, grDesc, grStage, grSize, grWinner, st.stNr, tb.stPos, " +
+            "SELECT cp.cpName, cp.cpDesc, cp.cpType, gr.grName, gr.grDesc, gr.grStage, gr.grSize, gr.grWinner, st.stNr, tb.stPos, " +
             "       mtMatchPoints, mtPointsA, mtPointsX, mtMatchesA, mtMatchesX, mtSetsA, mtSetsX, mtBallsA, mtBallsX, mtMatchCount, " +
             "       plpsLast, plpsFirst, plnaName, " +
             "       bdpsLast, bdpsFirst, bdnaName " +
             "  FROM CpList cp INNER JOIN GrList gr ON cp.cpID = gr.cpID CROSS APPLY TbSortFunc(gr.grID) tb INNER JOIN StDoubleList st ON tb.stID = st.stID " +
             " WHERE (cp.cpType = 2 OR cp.cpType = 3) AND plpsLast IS NOT NULL " + where + 
-            " ORDER BY cpName, grStage, grName, tb.stPos";
+            " ORDER BY cp.cpName, gr.grStage, gr.grName, tb.stPos";
             
         statement = connection.createStatement();
         result = statement.executeQuery(sql);
@@ -233,12 +233,12 @@ var ttm = new function() {
         statement.close();
         
         sql = 
-            "SELECT cpName, cpDesc, cpType, grName, grDesc, grStage, grSize, grWinner, st.stNr, tb.stPos, " +
+            "SELECT cp.cpName, cp.cpDesc, cp.cpType, gr.grName, gr.grDesc, gr.grStage, gr.grSize, gr.grWinner, st.stNr, tb.stPos, " +
             "       mtMatchPoints, mtPointsA, mtPointsX, mtMatchesA, mtMatchesX, mtSetsA, mtSetsX, mtBallsA, mtBallsX, mtMatchCount, " +
             "       psLast, psFirst, naName " +
             "  FROM CpList cp INNER JOIN GrList gr ON cp.cpID = gr.cpID CROSS APPLY TbSortFunc(gr.grID) tb INNER JOIN StSingleList st ON tb.stID = st.stID " +
             " WHERE cp.cpType = 1 AND psLast IS NOT NULL " + where + 
-            " ORDER BY cpName, grStage, grName, tb.stPos";
+            " ORDER BY cp.cpName, gr.grStage, gr.grName, tb.stPos";
             
         statement = connection.createStatement();
         result = statement.executeQuery(sql);
