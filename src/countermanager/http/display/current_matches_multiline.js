@@ -69,6 +69,11 @@ if (getParameterByName('debug', 0) != 0)
 if (showCurrentTime !== 'hm' && showCurrentTime !== 'hms')
     showCurrentTime = 'none';
 
+if (showCurrentTime === 'none')
+    $('#clock').hide();
+else
+    $('#clock').show();
+
 // Set configuration
 Matches.setConfig({minTime: minTime, prestart: prestart});
 
