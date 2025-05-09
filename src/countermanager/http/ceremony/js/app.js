@@ -10,7 +10,8 @@
  * cpName, grName: CP and optional GR to get the flags for 1st, 2nd, ... place
  * numFlagPoles: number of flag poles, i.e. up to which place are awards given
  * duration: time to raise the flags,default 20 (seconds)
- * start: How to start. Values are 'auto' (immediate start), and 'click' (start by left click)
+ * start: How to start. Values are 'auto' (immediate start), 
+ * 'click' (start by left click), and 'delay' (start after some seconds)
  * 
  */
 
@@ -2835,6 +2836,10 @@
         // set invisible
         $('.bg-sky').css('visibility', 'hidden');
         app.raiseFlags = false;
+      } else if (start === 'delay') {
+        // remove (in) visibility
+        $('.bg-sky').css('visibility', '');
+        setTimeout(function() {$('body').trigger('click');}, 5000);
       } else {
         // remove (in) visibility
         $('.bg-sky').css('visibility', '');
