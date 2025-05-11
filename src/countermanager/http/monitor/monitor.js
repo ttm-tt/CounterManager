@@ -762,7 +762,7 @@ function formatFlag(pl) {
         return '';
     
     // <img> tag is not closed!
-    return '<img src="' + '/flags/' + name + '.png" onerror="$(this).addClass(\'invisible\'); return false;" class="">';
+    return '<img src="' + '../flags/' + name + '.png" onerror="$(this).addClass(\'invisible\'); return false;" class="">';
 }
 
 
