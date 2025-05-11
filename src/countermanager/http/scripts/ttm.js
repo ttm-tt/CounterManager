@@ -617,7 +617,7 @@ var ttm = new function() {
                 "UNION ALL " +
                 "SELECT plna" + flag + " AS plAnaName, bdna" + flag + " AS plBnaName, st.stPos, st.stNr" +
                 "  FROM StDoubleList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
-                " WHERE (cp.cpType = 2 OR cp.cpType = 3) AND cp-cpName = '" + cpName + "' AND gr.grName = '" + grName + "' AND st.stPos > 0 AND st.stPos <= " + numPoles + " " +
+                " WHERE (cp.cpType = 2 OR cp.cpType = 3) AND cp.cpName = '" + cpName + "' AND gr.grName = '" + grName + "' AND st.stPos > 0 AND st.stPos <= " + numPoles + " " +
                 "UNION ALL " +
                 "SELECT na" + flag + " AS plAnaName, NULL AS plBnaName, st.stPos, st.stNr " +
                 "  FROM StTeamList st INNER JOIN GrList gr ON st.grID = gr.grID INNER JOIN CpList cp ON gr.cpID = cp.cpID " +
