@@ -63,14 +63,14 @@ body {
 }
 
 #serviceleft {
-    left: 750px;                           /* 1em left of team result */
+    left: 770px;                           /* 1em left of team result */
     border-top-width: 45px;                /* half if flag img height */
     border-bottom-width: 45px;
     border-right-width: 45px;
 }
 
 #serviceright {
-    right: 750px;                          /* 1 em right of team result */
+    right: 770px;                          /* 1 em right of team result */
     border-top-width: 45px;                /* half of flag img height */
     border-bottom-width: 45px;
     border-left-width: 45px;
