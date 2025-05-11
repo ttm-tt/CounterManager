@@ -113,7 +113,7 @@ export function doUpdateMatch() {
         // Case 3) will never happen because we don't read currentMatch in this case
         // So in case of error always set to invisible
         $.ajax({
-            url: '/counter/match?table=' + table,
+            url: '../counter/match?table=' + table,
             dataType: 'json',
             cache: false,
             timeout: 100, // 100 ms
@@ -153,7 +153,7 @@ export function doUpdateData() {
     if (currentData === null || currentMatch !== null) {
         // Case 4) and 5) of above: never set to invisible
         $.ajax({
-            url: '/counter/data?table=' + table,
+            url: '../counter/data?table=' + table,
             dataType: 'json',
             cache: false,
             timeout: 100, // 100 ms
