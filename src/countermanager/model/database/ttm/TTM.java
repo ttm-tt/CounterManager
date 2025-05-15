@@ -237,7 +237,8 @@ public final class TTM implements IDatabase {
     public List<CounterModelMatch> update(int fromTable, int toTable, java.time.LocalDate date, boolean all) {
         String sql =             
             // Singles
-            "SELECT cp.cpType, cp.cpName, cp.cpDesc, cp.cpSex, gr.grName, gr.grDesc, gr.grStage, gr.grModus, gr.grSize, " +
+            "SELECT cp.cpType, cp.cpName, cp.cpDesc, cp.cpSex, " +
+            "       gr.grName, gr.grDesc, gr.grStage, gr.grModus, gr.grSize, " +
             "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
             "       mtTimeStamp, mtNr, 0 AS mtMS, mtRound, mtMatch, " +
             "       mtTable, mtDateTime, mtBestOf, mtMatches, 0 AS mtReverse, 1 AS nmType, " +
@@ -288,7 +289,8 @@ public final class TTM implements IDatabase {
 
             // Doubles and Mixed
             "UNION " +                        
-            "SELECT cp.cpType, cp.cpName, cp.cpDesc, cp.cpSEx, gr.grName, gr.grDesc, gr.grStage, gr.grModus, gr.grSize, " +
+            "SELECT cp.cpType, cp.cpName, cp.cpDesc, cp.cpSex, grName, " +
+            "       gr.grDesc, gr.grStage, gr.grModus, gr.grSize, " +
             "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
             "       mtTimeStamp, mtNr, 0 AS mtMS, mtRound, mtMatch, " +
             "       mtTable, mtDateTime, mtBestOf, mtMatches, 0 AS mtReverse, 2 AS nmType, " +
@@ -339,7 +341,8 @@ public final class TTM implements IDatabase {
 
             // Team (Individual)
             "UNION " + 
-            "SELECT cp.cpType, cp.cpName, cp.cpDesc, cp.cpSex, gr.grName, gr.grDesc, gr.grStage, gr.grModus, gr.grSize, " +
+            "SELECT cp.cpType, cp.cpName, cp.cpDesc, cp.cpSex, gr.grName, " +
+            "       gr.grDesc, gr.grStage, gr.grModus, gr.grSize, " +
             "       gr.grWinner, gr.grNofRounds, gr.grNofMatches, " +
             "       mt.mtTimeStamp, mt.mtNr, mt.mtMS AS mtMS, mt.mtRound, mt.mtMatch, " +
             "       mt.mtTable, mt.mtDateTime, mt.mtBestOf, mt.mtMatches, mt.mtReverse, nmType, " +
