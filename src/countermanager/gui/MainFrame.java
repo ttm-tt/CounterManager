@@ -19,6 +19,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 import static countermanager.prefs.Prefs.*;
 import countermanager.prefs.Properties;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.prefs.BackingStoreException;
@@ -346,6 +348,8 @@ public class MainFrame extends javax.swing.JFrame {
         openIniFileMenuItem = new javax.swing.JMenuItem();
         exitMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
+        jMenuItemCheckUpdate = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
         aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -490,6 +494,15 @@ public class MainFrame extends javax.swing.JFrame {
         menuBar.add(connectionsMenu);
 
         helpMenu.setText(bundle.getString("helpMenu")); // NOI18N
+
+        jMenuItemCheckUpdate.setText(bundle.getString("checkUpdatesMenuItem")); // NOI18N
+        jMenuItemCheckUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemCheckUpdateActionPerformed(evt);
+            }
+        });
+        helpMenu.add(jMenuItemCheckUpdate);
+        helpMenu.add(jSeparator3);
 
         aboutMenuItem.setText(bundle.getString("aboutMenuItem")); // NOI18N
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -759,6 +772,64 @@ public class MainFrame extends javax.swing.JFrame {
         
         setTitle(bundle.getString("counterManagerTitle") + " - " + ini.getName());
     }//GEN-LAST:event_openIniFileMenuItemActionPerformed
+
+    public static boolean isUpdateAvailable() {
+        java.io.InputStream is = null;
+        boolean update = false;
+        try {
+            java.net.URL url = new java.net.URL("http://downloads.ttm.co.at/countermanager/current.txt");
+            is = url.openStream();
+            java.io.BufferedReader br = new java.io.BufferedReader(new java.io.InputStreamReader(is));
+            String current = br.readLine();
+            update = current.compareTo(VERSION_STRING) > 0;
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (is != null)
+                    is.close();
+            } catch (IOException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        return update;
+    }    
+    
+    private void jMenuItemCheckUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCheckUpdateActionPerformed
+        java.io.InputStream is = null;
+        try {
+            java.net.URL url = new java.net.URL("http://downloads.ttm.co.at/countermanager/current.txt");
+            is = url.openStream();
+            java.io.BufferedReader br = new java.io.BufferedReader(new java.io.InputStreamReader(is));
+            String current = br.readLine();
+            if (current.compareTo(VERSION_STRING) > 0) {
+                javax.swing.JPanel panel = new javax.swing.JPanel();
+                panel.setLayout(new javax.swing.BoxLayout(panel, javax.swing.BoxLayout.Y_AXIS));
+                panel.add(new javax.swing.JLabel(bundle.getString("A new version is available.")));
+                panel.add(new javax.swing.JLabel(bundle.getString("Click OK to download and install it.")));
+
+                if (javax.swing.JOptionPane.showConfirmDialog(this, panel, bundle.getString("Update Available"), javax.swing.JOptionPane.OK_CANCEL_OPTION) == javax.swing.JOptionPane.OK_OPTION)
+                java.awt.Desktop.getDesktop().browse(new java.net.URI("http://downloads.ttm.co.at/countermanager/install.exe"));
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, bundle.getString("You are using the current version of ") + bundle.getString("counterManagerTitle"));
+            }
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            // Auch wenn eine FileNotFoundException ist liefert ex.getLocalisedMessage nur die URL und keinen besseren Fehler.
+            String msg = bundle.getString("Could not determine current version.");
+            javax.swing.JOptionPane.showMessageDialog(this, msg,  "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        } finally {
+            try {
+                if (is != null)
+                is.close();
+            } catch (IOException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jMenuItemCheckUpdateActionPerformed
         
     private java.awt.Component getInvoker(java.awt.Component c) {        
         while (c.getParent() != null)
@@ -872,7 +943,28 @@ public class MainFrame extends javax.swing.JFrame {
                 int h = prefs.getInt("height", frame.getHeight());
                 frame.setBounds(x, y, w, h);
                 
-                frame.setVisible(true);
+                frame.setVisible(true);                    
+
+            // Check for updates
+                if (isUpdateAvailable()) {
+                    javax.swing.JPanel panel = new javax.swing.JPanel();
+                    panel.setLayout(new javax.swing.BoxLayout(panel, javax.swing.BoxLayout.Y_AXIS));
+                    panel.add(new javax.swing.JLabel(bundle.getString("A new version is available.")));
+                    panel.add(new javax.swing.JLabel(bundle.getString("Click OK to download and install it.")));
+
+                    int ret = javax.swing.JOptionPane.showConfirmDialog(
+                            frame, panel, bundle.getString("Update Available"), 
+                            javax.swing.JOptionPane.OK_CANCEL_OPTION);
+                    if (ret == javax.swing.JOptionPane.OK_OPTION) {
+                        try {
+                            java.awt.Desktop.getDesktop().browse(new java.net.URI("http://downloads.ttm.co.at/countermanager/install.exe"));
+                        } catch (URISyntaxException ex) {
+                            System.getLogger(MainFrame.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                        } catch (IOException ex) {
+                            System.getLogger(MainFrame.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                        }
+                    }
+                }
             }
         });
     }
@@ -926,8 +1018,10 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JCheckBoxMenuItem httpMenuItem;
+    private javax.swing.JMenuItem jMenuItemCheckUpdate;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JCheckBoxMenuItem largeFontMenuItem;
     private javax.swing.JCheckBoxMenuItem livetickerMenuItem;
     private javax.swing.JCheckBoxMenuItem lockscreenMenuItem;
