@@ -810,9 +810,9 @@ public class MainFrame extends javax.swing.JFrame {
                 panel.add(new javax.swing.JLabel(bundle.getString("Click OK to download and install it.")));
 
                 if (javax.swing.JOptionPane.showConfirmDialog(this, panel, bundle.getString("Update Available"), javax.swing.JOptionPane.OK_CANCEL_OPTION) == javax.swing.JOptionPane.OK_OPTION)
-                java.awt.Desktop.getDesktop().browse(new java.net.URI("http://downloads.ttm.co.at/countermanager/install.exe"));
+                    java.awt.Desktop.getDesktop().browse(new java.net.URI("http://downloads.ttm.co.at/countermanager/install.exe"));
             } else {
-                javax.swing.JOptionPane.showMessageDialog(this, bundle.getString("You are using the current version of ") + bundle.getString("counterManagerTitle"));
+                javax.swing.JOptionPane.showMessageDialog(this, bundle.getString("You are using the current version of CounterManager."));
             }
         } catch (URISyntaxException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -824,7 +824,7 @@ public class MainFrame extends javax.swing.JFrame {
         } finally {
             try {
                 if (is != null)
-                is.close();
+                    is.close();
             } catch (IOException ex) {
                 Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
