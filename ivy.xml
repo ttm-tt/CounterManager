@@ -15,6 +15,7 @@
         <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
         <dependency org="javax.xml.bind" name="jaxb-api" rev="2.3.1"/>
         <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
+        <!-- Updating glassfish leads to error Implementation of JAXB-API has not been found -->
         <dependency org="org.glassfish.jaxb" name="jaxb-runtime" rev="2.3.1"/>
         <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
         <dependency org="com.microsoft.sqlserver" name="mssql-jdbc" rev="12.10.0.jre11"/>
