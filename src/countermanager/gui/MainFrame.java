@@ -168,27 +168,7 @@ public class MainFrame extends javax.swing.JFrame {
         // Initialize Tables from Preferences
         String layout = getProperties().getString("Layout", "");
         
-        String[] tmp1 = layout.split(";");
-        
-        for (String tmp11 : tmp1) {
-            if (tmp11.length() == 0) {
-                continue;
-    }
-            String[] tmp2 = tmp11.split(",");
-            int     nr     = Integer.parseInt(tmp2[0]);
-            boolean active = Boolean.parseBoolean(tmp2[1]);
-            int     x      = Integer.parseInt(tmp2[2]);
-            int     y      = Integer.parseInt(tmp2[3]);
-            int counter = nr;
-            // Add counter first, so the callback functio will not do it also.
-            counters[counter] = new CounterPanelItem(nr);
-            counters[counter].setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-            counterPanel.add(counters[counter]);
-            counters[counter].setBounds(x * ITEM_SIZE + 10, y * ITEM_SIZE + 10, ITEM_SIZE, ITEM_SIZE);
-            // And now update the model
-            CounterModel.getDefaultInstance().addCounter(counter);
-            CounterModel.getDefaultInstance().setCounterActive(counter, active);
-        }
+        restoreLayout(layout);
     }
     
     // Add a counter representation
@@ -768,6 +748,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         Properties.setIniFile(ini);
         
+        // Initialize Tables from Preferences
+        String layout = getProperties().getString("Layout", "");
+        
+        restoreLayout(layout);
+        
         countermanager.liveticker.LivetickerAdmininstration.loadLiveticker();
         
         setTitle(bundle.getString("counterManagerTitle") + " - " + ini.getName());
@@ -891,6 +876,37 @@ public class MainFrame extends javax.swing.JFrame {
             HTTP.getDefaultInstance().setAliases(prefs.getString(ADD_DIRS_PREF, null));
         }
     }
+    
+    
+    private void restoreLayout(String layout) {
+        if (layout == null || layout.isEmpty())
+            return;
+        
+        for (int idx = counters.length; idx > 0; idx--)
+            counterRemoved(idx- 1);
+            
+        String[] tmp1 = layout.split(";");
+        
+        for (String tmp11 : tmp1) {
+            if (tmp11.length() == 0)
+                continue;
+
+            String[] tmp2 = tmp11.split(",");
+            int     nr     = Integer.parseInt(tmp2[0]);
+            boolean active = Boolean.parseBoolean(tmp2[1]);
+            int     x      = Integer.parseInt(tmp2[2]);
+            int     y      = Integer.parseInt(tmp2[3]);
+            int counter = nr;
+            // Add counter first, so the callback function will not do it also.
+            counters[counter] = new CounterPanelItem(nr);
+            counters[counter].setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+            counterPanel.add(counters[counter]);
+            counters[counter].setBounds(x * ITEM_SIZE + 10, y * ITEM_SIZE + 10, ITEM_SIZE, ITEM_SIZE);
+            // And now update the model
+            CounterModel.getDefaultInstance().addCounter(counter);
+            CounterModel.getDefaultInstance().setCounterActive(counter, active);
+        }        
+    } 
     
     // Ceck for Settings. We could implement a hierarchy listener. 
     // Or just check for setVisible
