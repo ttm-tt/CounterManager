@@ -95,7 +95,9 @@ body#current_matches_multiline {
 
 /* Time */
 .clock {
-    padding-top: 1ex;    
+    padding-top: 1ex;
+    position: absolute;
+    bottom: 0px;
 }
 .clock span {
     display: inline-flex;
