@@ -51,7 +51,7 @@ var sceneadmin = new function() {
         var list = new java.io.File(basedir + "http/display/scenes").listFiles();
             
         var ret = new java.util.ArrayList();
-        for (var i = 0; i < list.length; i++) {
+        for (var i = 0; list !== null && i < list.length; i++) {
             if (list[i].getName().endsWith(".json"))
                 ret.add(list[i].getName().substring(0, list[i].getName().length() - 5));
         }
