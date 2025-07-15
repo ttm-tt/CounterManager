@@ -126,6 +126,8 @@ function doInitialize() {
     });
     
     connectHttp(); 
+    
+    updateScreen();
 }
 
 
