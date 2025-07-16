@@ -316,6 +316,25 @@ export function create(match = null) {
                 this.service === Service.A && this.swapped ||
                 this.service === Service.X && !this.swapped
             );
+        },
+        
+        setResult : function(result) {
+            this.setsLeft = 0;
+            this.setsRight = 0;
+    
+            for (let i = 0; i < result.length; i++) {
+                this.setHistory[i][0] = result[i][0];
+                this.setHistory[i][1] = result[i][1];   
+                
+                if (this.hasGameFinished(i)) {
+                    if (result[i][0] > result[i][1])
+                        this.setsLeft++;
+                    else
+                        this.setsRight++;
+                }
+            }
+            
+            // TODO calculate current service based on firstService(Double
         }
     };
     

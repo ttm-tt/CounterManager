@@ -398,6 +398,12 @@ function resetMatch() {
     updateScreen();
 }
 
+function setResult(result) {
+    counterData.setResult(result);    
+    
+    updateScreen();
+}
+
 function updateLastUpdateTime() {
     lastUpdateTime = (new Date()).getTime();
 }
