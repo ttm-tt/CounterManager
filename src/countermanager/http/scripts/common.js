@@ -228,3 +228,28 @@ window.onerror = function(message, url, line) {
     return false;
 };
 
+
+// If moouse is hidden then show it after mouse move
+$(document).ready(function() {
+    // Show cursor if hidden after movement
+    var idleMouseTimer;
+    var forceMouseHide = false;
+    $("body").mousemove(function(ev) {
+        if(!forceMouseHide) {
+            $("*").css('cursor', 'default');
+
+            clearTimeout(idleMouseTimer);
+
+            idleMouseTimer = setTimeout(function() {
+                $("*").css('cursor', 'none');
+
+                forceMouseHide = true;
+                setTimeout(function() {
+                    forceMouseHide = false;
+                }, 200);
+            }, 500);
+        }
+    });
+});
+
+

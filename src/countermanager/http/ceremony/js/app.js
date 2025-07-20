@@ -2889,6 +2889,29 @@
             window.FW_App.raiseFlags = true;
         });
       });
+      
+    
+        // Show cursor if hidden after movement
+        var idleMouseTimer;
+        var forceMouseHide = $('body').css('cursor') === 'none';
+
+        $("body").mousemove(function(ev) {
+            if(!forceMouseHide) {
+                $("body").css('cursor', 'default');
+
+                clearTimeout(idleMouseTimer);
+
+                idleMouseTimer = setTimeout(function() {
+                    $("body").css('cursor', 'none');
+
+                    forceMouseHide = true;
+                    setTimeout(function() {
+                        forceMouseHide = false;
+                    }, 200);
+                }, 500);
+            }
+        });
+
     })(window, document, jQuery);
 
     /*!
