@@ -2891,12 +2891,12 @@
       });
       
     
-        // Show cursor if hidden after movement
+        // Show cursor if hidden after movementm but only when background is hidden
         var idleMouseTimer;
         var forceMouseHide = $('body').css('cursor') === 'none';
 
         $("body").mousemove(function(ev) {
-            if(!forceMouseHide) {
+            if(!forceMouseHide && $('.bg-sky').css('visibility') === 'hidden') {
                 $("body").css('cursor', 'default');
 
                 clearTimeout(idleMouseTimer);
