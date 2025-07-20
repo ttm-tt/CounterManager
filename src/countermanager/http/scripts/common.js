@@ -229,11 +229,11 @@ window.onerror = function(message, url, line) {
 };
 
 
-// If moouse is hidden then show it after mouse move
+// If moouse is hidden then show it after mouse move 
+// TODO but not in cascaded display and only of cursort is hidden in fact
 $(document).ready(function() {
-    // Show cursor if hidden after movement
     var idleMouseTimer;
-    var forceMouseHide = false;
+    var forceMouseHide = false; // ($('iframe').length() === 0) && ($('*').css('cursor') === 'none');
     $("body").mousemove(function(ev) {
         if(!forceMouseHide) {
             $("*").css('cursor', 'default');
