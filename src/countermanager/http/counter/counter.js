@@ -61,12 +61,10 @@ if (showTimer == 0)
 table = getParameterByName('table', '');
 
 if (table === '') {
-    // If no table is specified then use 'auto' to avoid an automatic redirect to table 1
-    if (window.location.search === '')
-        window.location.replace(window.location.href + '?table=auto');
-    else
-        window.location.replace(window.location.href + '&table=auto');
-} else if (table === 'auto') {
+    table  = parseInt(prompt("Enter table number:"));
+}
+
+if (table === 'auto') {
     $.ajax({
         url: '../counter/command',
         type : 'POST',
@@ -81,7 +79,13 @@ if (table === '') {
             window.location.replace(window.location.href.replace('table=auto', 'table=' + data));
             return;
         }
-    }); 
+    });
+} else if (isNaN(table)) {
+    // If no table is specified then use 'auto' to avoid an automatic redirect to table 1
+    if (window.location.search === '')
+        window.location.replace(window.location.href + '?table=auto');
+    else
+        window.location.replace(window.location.href + '&table=auto');
 } else {
     doInitialize();
 }
