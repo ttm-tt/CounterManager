@@ -118,6 +118,12 @@
         <copy todir="${dist.dir}/http">
             <fileset dir="${src.dir}/countermanager/http" includes="**/*.js **/*.css **/*.html **/*.gif **/*.png **/*.svg **/*.jpg"/>
         </copy>
+        
+        <!-- Copy scripts for Scripting liveticker to http/scripts-->
+        <copy todir="${dist.dir}/http/scripts">
+            <fileset dir="${src.dir}/countermanager/liveticker/scripting/scripts" includes="**/*.js"/>
+        </copy>
+        
         <copy file="CounterManager.ico" todir="${dist.dir}"/>
 
     </target>
