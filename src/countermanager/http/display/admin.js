@@ -42,7 +42,7 @@ function load() {
         return;
     
     xmlrpc(
-        "/RPC2", "sceneadmin.load", [scene],
+        "../RPC2", "sceneadmin.load", [scene],
         function success(data) {
             data = JSON.parse(data['scenes']);
             if (data == undefined)
@@ -94,7 +94,7 @@ function save() {
     }
     
     xmlrpc(
-        "/RPC2", "sceneadmin.save", [scene, scenes],
+        "../RPC2", "sceneadmin.save", [scene, scenes],
             function success(data) {
                 
             }
@@ -111,7 +111,7 @@ function remove() {
         return;    
     
     xmlrpc(
-        "/RPC2", "sceneadmin.remove", [scene],
+        "../RPC2", "sceneadmin.remove", [scene],
             function success(data) {
                 location.reload();
             }

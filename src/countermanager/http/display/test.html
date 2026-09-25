@@ -7,8 +7,8 @@ and open the template in the editor.
     <head>
         <title></title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <script type="text/javascript" src="/scripts/jquery.js"></script>
-        <script type="text/javascript" src="/scripts/xmlrpcclient.js"></script>
+        <script type="text/javascript" src="../scripts/jquery.js"></script>
+        <script type="text/javascript" src="../scripts/xmlrpcclient.js"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 update();
@@ -16,7 +16,7 @@ and open the template in the editor.
 
             function update() {
                 xmlrpc(
-                    "/RPC2", 
+                    "../RPC2", 
                     "ttm.listPlayers", 
                     [], 
                     function success(data) {

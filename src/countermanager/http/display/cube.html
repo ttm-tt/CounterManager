@@ -40,13 +40,13 @@ and open the template in the editor.
                 -webkit-transform-origin: -512px 0;
             }
         </style>
-        <script type="text/javascript" src="/scripts/common.js"></script>
-        <script type="text/javascript" src="/scripts/jquery.js"></script>        
+        <script type="text/javascript" src="../scripts/common.js"></script>
+        <script type="text/javascript" src="../scripts/jquery.js"></script>        
         <script type="text/javascript">
             document.write('<link rel="stylesheet" type="text/css" href="' + getParameterByName("config", "default") + '.css">');
             $(document).ready(function() {
-                $('#if1').attr('src', '/display/display.html?config=' + getParameterByName("config", "default") + "-left");
-                $('#if2').attr('src', '/display/display.html?config=' + getParameterByName("config", "default") + "-right");
+                $('#if1').attr('src', '../display/display.html?config=' + getParameterByName("config", "default") + "-left");
+                $('#if2').attr('src', '../display/display.html?config=' + getParameterByName("config", "default") + "-right");
             });
         </script>
             
